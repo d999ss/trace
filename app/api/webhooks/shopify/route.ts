@@ -57,7 +57,7 @@ async function handleOrderPaid(order: Record<string, unknown>) {
   console.log('Processing paid order:', order.id);
   
   // Extract custom attributes from the order
-  const customAttributes = order.note_attributes || [];
+  const customAttributes = Array.isArray(order.note_attributes) ? order.note_attributes : [];
   let activityId = null;
   let theme = 'light';
   let title = '';
@@ -65,22 +65,25 @@ async function handleOrderPaid(order: Record<string, unknown>) {
   let coordinates = null;
 
   for (const attr of customAttributes) {
-    switch (attr.name) {
+    const attribute = attr as { name?: string; value?: string };
+    if (!attribute.name || !attribute.value) continue;
+    
+    switch (attribute.name) {
       case 'activity_id':
-        activityId = attr.value;
+        activityId = attribute.value;
         break;
       case 'theme':
-        theme = attr.value;
+        theme = attribute.value;
         break;
       case 'title':
-        title = attr.value;
+        title = attribute.value;
         break;
       case 'subtitle':
-        subtitle = attr.value;
+        subtitle = attribute.value;
         break;
       case 'coordinates':
         try {
-          coordinates = JSON.parse(attr.value);
+          coordinates = JSON.parse(attribute.value);
         } catch (e) {
           console.error('Error parsing coordinates:', e);
         }
