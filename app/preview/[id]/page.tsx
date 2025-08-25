@@ -173,23 +173,20 @@ function PreviewContent() {
             <Text h5>Theme</Text>
             <ButtonGroup>
               <Button
-                size="small"
-                type={theme === 'light' ? 'success' : 'default'}
                 onClick={() => setTheme('light')}
+                style={{ backgroundColor: theme === 'light' ? '#0070f3' : '', color: theme === 'light' ? 'white' : '' }}
               >
                 Light
               </Button>
               <Button
-                size="small"
-                type={theme === 'dark' ? 'success' : 'default'}
                 onClick={() => setTheme('dark')}
+                style={{ backgroundColor: theme === 'dark' ? '#0070f3' : '', color: theme === 'dark' ? 'white' : '' }}
               >
                 Dark
               </Button>
               <Button
-                size="small"
-                type={theme === 'accent' ? 'success' : 'default'}
                 onClick={() => setTheme('accent')}
+                style={{ backgroundColor: theme === 'accent' ? '#0070f3' : '', color: theme === 'accent' ? 'white' : '' }}
               >
                 Accent
               </Button>
@@ -218,9 +215,7 @@ function PreviewContent() {
 
           <Button
             onClick={handleRenderPrint}
-            type="success"
-            width="100%"
-            size="large"
+            style={{ width: '100%' }}
           >
             Render print file
           </Button>

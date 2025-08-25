@@ -11,7 +11,7 @@ export default function Home() {
           <Text p>Transform your Strava activities into beautiful prints</Text>
           <Spacer h={2} />
           <Link href="/api/strava/auth">
-            <Button type="success" size="large">
+            <Button>
               Connect with Strava
             </Button>
           </Link>

@@ -90,7 +90,7 @@ function DashboardContent() {
                     </Text>
                   </div>
                   <Link href={`/preview/${activity.id}?access_token=${searchParams.get('access_token')}`}>
-                    <Button type="secondary">Preview</Button>
+                    <Button>Preview</Button>
                   </Link>
                 </div>
               </Card.Content>
