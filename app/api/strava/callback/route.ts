@@ -15,7 +15,9 @@ export async function GET(request: NextRequest) {
   }
 
   try {
+    console.log('Attempting token exchange with code:', code);
     const tokenData = await exchangeCodeForToken(code);
+    console.log('Token exchange successful');
     
     const redirectUrl = new URL('/dashboard', request.url);
     redirectUrl.searchParams.set('access_token', tokenData.access_token);
@@ -23,6 +25,6 @@ export async function GET(request: NextRequest) {
     return NextResponse.redirect(redirectUrl);
   } catch (error) {
     console.error('Token exchange failed:', error);
-    return NextResponse.redirect(new URL('/?error=token_exchange_failed', request.url));
+    return NextResponse.redirect(new URL(`/?error=token_exchange_failed&details=${encodeURIComponent(String(error))}`, request.url));
   }
 }
