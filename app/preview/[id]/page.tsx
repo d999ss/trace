@@ -82,26 +82,24 @@ function PreviewContent() {
     const titleY = topMargin;
     const subtitleY = titleY + Math.floor(60 * scaleFactor);
 
-    // Title: Bold, all caps, instantly recognizable
-    if (title) {
-      ctx.fillStyle = '#000000';
-      ctx.font = `bold ${Math.floor(48 * scaleFactor)}px -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif`;
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'top';
-      ctx.fillText(title.toUpperCase(), previewWidth / 2, titleY);
-    }
+    // Title: Bold, all caps, instantly recognizable (always show something)
+    const displayTitle = title || 'YOUR ACTIVITY';
+    ctx.fillStyle = '#000000';
+    ctx.font = `bold ${Math.floor(48 * scaleFactor)}px -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'top';
+    ctx.fillText(displayTitle.toUpperCase(), previewWidth / 2, titleY);
 
-    // Subtitle: Lighter, smaller, secondary information
-    if (subtitle) {
-      ctx.fillStyle = '#666666';
-      ctx.font = `${Math.floor(24 * scaleFactor)}px -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif`;
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'top';
-      ctx.fillText(subtitle, previewWidth / 2, subtitleY);
-    }
+    // Subtitle: Lighter, smaller, secondary information (always show something)
+    const displaySubtitle = subtitle || 'Strava Activity';
+    ctx.fillStyle = '#666666';
+    ctx.font = `${Math.floor(24 * scaleFactor)}px -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'top';
+    ctx.fillText(displaySubtitle, previewWidth / 2, subtitleY);
 
     // MIDDLE SECTION: Hero Map Block (floating, not touching edges)
-    const mapBlockTop = subtitle ? subtitleY + Math.floor(40 * scaleFactor) : titleY + Math.floor(40 * scaleFactor);
+    const mapBlockTop = subtitleY + Math.floor(40 * scaleFactor);
     const mapBlockHeight = Math.floor(280 * scaleFactor);
     const mapBlockMargin = Math.floor(60 * scaleFactor);
     const mapBlockWidth = previewWidth - (mapBlockMargin * 2);
@@ -1140,10 +1138,6 @@ function PreviewContent() {
             <div className="h-full flex flex-col">
               <div className="flex-1 flex items-center justify-center p-8">
                 <div className="max-w-2xl w-full">
-                  <div className="text-center mb-8">
-                    <h2 className="text-3xl font-bold text-gray-900 mb-2">Your Custom Poster</h2>
-                    <p className="text-gray-600">Live preview - customize on the right, see results here</p>
-                  </div>
                   <div className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
                     <canvas 
                       id="posterCanvas"
