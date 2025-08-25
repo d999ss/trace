@@ -36,13 +36,26 @@ function PreviewContent() {
 
   // Function to render poster in real-time
   const renderPosterPreview = useCallback(() => {
-    if (!coordinates.length) return;
+    console.log('renderPosterPreview called with:', { coordinates: coordinates.length, posterStyle, theme });
+    
+    if (!coordinates.length) {
+      console.log('No coordinates available, skipping poster render');
+      return;
+    }
     
     const canvas = document.getElementById('posterCanvas') as HTMLCanvasElement;
-    if (!canvas) return;
+    if (!canvas) {
+      console.log('Canvas element not found');
+      return;
+    }
     
     const ctx = canvas.getContext('2d');
-    if (!ctx) return;
+    if (!ctx) {
+      console.log('Could not get 2D context');
+      return;
+    }
+
+    console.log('Rendering poster preview with dimensions:', { displayWidth: 400, displayHeight: 600 });
 
     // Set canvas dimensions for preview (portrait orientation - 2:3 ratio)
     const displayWidth = 400;
@@ -64,10 +77,14 @@ function PreviewContent() {
     const scaleFactor = 1.0; // This gives us full-size proportions for the preview
 
     if (posterStyle === 'art-print') {
+      console.log('Rendering Art Print style');
       renderArtPrintPreview(ctx, previewWidth, previewHeight, scaleFactor);
     } else {
+      console.log('Rendering Classic style');
       renderClassicPreview(ctx, previewWidth, previewHeight, scaleFactor);
     }
+    
+    console.log('Poster preview render complete');
   }, [coordinates, title, subtitle, theme, selectedSize, activity, posterStyle]);
 
   // Function to render classic poster preview
@@ -1173,8 +1190,10 @@ function PreviewContent() {
 
   // Render poster preview whenever relevant state changes
   useEffect(() => {
-    renderPosterPreview();
-  }, [renderPosterPreview]);
+    if (coordinates.length > 0) {
+      renderPosterPreview();
+    }
+  }, [coordinates, title, subtitle, theme, selectedSize, posterStyle]);
 
   useEffect(() => {
     const accessToken = searchParams.get('access_token');
