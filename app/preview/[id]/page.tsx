@@ -35,16 +35,23 @@ function PreviewContent() {
 
     async function fetchActivity() {
       try {
+        console.log('Fetching activity:', activityId);
         const data = await getActivity(accessToken!, activityId);
+        console.log('Activity data received:', data);
         setActivity(data);
         
         if (data.map?.summary_polyline) {
+          console.log('Found polyline, decoding coordinates...');
           const coords = decodePolyline(data.map.summary_polyline);
+          console.log('Decoded coordinates:', coords.length, coords);
           setCoordinates(coords);
+        } else {
+          console.warn('No polyline data found in activity:', data);
+          setError('This activity has no GPS data to display');
         }
       } catch (err) {
+        console.error('Failed to fetch activity:', err);
         setError('Failed to fetch activity');
-        console.error(err);
       } finally {
         setLoading(false);
       }
@@ -54,9 +61,29 @@ function PreviewContent() {
   }, [params.id, searchParams]);
 
   useEffect(() => {
-    if (!mapContainer.current || !coordinates.length) return;
+    if (!mapContainer.current || !coordinates.length) {
+      console.log('Map initialization skipped:', { 
+        hasContainer: !!mapContainer.current, 
+        coordinatesLength: coordinates.length,
+        coordinates: coordinates 
+      });
+      return;
+    }
 
-    mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN || '';
+    const mapboxToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
+    if (!mapboxToken) {
+      console.error('Mapbox token is missing!');
+      setError('Mapbox configuration is missing');
+      return;
+    }
+
+    console.log('Initializing map with:', { 
+      coordinates: coordinates.length, 
+      theme, 
+      hasToken: !!mapboxToken 
+    });
+
+    mapboxgl.accessToken = mapboxToken;
 
     const mapStyle = theme === 'dark' 
       ? 'mapbox://styles/mapbox/dark-v11'
@@ -72,6 +99,8 @@ function PreviewContent() {
     const bounds = new mapboxgl.LngLatBounds();
     coordinates.forEach(coord => bounds.extend(coord as [number, number]));
 
+    console.log('Creating map with bounds:', bounds);
+
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
       style: mapStyle,
@@ -81,6 +110,7 @@ function PreviewContent() {
     });
 
     map.current.on('load', () => {
+      console.log('Map loaded, adding route layer');
       map.current!.addSource('route', {
         type: 'geojson',
         data: {
@@ -106,6 +136,11 @@ function PreviewContent() {
           'line-width': 3
         }
       });
+    });
+
+    map.current.on('error', (e) => {
+      console.error('Mapbox error:', e);
+      setError('Failed to load map');
     });
 
     return () => {
@@ -276,7 +311,17 @@ function PreviewContent() {
       </div>
 
       <div className="flex-1 relative">
-        <div ref={mapContainer} className="absolute inset-0" />
+        {coordinates.length > 0 ? (
+          <div ref={mapContainer} className="absolute inset-0" />
+        ) : (
+          <div className="absolute inset-0 bg-gray-100 flex items-center justify-center">
+            <div className="text-center text-gray-500">
+              <div className="text-lg font-medium mb-2">No GPS Data Available</div>
+              <div className="text-sm">This activity doesn't have GPS coordinates to display on the map.</div>
+              <div className="text-xs mt-2">Check the browser console for debugging information.</div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
