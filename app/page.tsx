@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Page, Text, Button, Spacer } from '@geist-ui/core';
+import { Page, Text, Spacer } from '@geist-ui/core';
 
 export default function Home() {
   return (
@@ -11,9 +11,18 @@ export default function Home() {
           <Text p>Transform your Strava activities into beautiful prints</Text>
           <Spacer h={2} />
           <Link href="/api/strava/auth">
-            <Button>
+            <button style={{ 
+              padding: '12px 24px', 
+              border: '1px solid #eaeaea', 
+              borderRadius: '5px', 
+              background: '#0070f3', 
+              color: 'white',
+              cursor: 'pointer',
+              fontSize: '16px',
+              fontWeight: '500'
+            }}>
               Connect with Strava
-            </Button>
+            </button>
           </Link>
         </div>
       </Page.Content>

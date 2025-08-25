@@ -3,7 +3,7 @@
 import { Suspense, useEffect, useState, useRef } from 'react';
 import { useParams, useSearchParams } from 'next/navigation';
 import { getActivity, decodePolyline } from '@/lib/strava';
-import { Button, ButtonGroup, Input, Text, Loading, Note } from '@geist-ui/core';
+import { Input, Text, Loading, Note } from '@geist-ui/core';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 
@@ -171,26 +171,50 @@ function PreviewContent() {
         <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
           <div>
             <Text h5>Theme</Text>
-            <ButtonGroup>
-              <Button
+            <div style={{ display: 'flex', gap: '8px' }}>
+              <button
                 onClick={() => setTheme('light')}
-                style={{ backgroundColor: theme === 'light' ? '#0070f3' : '', color: theme === 'light' ? 'white' : '' }}
+                style={{ 
+                  padding: '6px 12px',
+                  border: '1px solid #eaeaea',
+                  borderRadius: '4px',
+                  background: theme === 'light' ? '#0070f3' : 'white',
+                  color: theme === 'light' ? 'white' : 'black',
+                  cursor: 'pointer',
+                  fontSize: '12px'
+                }}
               >
                 Light
-              </Button>
-              <Button
+              </button>
+              <button
                 onClick={() => setTheme('dark')}
-                style={{ backgroundColor: theme === 'dark' ? '#0070f3' : '', color: theme === 'dark' ? 'white' : '' }}
+                style={{ 
+                  padding: '6px 12px',
+                  border: '1px solid #eaeaea',
+                  borderRadius: '4px',
+                  background: theme === 'dark' ? '#0070f3' : 'white',
+                  color: theme === 'dark' ? 'white' : 'black',
+                  cursor: 'pointer',
+                  fontSize: '12px'
+                }}
               >
                 Dark
-              </Button>
-              <Button
+              </button>
+              <button
                 onClick={() => setTheme('accent')}
-                style={{ backgroundColor: theme === 'accent' ? '#0070f3' : '', color: theme === 'accent' ? 'white' : '' }}
+                style={{ 
+                  padding: '6px 12px',
+                  border: '1px solid #eaeaea',
+                  borderRadius: '4px',
+                  background: theme === 'accent' ? '#0070f3' : 'white',
+                  color: theme === 'accent' ? 'white' : 'black',
+                  cursor: 'pointer',
+                  fontSize: '12px'
+                }}
               >
                 Accent
-              </Button>
-            </ButtonGroup>
+              </button>
+            </div>
           </div>
 
           <div>
@@ -213,12 +237,22 @@ function PreviewContent() {
             />
           </div>
 
-          <Button
+          <button
             onClick={handleRenderPrint}
-            style={{ width: '100%' }}
+            style={{ 
+              width: '100%',
+              padding: '12px 24px',
+              border: '1px solid #eaeaea',
+              borderRadius: '5px',
+              background: '#0070f3',
+              color: 'white',
+              cursor: 'pointer',
+              fontSize: '14px',
+              fontWeight: '500'
+            }}
           >
             Render print file
-          </Button>
+          </button>
         </div>
       </div>
 

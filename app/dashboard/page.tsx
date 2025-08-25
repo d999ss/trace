@@ -4,7 +4,7 @@ import { Suspense, useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { getActivities } from '@/lib/strava';
 import Link from 'next/link';
-import { Page, Card, Text, Button, Loading, Note, Spacer } from '@geist-ui/core';
+import { Page, Card, Text, Loading, Note, Spacer } from '@geist-ui/core';
 
 interface Activity {
   id: number;
@@ -90,7 +90,16 @@ function DashboardContent() {
                     </Text>
                   </div>
                   <Link href={`/preview/${activity.id}?access_token=${searchParams.get('access_token')}`}>
-                    <Button>Preview</Button>
+                    <button style={{ 
+                      padding: '8px 16px', 
+                      border: '1px solid #eaeaea', 
+                      borderRadius: '5px', 
+                      background: 'white', 
+                      cursor: 'pointer',
+                      fontSize: '14px'
+                    }}>
+                      Preview
+                    </button>
                   </Link>
                 </div>
               </Card.Content>
