@@ -50,7 +50,7 @@ function DashboardContent() {
       <Page>
         <Page.Content>
           <div style={{ textAlign: 'center', padding: '100px 0' }}>
-            <Loading size="large">Loading activities...</Loading>
+            <Loading>Loading activities...</Loading>
           </div>
         </Page.Content>
       </Page>

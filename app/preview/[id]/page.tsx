@@ -150,7 +150,7 @@ function PreviewContent() {
   if (loading) {
     return (
       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
-        <Loading size="large">Loading activity...</Loading>
+        <Loading>Loading activity...</Loading>
       </div>
     );
   }
