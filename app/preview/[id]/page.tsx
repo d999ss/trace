@@ -1058,499 +1058,445 @@ function PreviewContent() {
     };
   }, [coordinates, theme]);
 
+  // Handle print generation
   const handleRenderPrint = async () => {
-    try {
-      // Create a canvas for the poster
-      const canvas = document.createElement('canvas');
-      const ctx = canvas.getContext('2d');
-      if (!ctx) return;
+    if (!coordinates.length) return;
+    
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
 
-      // Set poster dimensions
-      const getSizeDimensions = (size: string) => {
-        switch (size) {
-          case 'digital': return { width: 2400, height: 3600 }; // 2:3 ratio
-          case 'small': return { width: 2400, height: 3600 }; // 2:3 ratio
-          case 'medium': return { width: 3000, height: 4500 }; // 2:3 ratio
-          case 'large': return { width: 3600, height: 5400 }; // 2:3 ratio
-          default: return { width: 3000, height: 4500 }; // medium default
-        }
-      };
-      
-      const { width: posterWidth, height: posterHeight } = getSizeDimensions(selectedSize);
-      canvas.width = posterWidth;
-      canvas.height = posterHeight;
-
-      if (posterStyle === 'art-print') {
-        renderArtPrintPoster(ctx, posterWidth, posterHeight, selectedSize);
-      } else {
-        renderClassicPoster(ctx, posterWidth, posterHeight, selectedSize);
+    // Set poster dimensions
+    const getSizeDimensions = (size: string) => {
+      switch (size) {
+        case 'digital': return { width: 2400, height: 3600 }; // 2:3 ratio
+        case 'small': return { width: 2400, height: 3600 }; // 2:3 ratio
+        case 'medium': return { width: 3000, height: 4500 }; // 2:3 ratio
+        case 'large': return { width: 3600, height: 5400 }; // 2:3 ratio
+        default: return { width: 3000, height: 4500 }; // medium default
       }
+    };
+    
+    const { width: posterWidth, height: posterHeight } = getSizeDimensions(selectedSize);
+    canvas.width = posterWidth;
+    canvas.height = posterHeight;
 
-      // Convert to blob and download
-      canvas.toBlob((blob) => {
-        if (blob) {
-          const url = URL.createObjectURL(blob);
-          const a = document.createElement('a');
-          a.href = url;
-          a.download = `trace-poster-${selectedSize}-${params.id}.png`;
-          document.body.appendChild(a);
-          a.click();
-          document.body.removeChild(a);
-          URL.revokeObjectURL(url);
-        }
-      }, 'image/png', 1.0);
-    } catch (err) {
-      console.error('Failed to generate poster:', err);
-      alert('Failed to generate poster. Please try again.');
+    if (posterStyle === 'art-print') {
+      renderArtPrintPoster(ctx, posterWidth, posterHeight, selectedSize);
+    } else {
+      renderClassicPoster(ctx, posterWidth, posterHeight, selectedSize);
     }
+
+    // Convert to blob and download
+    canvas.toBlob((blob) => {
+      if (blob) {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `trace-prints-${selectedSize}-${Date.now()}.png`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }
+    }, 'image/png');
   };
 
-  const handleBuyPrint = async () => {
-    try {
-      if (!process.env.NEXT_PUBLIC_SHOPIFY_DOMAIN || !process.env.NEXT_PUBLIC_SHOPIFY_STOREFRONT_ACCESS_TOKEN) {
-        alert('Shopify is not configured yet. Please use the render button to download your print file.');
-        return;
-      }
-
-      // Create checkout with the print product
-      // For now, we'll use a placeholder product ID - this should be replaced with actual product ID
-      const PRINT_PRODUCT_VARIANT_ID = 'YOUR_PRODUCT_VARIANT_ID';
-      
-      const checkout = await createCheckout(PRINT_PRODUCT_VARIANT_ID, 1);
-      
-      // Add custom attributes for the design
-      await updateCheckoutAttributes(checkout.id, [
-        { key: 'activity_id', value: params.id as string },
-        { key: 'theme', value: theme },
-        { key: 'title', value: title },
-        { key: 'subtitle', value: subtitle },
-        { key: 'coordinates', value: JSON.stringify(coordinates) }
-      ]);
-
-      // Redirect to Shopify checkout
-      window.location.href = checkout.webUrl;
-    } catch (err) {
-      console.error('Failed to create checkout:', err);
-      alert('Failed to create checkout. Please try again.');
-    }
+  // Handle buy print (placeholder for now)
+  const handleBuyPrint = () => {
+    // This would integrate with a print service
+    alert('Print ordering coming soon! For now, use "Save Digital Poster" to download your high-resolution file.');
   };
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-gray-600">Loading activity...</div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-red-600 bg-red-50 border border-red-200 rounded-lg p-4">{error}</div>
-      </div>
-    );
-  }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex">
-      {/* Left Sidebar - Apple-style stepper */}
-      <div className="w-96 bg-white border-r border-gray-100 flex flex-col">
-        {/* Header with stepper */}
-        <div className="p-6 border-b border-gray-100">
-          <h1 className="text-xl font-semibold text-gray-900 mb-4">Create Your Poster</h1>
-          
-          {/* Stepper Navigation */}
-          <div className="space-y-3">
-            <div className={`flex items-center space-x-3 p-3 rounded-lg transition-all ${
-              currentStep === 1 ? 'bg-blue-50 border border-blue-200' : 'hover:bg-gray-50'
-            }`}>
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
-                currentStep === 1 ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-600'
-              }`}>
-                1
-              </div>
-              <div>
-                <div className={`font-medium ${currentStep === 1 ? 'text-blue-900' : 'text-gray-700'}`}>Route</div>
-                <div className="text-sm text-gray-500">Select your activity</div>
-              </div>
+    <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <div className="bg-white border-b border-gray-200 px-6 py-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-3">
+            <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+              <span className="text-white font-bold text-sm">T</span>
             </div>
-            
-            <div className={`flex items-center space-x-3 p-3 rounded-lg transition-all ${
-              currentStep === 2 ? 'bg-blue-50 border border-blue-200' : 'hover:bg-gray-50'
-            }`}>
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
-                currentStep === 2 ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-600'
-              }`}>
-                2
-              </div>
-              <div>
-                <div className={`font-medium ${currentStep === 2 ? 'text-blue-900' : 'text-gray-700'}`}>Style</div>
-                <div className="text-sm text-gray-500">Choose your theme</div>
-              </div>
-            </div>
-            
-            <div className={`flex items-center space-x-3 p-3 rounded-lg transition-all ${
-              currentStep === 3 ? 'bg-blue-50 border border-blue-200' : 'hover:bg-gray-50'
-            }`}>
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
-                currentStep === 3 ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-600'
-              }`}>
-                3
-              </div>
-              <div>
-                <div className={`font-medium ${currentStep === 3 ? 'text-blue-900' : 'text-gray-700'}`}>Text</div>
-                <div className="text-sm text-gray-500">Add your message</div>
-              </div>
-            </div>
-            
-            <div className={`flex items-center space-x-3 p-3 rounded-lg transition-all ${
-              currentStep === 4 ? 'bg-blue-50 border border-blue-200' : 'hover:bg-gray-50'
-            }`}>
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
-                currentStep === 4 ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-600'
-              }`}>
-                4
-              </div>
-              <div>
-                <div className={`font-medium ${currentStep === 4 ? 'text-blue-900' : 'text-gray-700'}`}>Size</div>
-                <div className="text-sm text-gray-500">Pick your format</div>
-              </div>
-            </div>
+            <h1 className="text-xl font-semibold text-gray-900">Trace Prints</h1>
           </div>
-        </div>
-
-        {/* Contextual Content - Only show relevant controls */}
-        <div className="flex-1 p-6 overflow-y-auto">
-          {/* Step 1: Route Selection */}
-          {currentStep === 1 && (
-            <div className="space-y-6">
-              {/* Activity Card - Clean and tucked away */}
-              <div className="bg-gray-50 rounded-xl p-4 border border-gray-100">
-                <div className="flex items-center space-x-3 mb-3">
-                  <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                    <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-1.447-.894L15 4m0 13V4m-6 3l6-3" />
-                    </svg>
-                  </div>
-                  <div>
-                    <div className="font-medium text-gray-900">{activity?.name || 'Loading...'}</div>
-                    <div className="text-sm text-gray-500">Strava Activity</div>
-                  </div>
-                </div>
-                
-                {/* Stats in clean grid */}
-                <div className="grid grid-cols-3 gap-3">
-                  <div className="text-center">
-                    <div className="text-lg font-semibold text-gray-900">8.85</div>
-                    <div className="text-xs text-gray-500">miles</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-lg font-semibold text-gray-900">1:23</div>
-                    <div className="text-xs text-gray-500">duration</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-lg font-semibold text-gray-900">6.4</div>
-                    <div className="text-xs text-gray-500">mph avg</div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Navigation buttons */}
-              <div className="flex space-x-3">
-                <button
-                  onClick={() => setCurrentStep(2)}
-                  disabled={!coordinates.length}
-                  className="flex-1 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 text-white font-medium py-3 px-4 rounded-lg transition-colors"
-                >
-                  Continue to Style
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* Step 2: Style Selection */}
-          {currentStep === 2 && (
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Poster Style</label>
-                <div className="space-y-2">
-                  <label className="flex items-center space-x-3 cursor-pointer">
-                    <input
-                      type="radio"
-                      name="posterStyle"
-                      value="classic"
-                      checked={posterStyle === 'classic'}
-                      onChange={(e) => setPosterStyle(e.target.value as 'classic' | 'art-print')}
-                      className="text-blue-600 focus:ring-blue-500"
-                    />
-                    <span className="text-sm text-gray-700">Classic</span>
-                  </label>
-                  <label className="flex items-center space-x-3 cursor-pointer">
-                    <input
-                      type="radio"
-                      name="posterStyle"
-                      value="art-print"
-                      checked={posterStyle === 'art-print'}
-                      onChange={(e) => setPosterStyle(e.target.value as 'classic' | 'art-print')}
-                      className="text-blue-600 focus:ring-blue-500"
-                    />
-                    <span className="text-sm text-gray-700">Art Print</span>
-                  </label>
-                </div>
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Map Style</label>
-                <div className="space-y-2">
-                  <label className="flex items-center space-x-3 cursor-pointer">
-                    <input
-                      type="radio"
-                      name="theme"
-                      value="light"
-                      checked={theme === 'light'}
-                      onChange={(e) => setTheme(e.target.value as 'light' | 'dark' | 'accent')}
-                      className="text-blue-600 focus:ring-blue-500"
-                    />
-                    <span className="text-sm text-gray-700">Classic</span>
-                  </label>
-                  <label className="flex items-center space-x-3 cursor-pointer">
-                    <input
-                      type="radio"
-                      name="theme"
-                      value="dark"
-                      checked={theme === 'dark'}
-                      onChange={(e) => setTheme(e.target.value as 'light' | 'dark' | 'accent')}
-                      className="text-blue-600 focus:ring-blue-500"
-                    />
-                    <span className="text-sm text-gray-700">Dark</span>
-                  </label>
-                  <label className="flex items-center space-x-3 cursor-pointer">
-                    <input
-                      type="radio"
-                      name="theme"
-                      value="accent"
-                      checked={theme === 'accent'}
-                      onChange={(e) => setTheme(e.target.value as 'light' | 'dark' | 'accent')}
-                      className="text-blue-600 focus:ring-blue-500"
-                    />
-                    <span className="text-sm text-gray-700">Satellite</span>
-                  </label>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Step 3: Text Customization */}
-          {currentStep === 3 && (
-            <div className="space-y-6">
-              <div>
-                <h3 className="text-lg font-medium text-gray-900 mb-4">Add Your Message</h3>
-                
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Title</label>
-                    <input
-                      type="text"
-                      placeholder="Enter a memorable title..."
-                      value={title}
-                      onChange={(e) => setTitle(e.target.value)}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Subtitle</label>
-                    <input
-                      type="text"
-                      placeholder="Add a personal message..."
-                      value={subtitle}
-                      onChange={(e) => setSubtitle(e.target.value)}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* Navigation buttons */}
-              <div className="flex space-x-3">
-                <button
-                  onClick={() => setCurrentStep(2)}
-                  className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-3 px-4 rounded-lg transition-colors"
-                >
-                  Back
-                </button>
-                <button
-                  onClick={() => setCurrentStep(4)}
-                  className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg transition-colors"
-                >
-                  Continue to Size
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* Step 4: Size Selection */}
-          {currentStep === 4 && (
-            <div className="space-y-6">
-              <div>
-                <h3 className="text-lg font-medium text-gray-900 mb-4">Choose Your Size</h3>
-                <div className="space-y-3">
-                  <button
-                    onClick={() => setSelectedSize('digital')}
-                    className={`w-full p-4 rounded-xl border-2 transition-all text-left ${
-                      selectedSize === 'digital'
-                        ? 'border-blue-500 bg-blue-50 shadow-sm'
-                        : 'border-gray-200 bg-white hover:border-gray-300 hover:shadow-sm'
-                    }`}
-                  >
-                    <div className="font-medium text-gray-900">Digital</div>
-                    <div className="text-sm text-gray-600">High-res digital files only</div>
-                    <div className="text-sm font-medium text-blue-600 mt-1">$20</div>
-                  </button>
-                  
-                  <button
-                    onClick={() => setSelectedSize('small')}
-                    className={`w-full p-4 rounded-xl border-2 transition-all text-left ${
-                      selectedSize === 'small'
-                        ? 'border-blue-500 bg-blue-50 shadow-sm'
-                        : 'border-gray-200 bg-white hover:border-gray-300 hover:shadow-sm'
-                    }`}
-                  >
-                    <div className="font-medium text-gray-900">Small</div>
-                    <div className="text-sm text-gray-600">20×30cm / 8×12&quot;</div>
-                    <div className="text-sm font-medium text-blue-600 mt-1">$35</div>
-                  </button>
-                  
-                  <button
-                    onClick={() => setSelectedSize('medium')}
-                    className={`w-full p-4 rounded-xl border-2 transition-all text-left ${
-                      selectedSize === 'medium'
-                        ? 'border-blue-500 bg-blue-50 shadow-sm'
-                        : 'border-gray-200 bg-white hover:border-gray-300 hover:shadow-sm'
-                    }`}
-                  >
-                    <div className="font-medium text-gray-900">Medium</div>
-                    <div className="text-sm text-gray-600">30×45cm / 12×18&quot;</div>
-                    <div className="text-sm font-medium text-blue-600 mt-1">$55</div>
-                  </button>
-                  
-                  <button
-                    onClick={() => setSelectedSize('large')}
-                    className={`w-full p-4 rounded-xl border-2 transition-all text-left ${
-                      selectedSize === 'large'
-                        ? 'border-blue-500 bg-blue-50 shadow-sm'
-                        : 'border-gray-200 bg-white hover:border-gray-300 hover:shadow-sm'
-                    }`}
-                  >
-                    <div className="font-medium text-gray-900">Large</div>
-                    <div className="text-sm text-gray-600">40×60cm / 16×24&quot;</div>
-                    <div className="text-sm font-medium text-blue-600 mt-1">$65</div>
-                  </button>
-                </div>
-              </div>
-
-              {/* Navigation buttons */}
-              <div className="flex space-x-3">
-                <button
-                  onClick={() => setCurrentStep(3)}
-                  className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-3 px-4 rounded-lg transition-colors"
-                >
-                  Back
-                </button>
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* Fixed Bottom Bar - Primary Actions */}
-        <div className="p-6 border-t border-gray-100 bg-white">
-          <div className="space-y-3">
-            <button
-              onClick={handleRenderPrint}
-              className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-3 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center gap-2"
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-              </svg>
-              Save Digital Poster
-            </button>
-            
-            <button
-              onClick={handleBuyPrint}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-4 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center gap-2 text-lg"
-            >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-              </svg>
-              Get It Printed - ${selectedSize === 'digital' ? '20' : selectedSize === 'small' ? '35' : selectedSize === 'medium' ? '55' : '65'}
-            </button>
+          <div className="text-sm text-gray-500">
+            {activity?.name || 'Loading activity...'}
           </div>
         </div>
       </div>
 
-      {/* Main Content - Poster Preview */}
-      <div className="flex-1 bg-white">
-        {loading ? (
-          <div className="h-full flex items-center justify-center">
-            <div className="text-center">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-              <div className="text-gray-600">Loading your route...</div>
+      {/* Main Content - Right Sidebar Layout */}
+      <div className="flex h-[calc(100vh-80px)]">
+        {/* Left: Poster Preview (Main Content) */}
+        <div className="flex-1 bg-white overflow-auto">
+          {loading ? (
+            <div className="h-full flex items-center justify-center">
+              <div className="text-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+                <p className="text-gray-600">Loading your activity...</p>
+              </div>
             </div>
-          </div>
-        ) : coordinates.length > 0 ? (
-          <div className="h-full flex flex-col">
-            {/* Poster as the main focus - edge-to-edge white */}
-            <div className="flex-1 flex items-center justify-center p-8">
-              <div className="max-w-2xl w-full">
-                <div className="text-center mb-8">
-                  <h2 className="text-3xl font-bold text-gray-900 mb-2">Your Custom Poster</h2>
-                  <p className="text-gray-600">Live preview - customize on the left, see results here</p>
-                </div>
-                
-                {/* Poster Canvas - Large and prominent with hover effects */}
-                <div className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
-                  <canvas 
-                    id="posterCanvas"
-                    className="w-full h-auto rounded-2xl"
-                    style={{ 
-                      maxHeight: '700px',
-                      aspectRatio: '2/3' // Ensure portrait orientation is maintained
-                    }}
-                  />
-                </div>
-                
-                {/* Poster Details - Clean and minimal */}
-                <div className="mt-8 grid grid-cols-3 gap-6 text-center">
-                  <div className="bg-gray-50 rounded-xl p-4">
-                    <div className="font-medium text-gray-900">Size</div>
-                    <div className="text-sm text-gray-600">{selectedSize === 'digital' ? 'Digital' : selectedSize === 'small' ? 'Small' : selectedSize === 'medium' ? 'Medium' : 'Large'}</div>
+          ) : coordinates.length > 0 ? (
+            <div className="h-full flex flex-col">
+              <div className="flex-1 flex items-center justify-center p-8">
+                <div className="max-w-2xl w-full">
+                  <div className="text-center mb-8">
+                    <h2 className="text-3xl font-bold text-gray-900 mb-2">Your Custom Poster</h2>
+                    <p className="text-gray-600">Live preview - customize on the right, see results here</p>
                   </div>
-                  <div className="bg-gray-50 rounded-xl p-4">
-                    <div className="font-medium text-gray-900">Theme</div>
-                    <div className="text-sm text-gray-600">{theme.charAt(0).toUpperCase() + theme.slice(1)}</div>
+                  <div className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+                    <canvas 
+                      id="posterCanvas"
+                      className="w-full h-auto rounded-2xl"
+                      style={{ 
+                        maxHeight: '700px',
+                        aspectRatio: '2/3' // Ensure portrait orientation is maintained
+                      }}
+                    />
                   </div>
-                  <div className="bg-gray-50 rounded-xl p-4">
-                    <div className="font-medium text-gray-900">Route</div>
-                    <div className="text-sm text-gray-600">{coordinates.length} points</div>
+                  
+                  {/* Poster Details */}
+                  <div className="mt-6 text-center text-sm text-gray-500">
+                    <p>Size: {selectedSize.toUpperCase()} • Style: {posterStyle === 'classic' ? 'Classic' : 'Art Print'} • Theme: {theme === 'light' ? 'Classic' : theme === 'dark' ? 'Dark' : 'Satellite'}</p>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-        ) : (
-          <div className="h-full flex items-center justify-center">
-            <div className="text-center max-w-md mx-auto px-4">
-              <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-4">
-                <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-1.447-.894L15 4m0 13V4m-6 3l6-3" />
-                </svg>
+          ) : (
+            <div className="h-full flex items-center justify-center">
+              <div className="text-center max-w-md">
+                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-1.447-.894L15 4m0 13V4m0 0L9 7" />
+                  </svg>
+                </div>
+                <h3 className="text-lg font-medium text-gray-900 mb-2">No GPS Data Available</h3>
+                <p className="text-gray-600">This activity doesn&apos;t have GPS coordinates to display on the poster.</p>
               </div>
-              <div className="text-lg font-medium text-gray-900 mb-2">No GPS Data Available</div>
-              <div className="text-gray-600 mb-4">This activity doesn&apos;t have GPS coordinates to display on the map.</div>
-              <div className="text-sm text-gray-500">Try selecting a different activity with GPS tracking enabled.</div>
+            </div>
+          )}
+        </div>
+
+        {/* Right: Controls Sidebar */}
+        <div className="w-96 bg-white border-l border-gray-200 overflow-y-auto">
+          <div className="p-6">
+            {/* Stepper Navigation */}
+            <div className="mb-8">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-lg font-semibold text-gray-900">Customize Your Poster</h2>
+                <div className="text-sm text-gray-500">Step {currentStep} of 4</div>
+              </div>
+              
+              <div className="space-y-3">
+                <div className={`flex items-center space-x-3 p-3 rounded-lg transition-all ${
+                  currentStep === 1 ? 'bg-blue-50 border border-blue-200' : 'hover:bg-gray-50'
+                }`}>
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
+                    currentStep === 1 ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-600'
+                  }`}>
+                    1
+                  </div>
+                  <div>
+                    <div className={`font-medium ${currentStep === 1 ? 'text-blue-900' : 'text-gray-700'}`}>Route</div>
+                    <div className="text-sm text-gray-500">Select your activity</div>
+                  </div>
+                </div>
+                
+                <div className={`flex items-center space-x-3 p-3 rounded-lg transition-all ${
+                  currentStep === 2 ? 'bg-blue-50 border border-blue-200' : 'hover:bg-gray-50'
+                }`}>
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
+                    currentStep === 2 ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-600'
+                  }`}>
+                    2
+                  </div>
+                  <div>
+                    <div className={`font-medium ${currentStep === 2 ? 'text-blue-900' : 'text-gray-700'}`}>Style</div>
+                    <div className="text-sm text-gray-500">Choose poster style & map theme</div>
+                  </div>
+                </div>
+                
+                <div className={`flex items-center space-x-3 p-3 rounded-lg transition-all ${
+                  currentStep === 3 ? 'bg-blue-50 border border-blue-200' : 'hover:bg-gray-50'
+                }`}>
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
+                    currentStep === 3 ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-600'
+                  }`}>
+                    3
+                  </div>
+                  <div>
+                    <div className={`font-medium ${currentStep === 3 ? 'text-blue-900' : 'text-gray-700'}`}>Text</div>
+                    <div className="text-sm text-gray-500">Add title & subtitle</div>
+                  </div>
+                </div>
+                
+                <div className={`flex items-center space-x-3 p-3 rounded-lg transition-all ${
+                  currentStep === 4 ? 'bg-blue-50 border border-blue-200' : 'hover:bg-gray-50'
+                }`}>
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
+                    currentStep === 4 ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-600'
+                  }`}>
+                    4
+                  </div>
+                  <div>
+                    <div className={`font-medium ${currentStep === 4 ? 'text-blue-900' : 'text-gray-700'}`}>Size</div>
+                    <div className="text-sm text-gray-500">Select print size</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Step Content */}
+            <div className="space-y-6">
+              {/* Step 1: Route Selection */}
+              {currentStep === 1 && (
+                <div className="space-y-4">
+                  <div>
+                    <h3 className="text-lg font-medium text-gray-900 mb-3">Current Activity</h3>
+                    <div className="bg-gray-50 rounded-lg p-4">
+                      <div className="flex items-center space-x-3">
+                        <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                          <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                          </svg>
+                        </div>
+                        <div className="flex-1">
+                          <div className="font-medium text-gray-900">{activity?.name || 'Loading...'}</div>
+                          <div className="text-sm text-gray-500">{coordinates.length} GPS points</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Navigation buttons */}
+                  <div className="flex space-x-3 pt-4">
+                    <button
+                      onClick={() => setCurrentStep(2)}
+                      disabled={!coordinates.length}
+                      className="flex-1 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-medium py-3 px-4 rounded-lg transition-colors"
+                    >
+                      Continue to Style
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* Step 2: Style Selection */}
+              {currentStep === 2 && (
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Poster Style</label>
+                    <div className="space-y-2">
+                      <label className="flex items-center space-x-3 cursor-pointer">
+                        <input
+                          type="radio"
+                          name="posterStyle"
+                          value="classic"
+                          checked={posterStyle === 'classic'}
+                          onChange={(e) => setPosterStyle(e.target.value as 'classic' | 'art-print')}
+                          className="text-blue-600 focus:ring-blue-500"
+                        />
+                        <span className="text-sm text-gray-700">Classic</span>
+                      </label>
+                      <label className="flex items-center space-x-3 cursor-pointer">
+                        <input
+                          type="radio"
+                          name="posterStyle"
+                          value="art-print"
+                          checked={posterStyle === 'art-print'}
+                          onChange={(e) => setPosterStyle(e.target.value as 'classic' | 'art-print')}
+                          className="text-blue-600 focus:ring-blue-500"
+                        />
+                        <span className="text-sm text-gray-700">Art Print</span>
+                      </label>
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Map Style</label>
+                    <div className="space-y-2">
+                      <label className="flex items-center space-x-3 cursor-pointer">
+                        <input
+                          type="radio"
+                          name="theme"
+                          value="light"
+                          checked={theme === 'light'}
+                          onChange={(e) => setTheme(e.target.value as 'light' | 'dark' | 'accent')}
+                          className="text-blue-600 focus:ring-blue-500"
+                        />
+                        <span className="text-sm text-gray-700">Classic</span>
+                      </label>
+                      <label className="flex items-center space-x-3 cursor-pointer">
+                        <input
+                          type="radio"
+                          name="theme"
+                          value="dark"
+                          checked={theme === 'dark'}
+                          onChange={(e) => setTheme(e.target.value as 'light' | 'dark' | 'accent')}
+                          className="text-blue-600 focus:ring-blue-500"
+                        />
+                        <span className="text-sm text-gray-700">Dark</span>
+                      </label>
+                      <label className="flex items-center space-x-3 cursor-pointer">
+                        <input
+                          type="radio"
+                          name="theme"
+                          value="accent"
+                          checked={theme === 'accent'}
+                          onChange={(e) => setTheme(e.target.value as 'light' | 'dark' | 'accent')}
+                          className="text-blue-600 focus:ring-blue-500"
+                        />
+                        <span className="text-sm text-gray-700">Satellite</span>
+                      </label>
+                    </div>
+                  </div>
+                  
+                  {/* Navigation buttons */}
+                  <div className="flex space-x-3 pt-4">
+                    <button
+                      onClick={() => setCurrentStep(1)}
+                      className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-3 px-4 rounded-lg transition-colors"
+                    >
+                      Back
+                    </button>
+                    <button
+                      onClick={() => setCurrentStep(3)}
+                      className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg transition-colors"
+                    >
+                      Continue to Text
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* Step 3: Text Input */}
+              {currentStep === 3 && (
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Poster Title</label>
+                    <input
+                      type="text"
+                      value={title}
+                      onChange={(e) => setTitle(e.target.value)}
+                      placeholder="e.g., Morning Run, Epic Ride"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Subtitle (Optional)</label>
+                    <input
+                      type="text"
+                      value={subtitle}
+                      onChange={(e) => setSubtitle(e.target.value)}
+                      placeholder="e.g., January 15, 2024"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    />
+                  </div>
+                  
+                  {/* Navigation buttons */}
+                  <div className="flex space-x-3 pt-4">
+                    <button
+                      onClick={() => setCurrentStep(2)}
+                      className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-3 px-4 rounded-lg transition-colors"
+                    >
+                      Back
+                    </button>
+                    <button
+                      onClick={() => setCurrentStep(4)}
+                      className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg transition-colors"
+                    >
+                      Continue to Size
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* Step 4: Size Selection */}
+              {currentStep === 4 && (
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Print Size</label>
+                    <div className="space-y-2">
+                      <label className="flex items-center space-x-3 cursor-pointer">
+                        <input
+                          type="radio"
+                          name="selectedSize"
+                          value="digital"
+                          checked={selectedSize === 'digital'}
+                          onChange={(e) => setSelectedSize(e.target.value as 'digital' | 'small' | 'medium' | 'large')}
+                          className="text-blue-600 focus:ring-blue-500"
+                        />
+                        <span className="text-sm text-gray-700">Digital</span>
+                      </label>
+                      <label className="flex items-center space-x-3 cursor-pointer">
+                        <input
+                          type="radio"
+                          name="selectedSize"
+                          value="small"
+                          checked={selectedSize === 'small'}
+                          onChange={(e) => setSelectedSize(e.target.value as 'digital' | 'small' | 'medium' | 'large')}
+                          className="text-blue-600 focus:ring-blue-500"
+                        />
+                        <span className="text-sm text-gray-700">Small</span>
+                      </label>
+                      <label className="flex items-center space-x-3 cursor-pointer">
+                        <input
+                          type="radio"
+                          name="selectedSize"
+                          value="medium"
+                          checked={selectedSize === 'medium'}
+                          onChange={(e) => setSelectedSize(e.target.value as 'digital' | 'small' | 'medium' | 'large')}
+                          className="text-blue-600 focus:ring-blue-500"
+                        />
+                        <span className="text-sm text-gray-700">Medium</span>
+                      </label>
+                      <label className="flex items-center space-x-3 cursor-pointer">
+                        <input
+                          type="radio"
+                          name="selectedSize"
+                          value="large"
+                          checked={selectedSize === 'large'}
+                          onChange={(e) => setSelectedSize(e.target.value as 'digital' | 'small' | 'medium' | 'large')}
+                          className="text-blue-600 focus:ring-blue-500"
+                        />
+                        <span className="text-sm text-gray-700">Large</span>
+                      </label>
+                    </div>
+                  </div>
+                  
+                  {/* Navigation buttons */}
+                  <div className="flex space-x-3 pt-4">
+                    <button
+                      onClick={() => setCurrentStep(3)}
+                      className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-3 px-4 rounded-lg transition-colors"
+                    >
+                      Back
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Action Buttons - Fixed at Bottom */}
+            <div className="fixed bottom-0 right-0 w-96 bg-white border-t border-gray-200 p-6">
+              <div className="space-y-3">
+                <button
+                  onClick={handleRenderPrint}
+                  className="w-full bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium py-3 px-4 rounded-lg transition-colors"
+                >
+                  Save Digital Poster
+                </button>
+                <button
+                  onClick={handleBuyPrint}
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-4 px-6 rounded-lg text-lg font-semibold transition-colors"
+                >
+                  Get It Printed
+                </button>
+              </div>
             </div>
           </div>
-        )}
+        </div>
       </div>
     </div>
   );
