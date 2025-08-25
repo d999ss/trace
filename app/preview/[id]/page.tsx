@@ -23,14 +23,14 @@ function PreviewContent() {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<L.Map | null>(null);
   
-  const [activity, setActivity] = useState<{name?: string; map?: {summary_polyline?: string}} | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [theme, setTheme] = useState<Theme>('light');
+  const [activity, setActivity] = useState<any>(null);
+  const [coordinates, setCoordinates] = useState<[number, number][]>([]);
+  const [currentStep, setCurrentStep] = useState<1 | 2 | 3 | 4>(1);
+  const [theme, setTheme] = useState<'light' | 'dark' | 'accent'>('light');
   const [title, setTitle] = useState('');
   const [subtitle, setSubtitle] = useState('');
-  const [coordinates, setCoordinates] = useState<[number, number][]>([]);
-  const [activeTab, setActiveTab] = useState<'routes' | 'style' | 'text' | 'size'>('routes');
   const [selectedSize, setSelectedSize] = useState('medium');
 
   // Function to render poster in real-time
@@ -70,7 +70,7 @@ function PreviewContent() {
     // Add title
     if (title) {
       ctx.fillStyle = theme === 'dark' ? '#ffffff' : '#000000';
-      ctx.font = `bold ${Math.floor(72 * scaleFactor)}px Arial, sans-serif`;
+      ctx.font = `bold ${Math.floor(72 * scaleFactor)}px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif`;
       ctx.textAlign = 'center';
       ctx.fillText(title, previewWidth / 2, Math.floor(120 * scaleFactor));
     }
@@ -78,21 +78,21 @@ function PreviewContent() {
     // Add subtitle
     if (subtitle) {
       ctx.fillStyle = theme === 'dark' ? '#cccccc' : '#666666';
-      ctx.font = `${Math.floor(36 * scaleFactor)}px Arial, sans-serif`;
+      ctx.font = `${Math.floor(36 * scaleFactor)}px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif`;
       ctx.textAlign = 'center';
       ctx.fillText(subtitle, previewWidth / 2, Math.floor(180 * scaleFactor));
     }
 
     // Add activity name
     ctx.fillStyle = theme === 'dark' ? '#888888' : '#333333';
-    ctx.font = `${Math.floor(24 * scaleFactor)}px Arial, sans-serif`;
+    ctx.font = `${Math.floor(24 * scaleFactor)}px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif`;
     ctx.textAlign = 'center';
     ctx.fillText(activity?.name || 'Strava Activity', previewWidth / 2, Math.floor(220 * scaleFactor));
 
     // Add activity statistics
     const statsY = Math.floor(260 * scaleFactor);
     ctx.fillStyle = theme === 'dark' ? '#666666' : '#999999';
-    ctx.font = `${Math.floor(18 * scaleFactor)}px Arial, sans-serif`;
+    ctx.font = `${Math.floor(18 * scaleFactor)}px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif`;
     ctx.textAlign = 'center';
     
     const distance = '8.85 mi';
@@ -124,7 +124,7 @@ function PreviewContent() {
     for (let y = mapAreaY; y < mapAreaY + mapAreaHeight; y += gridSize) {
       ctx.beginPath();
       ctx.moveTo(mapAreaX, y);
-      ctx.lineTo(mapAreaX + mapAreaWidth, y);
+      ctx.lineTo(mapAreaX + mapAreaY + mapAreaHeight, y);
       ctx.stroke();
     }
 
@@ -157,7 +157,7 @@ function PreviewContent() {
       };
 
       // Draw the actual route path
-      ctx.strokeStyle = theme === 'dark' ? '#00ff88' : theme === 'accent' ? '#0066cc' : '#ff6b35';
+      ctx.strokeStyle = theme === 'dark' ? '#00ff88' : theme === 'accent' ? '#0066cc' : '#007AFF';
       ctx.lineWidth = Math.max(3, Math.floor(6 * scaleFactor));
       ctx.lineCap = 'round';
       ctx.lineJoin = 'round';
@@ -179,13 +179,13 @@ function PreviewContent() {
       const end = gpsToCanvas(coordinates[coordinates.length - 1][0], coordinates[coordinates.length - 1][1]);
       
       // Start marker (green circle)
-      ctx.fillStyle = '#00ff00';
+      ctx.fillStyle = '#34C759';
       ctx.beginPath();
       ctx.arc(start.x, start.y, Math.floor(8 * scaleFactor), 0, 2 * Math.PI);
       ctx.fill();
       
       // End marker (red circle)
-      ctx.fillStyle = '#ff0000';
+      ctx.fillStyle = '#FF3B30';
       ctx.beginPath();
       ctx.arc(end.x, end.y, Math.floor(8 * scaleFactor), 0, 2 * Math.PI);
       ctx.fill();
@@ -193,13 +193,13 @@ function PreviewContent() {
 
     // Add route points indicator
     ctx.fillStyle = theme === 'dark' ? '#ffffff' : '#000000';
-    ctx.font = `${Math.floor(16 * scaleFactor)}px Arial, sans-serif`;
+    ctx.font = `${Math.floor(16 * scaleFactor)}px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif`;
     ctx.textAlign = 'center';
     ctx.fillText(`${coordinates.length} GPS points`, previewWidth / 2, mapAreaY + mapAreaHeight + Math.floor(40 * scaleFactor));
 
     // Add footer
     ctx.fillStyle = theme === 'dark' ? '#666666' : '#999999';
-    ctx.font = `${Math.floor(16 * scaleFactor)}px Arial, sans-serif`;
+    ctx.font = `${Math.floor(16 * scaleFactor)}px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif`;
     ctx.textAlign = 'center';
     ctx.fillText(`${selectedSize.toUpperCase()} • Trace Prints`, previewWidth / 2, previewHeight - Math.floor(50 * scaleFactor));
   }, [coordinates, title, subtitle, theme, selectedSize, activity]);
@@ -551,306 +551,379 @@ function PreviewContent() {
 
   return (
     <div className="min-h-screen bg-gray-50 flex">
-      <div className="w-1/3 p-8 bg-white shadow-lg overflow-y-auto">
-        <h1 className="text-2xl font-bold text-gray-900 mb-6">{activity?.name}</h1>
-        
-        {/* Tab Navigation */}
-        <div className="flex space-x-1 mb-6 bg-gray-100 p-1 rounded-lg">
-          <button
-            onClick={() => setActiveTab('routes')}
-            className={`flex-1 py-2 px-3 text-sm font-medium rounded-md transition-colors ${
-              activeTab === 'routes'
-                ? 'bg-white text-gray-900 shadow-sm'
-                : 'text-gray-600 hover:text-gray-900'
-            }`}
-          >
-            Routes
-          </button>
-          <button
-            onClick={() => setActiveTab('style')}
-            className={`flex-1 py-2 px-3 text-sm font-medium rounded-md transition-colors ${
-              activeTab === 'style'
-                ? 'bg-white text-gray-900 shadow-sm'
-                : 'text-gray-600 hover:text-gray-900'
-            }`}
-          >
-            Style
-          </button>
-          <button
-            onClick={() => setActiveTab('text')}
-            className={`flex-1 py-2 px-3 text-sm font-medium rounded-md transition-colors ${
-              activeTab === 'text'
-                ? 'bg-white text-gray-900 shadow-sm'
-                : 'text-gray-600 hover:text-gray-900'
-            }`}
-          >
-            Text
-          </button>
-          <button
-            onClick={() => setActiveTab('size')}
-            className={`flex-1 py-2 px-3 text-sm font-medium rounded-md transition-colors ${
-              activeTab === 'size'
-                ? 'bg-white text-gray-900 shadow-sm'
-                : 'text-gray-600 hover:text-gray-900'
-            }`}
-          >
-            Size
-          </button>
-        </div>
-
-        {/* Tab Content */}
-        {activeTab === 'routes' && (
-          <div className="space-y-6">
-            <div>
-              <h3 className="text-sm font-medium text-gray-700 mb-3">Current Activity</h3>
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-                <div className="text-sm font-medium text-blue-900">{activity?.name}</div>
-                <div className="text-xs text-blue-700 mt-1">Route points: {coordinates.length}</div>
+      {/* Left Sidebar - Apple-style stepper */}
+      <div className="w-96 bg-white border-r border-gray-100 flex flex-col">
+        {/* Header with stepper */}
+        <div className="p-6 border-b border-gray-100">
+          <h1 className="text-xl font-semibold text-gray-900 mb-4">Create Your Poster</h1>
+          
+          {/* Stepper Navigation */}
+          <div className="space-y-3">
+            <div className={`flex items-center space-x-3 p-3 rounded-lg transition-all ${
+              currentStep === 1 ? 'bg-blue-50 border border-blue-200' : 'hover:bg-gray-50'
+            }`}>
+              <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
+                currentStep === 1 ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-600'
+              }`}>
+                1
+              </div>
+              <div>
+                <div className={`font-medium ${currentStep === 1 ? 'text-blue-900' : 'text-gray-700'}`}>Route</div>
+                <div className="text-sm text-gray-500">Select your activity</div>
               </div>
             </div>
             
-            <div>
-              <h3 className="text-sm font-medium text-gray-700 mb-3">Activity Statistics</h3>
-              <div className="grid grid-cols-3 gap-3 text-center">
-                <div className="bg-gray-50 rounded-lg p-3">
-                  <div className="text-lg font-bold text-gray-900">8.85</div>
-                  <div className="text-xs text-gray-600">miles</div>
-                </div>
-                <div className="bg-gray-50 rounded-lg p-3">
-                  <div className="text-lg font-bold text-gray-900">1:23</div>
-                  <div className="text-xs text-gray-600">duration</div>
-                </div>
-                <div className="bg-gray-50 rounded-lg p-3">
-                  <div className="text-lg font-bold text-gray-900">6.4</div>
-                  <div className="text-xs text-gray-600">mph avg</div>
-                </div>
+            <div className={`flex items-center space-x-3 p-3 rounded-lg transition-all ${
+              currentStep === 2 ? 'bg-blue-50 border border-blue-200' : 'hover:bg-gray-50'
+            }`}>
+              <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
+                currentStep === 2 ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-600'
+              }`}>
+                2
+              </div>
+              <div>
+                <div className={`font-medium ${currentStep === 2 ? 'text-blue-900' : 'text-gray-700'}`}>Style</div>
+                <div className="text-sm text-gray-500">Choose your theme</div>
+              </div>
+            </div>
+            
+            <div className={`flex items-center space-x-3 p-3 rounded-lg transition-all ${
+              currentStep === 3 ? 'bg-blue-50 border border-blue-200' : 'hover:bg-gray-50'
+            }`}>
+              <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
+                currentStep === 3 ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-600'
+              }`}>
+                3
+              </div>
+              <div>
+                <div className={`font-medium ${currentStep === 3 ? 'text-blue-900' : 'text-gray-700'}`}>Text</div>
+                <div className="text-sm text-gray-500">Add your message</div>
+              </div>
+            </div>
+            
+            <div className={`flex items-center space-x-3 p-3 rounded-lg transition-all ${
+              currentStep === 4 ? 'bg-blue-50 border border-blue-200' : 'hover:bg-gray-50'
+            }`}>
+              <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
+                currentStep === 4 ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-600'
+              }`}>
+                4
+              </div>
+              <div>
+                <div className={`font-medium ${currentStep === 4 ? 'text-blue-900' : 'text-gray-700'}`}>Size</div>
+                <div className="text-sm text-gray-500">Pick your format</div>
               </div>
             </div>
           </div>
-        )}
+        </div>
 
-        {activeTab === 'style' && (
-          <div className="space-y-6">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-3">Map Style</label>
-              <div className="grid grid-cols-3 gap-2">
-                <button
-                  onClick={() => setTheme('light')}
-                  className={`p-3 rounded-lg border-2 transition-all ${
-                    theme === 'light' 
-                      ? 'border-blue-500 bg-blue-50 text-blue-700' 
-                      : 'border-gray-200 bg-white text-gray-700 hover:border-gray-300 hover:bg-gray-50'
-                  }`}
-                >
-                  <div className="text-xs font-medium">Classic</div>
-                  <div className="text-xs text-gray-500">Clean & Simple</div>
-                </button>
-                <button
-                  onClick={() => setTheme('dark')}
-                  className={`p-3 rounded-lg border-2 transition-all ${
-                    theme === 'dark' 
-                      ? 'border-blue-500 bg-blue-50 text-blue-700' 
-                      : 'border-gray-200 bg-white text-gray-700 hover:border-gray-300 hover:bg-gray-50'
-                  }`}
-                >
-                  <div className="text-xs font-medium">Modern</div>
-                  <div className="text-xs text-gray-500">Dark & Sleek</div>
-                </button>
-                <button
-                  onClick={() => setTheme('accent')}
-                  className={`p-3 rounded-lg border-2 transition-all ${
-                    theme === 'accent' 
-                      ? 'border-blue-500 bg-blue-50 text-blue-700' 
-                      : 'border-gray-200 bg-white text-gray-700 hover:border-gray-300 hover:bg-gray-50'
-                  }`}
-                >
-                  <div className="text-xs font-medium">Satellite</div>
-                  <div className="text-xs text-gray-500">Aerial View</div>
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {activeTab === 'text' && (
-          <div className="space-y-6">
-            <div>
-              <h3 className="text-sm font-medium text-gray-700 mb-4">Customize Your Print</h3>
-              
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Title</label>
-                  <input
-                    type="text"
-                    placeholder="Enter a memorable title..."
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  />
+        {/* Contextual Content - Only show relevant controls */}
+        <div className="flex-1 p-6 overflow-y-auto">
+          {/* Step 1: Route Selection */}
+          {currentStep === 1 && (
+            <div className="space-y-6">
+              {/* Activity Card - Clean and tucked away */}
+              <div className="bg-gray-50 rounded-xl p-4 border border-gray-100">
+                <div className="flex items-center space-x-3 mb-3">
+                  <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                    <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-1.447-.894L15 4m0 13V4m-6 3l6-3" />
+                    </svg>
+                  </div>
+                  <div>
+                    <div className="font-medium text-gray-900">{activity?.name || 'Loading...'}</div>
+                    <div className="text-sm text-gray-500">Strava Activity</div>
+                  </div>
                 </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Subtitle</label>
-                  <input
-                    type="text"
-                    placeholder="Add a personal message..."
-                    value={subtitle}
-                    onChange={(e) => setSubtitle(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {activeTab === 'size' && (
-          <div className="space-y-6">
-            <div>
-              <h3 className="text-sm font-medium text-gray-700 mb-4">Print Size</h3>
-              <div className="space-y-3">
-                <button
-                  onClick={() => setSelectedSize('digital')}
-                  className={`w-full p-4 rounded-lg border-2 transition-all text-left ${
-                    selectedSize === 'digital'
-                      ? 'border-purple-500 bg-purple-50'
-                      : 'border-gray-200 bg-white hover:border-gray-300'
-                  }`}
-                >
-                  <div className="font-medium text-gray-900">Digital</div>
-                  <div className="text-sm text-gray-600">High-res digital files only</div>
-                  <div className="text-sm font-medium text-purple-600 mt-1">$20</div>
-                </button>
                 
+                {/* Stats in clean grid */}
+                <div className="grid grid-cols-3 gap-3">
+                  <div className="text-center">
+                    <div className="text-lg font-semibold text-gray-900">8.85</div>
+                    <div className="text-xs text-gray-500">miles</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-lg font-semibold text-gray-900">1:23</div>
+                    <div className="text-xs text-gray-500">duration</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-lg font-semibold text-gray-900">6.4</div>
+                    <div className="text-xs text-gray-500">mph avg</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Navigation buttons */}
+              <div className="flex space-x-3">
                 <button
-                  onClick={() => setSelectedSize('small')}
-                  className={`w-full p-4 rounded-lg border-2 transition-all text-left ${
-                    selectedSize === 'small'
-                      ? 'border-purple-500 bg-purple-50'
-                      : 'border-gray-200 bg-white hover:border-gray-300'
-                  }`}
+                  onClick={() => setCurrentStep(2)}
+                  disabled={!coordinates.length}
+                  className="flex-1 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 text-white font-medium py-3 px-4 rounded-lg transition-colors"
                 >
-                  <div className="font-medium text-gray-900">Small</div>
-                  <div className="text-sm text-gray-600">20×30cm / 8×12&quot;</div>
-                  <div className="text-sm font-medium text-purple-600 mt-1">$35</div>
-                </button>
-                
-                <button
-                  onClick={() => setSelectedSize('medium')}
-                  className={`w-full p-4 rounded-lg border-2 transition-all text-left ${
-                    selectedSize === 'medium'
-                      ? 'border-purple-500 bg-purple-50'
-                      : 'border-gray-200 bg-white hover:border-gray-300'
-                  }`}
-                >
-                  <div className="font-medium text-gray-900">Medium</div>
-                  <div className="text-sm text-gray-600">30×45cm / 12×18&quot;</div>
-                  <div className="text-sm font-medium text-purple-600 mt-1">$55</div>
-                </button>
-                
-                <button
-                  onClick={() => setSelectedSize('large')}
-                  className={`w-full p-4 rounded-lg border-2 transition-all text-left ${
-                    selectedSize === 'large'
-                      ? 'border-purple-500 bg-purple-50'
-                      : 'border-gray-200 bg-white hover:border-gray-300'
-                  }`}
-                >
-                  <div className="font-medium text-gray-900">Large</div>
-                  <div className="text-sm text-gray-600">40×60cm / 16×24&quot;</div>
-                  <div className="text-sm font-medium text-purple-600 mt-1">$65</div>
+                  Continue to Style
                 </button>
               </div>
             </div>
-          </div>
-        )}
+          )}
 
-        {/* Action Buttons - Always Visible */}
-        <div className="border-t pt-6 mt-6">
+          {/* Step 2: Style Selection */}
+          {currentStep === 2 && (
+            <div className="space-y-6">
+              <div>
+                <h3 className="text-lg font-medium text-gray-900 mb-4">Choose Your Style</h3>
+                <div className="space-y-3">
+                  <button
+                    onClick={() => setTheme('light')}
+                    className={`w-full p-4 rounded-xl border-2 transition-all text-left ${
+                      theme === 'light' 
+                        ? 'border-blue-500 bg-blue-50 shadow-sm' 
+                        : 'border-gray-200 bg-white hover:border-gray-300 hover:shadow-sm'
+                    }`}
+                  >
+                    <div className="font-medium text-gray-900">Classic</div>
+                    <div className="text-sm text-gray-600">Clean & Simple</div>
+                  </button>
+                  
+                  <button
+                    onClick={() => setTheme('dark')}
+                    className={`w-full p-4 rounded-xl border-2 transition-all text-left ${
+                      theme === 'dark' 
+                        ? 'border-blue-500 bg-blue-50 shadow-sm' 
+                        : 'border-gray-200 bg-white hover:border-gray-300 hover:shadow-sm'
+                    }`}
+                  >
+                    <div className="font-medium text-gray-900">Modern</div>
+                    <div className="text-sm text-gray-600">Dark & Sleek</div>
+                  </button>
+                  
+                  <button
+                    onClick={() => setTheme('accent')}
+                    className={`w-full p-4 rounded-xl border-2 transition-all text-left ${
+                      theme === 'accent' 
+                        ? 'border-blue-500 bg-blue-50 shadow-sm' 
+                        : 'border-gray-200 bg-white hover:border-gray-300 hover:shadow-sm'
+                    }`}
+                  >
+                    <div className="font-medium text-gray-900">Satellite</div>
+                    <div className="text-sm text-gray-600">Aerial View</div>
+                  </button>
+                </div>
+              </div>
+
+              {/* Navigation buttons */}
+              <div className="flex space-x-3">
+                <button
+                  onClick={() => setCurrentStep(1)}
+                  className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-3 px-4 rounded-lg transition-colors"
+                >
+                  Back
+                </button>
+                <button
+                  onClick={() => setCurrentStep(3)}
+                  className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg transition-colors"
+                >
+                  Continue to Text
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Step 3: Text Customization */}
+          {currentStep === 3 && (
+            <div className="space-y-6">
+              <div>
+                <h3 className="text-lg font-medium text-gray-900 mb-4">Add Your Message</h3>
+                
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Title</label>
+                    <input
+                      type="text"
+                      placeholder="Enter a memorable title..."
+                      value={title}
+                      onChange={(e) => setTitle(e.target.value)}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Subtitle</label>
+                    <input
+                      type="text"
+                      placeholder="Add a personal message..."
+                      value={subtitle}
+                      onChange={(e) => setSubtitle(e.target.value)}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Navigation buttons */}
+              <div className="flex space-x-3">
+                <button
+                  onClick={() => setCurrentStep(2)}
+                  className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-3 px-4 rounded-lg transition-colors"
+                >
+                  Back
+                </button>
+                <button
+                  onClick={() => setCurrentStep(4)}
+                  className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg transition-colors"
+                >
+                  Continue to Size
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Step 4: Size Selection */}
+          {currentStep === 4 && (
+            <div className="space-y-6">
+              <div>
+                <h3 className="text-lg font-medium text-gray-900 mb-4">Choose Your Size</h3>
+                <div className="space-y-3">
+                  <button
+                    onClick={() => setSelectedSize('digital')}
+                    className={`w-full p-4 rounded-xl border-2 transition-all text-left ${
+                      selectedSize === 'digital'
+                        ? 'border-blue-500 bg-blue-50 shadow-sm'
+                        : 'border-gray-200 bg-white hover:border-gray-300 hover:shadow-sm'
+                    }`}
+                  >
+                    <div className="font-medium text-gray-900">Digital</div>
+                    <div className="text-sm text-gray-600">High-res digital files only</div>
+                    <div className="text-sm font-medium text-blue-600 mt-1">$20</div>
+                  </button>
+                  
+                  <button
+                    onClick={() => setSelectedSize('small')}
+                    className={`w-full p-4 rounded-xl border-2 transition-all text-left ${
+                      selectedSize === 'small'
+                        ? 'border-blue-500 bg-blue-50 shadow-sm'
+                        : 'border-gray-200 bg-white hover:border-gray-300 hover:shadow-sm'
+                    }`}
+                  >
+                    <div className="font-medium text-gray-900">Small</div>
+                    <div className="text-sm text-gray-600">20×30cm / 8×12&quot;</div>
+                    <div className="text-sm font-medium text-blue-600 mt-1">$35</div>
+                  </button>
+                  
+                  <button
+                    onClick={() => setSelectedSize('medium')}
+                    className={`w-full p-4 rounded-xl border-2 transition-all text-left ${
+                      selectedSize === 'medium'
+                        ? 'border-blue-500 bg-blue-50 shadow-sm'
+                        : 'border-gray-200 bg-white hover:border-gray-300 hover:shadow-sm'
+                    }`}
+                  >
+                    <div className="font-medium text-gray-900">Medium</div>
+                    <div className="text-sm text-gray-600">30×45cm / 12×18&quot;</div>
+                    <div className="text-sm font-medium text-blue-600 mt-1">$55</div>
+                  </button>
+                  
+                  <button
+                    onClick={() => setSelectedSize('large')}
+                    className={`w-full p-4 rounded-xl border-2 transition-all text-left ${
+                      selectedSize === 'large'
+                        ? 'border-blue-500 bg-blue-50 shadow-sm'
+                        : 'border-gray-200 bg-white hover:border-gray-300 hover:shadow-sm'
+                    }`}
+                  >
+                    <div className="font-medium text-gray-900">Large</div>
+                    <div className="text-sm text-gray-600">40×60cm / 16×24&quot;</div>
+                    <div className="text-sm font-medium text-blue-600 mt-1">$65</div>
+                  </button>
+                </div>
+              </div>
+
+              {/* Navigation buttons */}
+              <div className="flex space-x-3">
+                <button
+                  onClick={() => setCurrentStep(3)}
+                  className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-3 px-4 rounded-lg transition-colors"
+                >
+                  Back
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Fixed Bottom Bar - Primary Actions */}
+        <div className="p-6 border-t border-gray-100 bg-white">
           <div className="space-y-3">
             <button
               onClick={handleRenderPrint}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center gap-2"
+              className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-3 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center gap-2"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
-              Download High-Resolution Poster
+              Save Digital Poster
             </button>
             
             <button
               onClick={handleBuyPrint}
-              className="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-3 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center gap-2"
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-4 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center gap-2 text-lg"
             >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
               </svg>
-              Order Print - ${selectedSize === 'digital' ? '20' : selectedSize === 'small' ? '35' : selectedSize === 'medium' ? '55' : '65'}
+              Get It Printed - ${selectedSize === 'digital' ? '20' : selectedSize === 'small' ? '35' : selectedSize === 'medium' ? '55' : '65'}
             </button>
           </div>
-          
-          {/* Poster Preview Section */}
-          {/* Removed Poster Preview Section */}
         </div>
       </div>
 
-      <div className="flex-1 relative bg-gray-100">
+      {/* Main Content - Poster Preview */}
+      <div className="flex-1 bg-white">
         {loading ? (
-          <div className="absolute inset-0 flex items-center justify-center">
+          <div className="h-full flex items-center justify-center">
             <div className="text-center">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
               <div className="text-gray-600">Loading your route...</div>
             </div>
           </div>
         ) : coordinates.length > 0 ? (
-          <div className="absolute inset-0 flex flex-col">
-            {/* Poster as the main focus */}
+          <div className="h-full flex flex-col">
+            {/* Poster as the main focus - edge-to-edge white */}
             <div className="flex-1 flex items-center justify-center p-8">
-              <div className="bg-white rounded-lg shadow-2xl p-6 max-w-4xl w-full">
-                <div className="text-center mb-6">
-                  <h2 className="text-2xl font-bold text-gray-900 mb-2">Your Custom Poster</h2>
+              <div className="max-w-2xl w-full">
+                <div className="text-center mb-8">
+                  <h2 className="text-3xl font-bold text-gray-900 mb-2">Your Custom Poster</h2>
                   <p className="text-gray-600">Live preview - customize on the left, see results here</p>
                 </div>
                 
-                {/* Poster Canvas - Large and prominent */}
-                <div className="bg-gray-50 rounded-lg p-4 mb-6">
+                {/* Poster Canvas - Large and prominent with hover effects */}
+                <div className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
                   <canvas 
                     id="posterCanvas"
-                    className="w-full h-auto border border-gray-200 rounded shadow-lg"
-                    style={{ maxHeight: '600px' }}
+                    className="w-full h-auto rounded-2xl"
+                    style={{ maxHeight: '700px' }}
                   />
                 </div>
                 
-                {/* Poster Details */}
-                <div className="grid grid-cols-3 gap-4 text-center text-sm text-gray-600">
-                  <div className="bg-gray-50 rounded-lg p-3">
+                {/* Poster Details - Clean and minimal */}
+                <div className="mt-8 grid grid-cols-3 gap-6 text-center">
+                  <div className="bg-gray-50 rounded-xl p-4">
                     <div className="font-medium text-gray-900">Size</div>
-                    <div>{selectedSize === '16x20' ? '16" x 20"' : selectedSize === '20x24' ? '20" x 24"' : '24" x 36"'}</div>
+                    <div className="text-sm text-gray-600">{selectedSize === 'digital' ? 'Digital' : selectedSize === 'small' ? 'Small' : selectedSize === 'medium' ? 'Medium' : 'Large'}</div>
                   </div>
-                  <div className="bg-gray-50 rounded-lg p-3">
+                  <div className="bg-gray-50 rounded-xl p-4">
                     <div className="font-medium text-gray-900">Theme</div>
-                    <div>{theme.charAt(0).toUpperCase() + theme.slice(1)}</div>
+                    <div className="text-sm text-gray-600">{theme.charAt(0).toUpperCase() + theme.slice(1)}</div>
                   </div>
-                  <div className="bg-gray-50 rounded-lg p-3">
-                    <div className="font-medium text-gray-900">GPS Points</div>
-                    <div>{coordinates.length}</div>
+                  <div className="bg-gray-50 rounded-xl p-4">
+                    <div className="font-medium text-gray-900">Route</div>
+                    <div className="text-sm text-gray-600">{coordinates.length} points</div>
                   </div>
-                </div>
-              </div>
-            </div>
-            
-            {/* Small map at the bottom for reference */}
-            <div className="h-48 bg-white border-t border-gray-200">
-              <div className="p-4">
-                <div className="text-sm font-medium text-gray-700 mb-2">Route Reference</div>
-                <div className="h-32 relative">
-                  <div ref={mapContainer} className="absolute inset-0 rounded border border-gray-200" />
                 </div>
               </div>
             </div>
           </div>
         ) : (
-          <div className="absolute inset-0 flex items-center justify-center">
+          <div className="h-full flex items-center justify-center">
             <div className="text-center max-w-md mx-auto px-4">
               <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-4">
                 <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -861,14 +934,6 @@ function PreviewContent() {
               <div className="text-gray-600 mb-4">This activity doesn&apos;t have GPS coordinates to display on the map.</div>
               <div className="text-sm text-gray-500">Try selecting a different activity with GPS tracking enabled.</div>
             </div>
-          </div>
-        )}
-        
-        {/* Map Controls Overlay - moved to bottom map */}
-        {coordinates.length > 0 && (
-          <div className="absolute bottom-52 right-4 bg-white rounded-lg shadow-lg p-2">
-            <div className="text-xs text-gray-600 mb-2">Map Style: {theme.charAt(0).toUpperCase() + theme.slice(1)}</div>
-            <div className="text-xs text-gray-500">Route points: {coordinates.length}</div>
           </div>
         )}
       </div>
