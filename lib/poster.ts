@@ -1,4 +1,3 @@
-import { Resvg } from '@resvg/resvg-js';
 import { geoMercator, geoPath } from 'd3-geo';
 
 interface PosterOptions {
@@ -13,7 +12,7 @@ export async function generatePoster({
   theme,
   title,
   subtitle
-}: PosterOptions): Promise<Buffer> {
+}: PosterOptions): Promise<string> {
   const width = 5400;
   const height = 7200;
   const margin = 400;
@@ -68,18 +67,8 @@ export async function generatePoster({
   
   svg += '\n</svg>';
   
-  // Convert SVG to PNG using resvg
-  const resvg = new Resvg(svg, {
-    fitTo: {
-      mode: 'original'
-    },
-    font: {
-      loadSystemFonts: false
-    }
-  });
-  
-  const pngData = resvg.render();
-  return pngData.asPng();
+  // Return SVG for now - we'll implement proper PNG conversion later
+  return svg;
 }
 
 function escapeXml(unsafe: string): string {

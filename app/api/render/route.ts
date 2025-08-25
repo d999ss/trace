@@ -14,18 +14,18 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Invalid theme' }, { status: 400 });
     }
 
-    const pngBuffer = await generatePoster({
+    const svgContent = await generatePoster({
       coords,
       theme,
       title,
       subtitle
     });
 
-    return new NextResponse(new Uint8Array(pngBuffer), {
+    return new NextResponse(svgContent, {
       status: 200,
       headers: {
-        'Content-Type': 'image/png',
-        'Content-Disposition': `attachment; filename="trace-poster.png"`
+        'Content-Type': 'image/svg+xml',
+        'Content-Disposition': `attachment; filename="trace-poster.svg"`
       }
     });
   } catch (error) {
