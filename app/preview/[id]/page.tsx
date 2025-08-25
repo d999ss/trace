@@ -72,58 +72,96 @@ function PreviewContent() {
 
   // Function to render classic poster preview
   const renderClassicPreview = (ctx: CanvasRenderingContext2D, previewWidth: number, previewHeight: number, scaleFactor: number) => {
-    
-    // Fill background with pure white for Apple-like framing
-    ctx.fillStyle = '#ffffff';
+    // Create beautiful gradient background
+    const gradient = ctx.createLinearGradient(0, 0, 0, previewHeight);
+    gradient.addColorStop(0, '#ffffff');
+    gradient.addColorStop(1, '#f8fafc');
+    ctx.fillStyle = gradient;
     ctx.fillRect(0, 0, previewWidth, previewHeight);
 
-    // TOP SECTION: Title & Subtitle (Apple-like hierarchy)
-    const topMargin = Math.floor(80 * scaleFactor);
-    const titleY = topMargin;
-    const subtitleY = titleY + Math.floor(60 * scaleFactor);
+    // TOP SECTION: Beautiful title area with subtle background
+    const topSectionHeight = Math.floor(120 * scaleFactor);
+    const topGradient = ctx.createLinearGradient(0, 0, 0, topSectionHeight);
+    topGradient.addColorStop(0, 'rgba(59, 130, 246, 0.05)');
+    topGradient.addColorStop(1, 'rgba(59, 130, 246, 0.02)');
+    ctx.fillStyle = topGradient;
+    ctx.fillRect(0, 0, previewWidth, topSectionHeight);
 
-    // Title: Bold, all caps, instantly recognizable (always show something)
+    // Title: Beautiful, modern typography
+    const titleY = Math.floor(40 * scaleFactor);
     const displayTitle = title || 'YOUR ACTIVITY';
-    ctx.fillStyle = '#000000';
-    ctx.font = `bold ${Math.floor(48 * scaleFactor)}px -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif`;
+    
+    // Title shadow for depth
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+    ctx.font = `bold ${Math.floor(52 * scaleFactor)}px -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif`;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'top';
+    ctx.fillText(displayTitle.toUpperCase(), previewWidth / 2 + 2, titleY + 2);
+    
+    // Main title
+    ctx.fillStyle = '#1e293b';
     ctx.fillText(displayTitle.toUpperCase(), previewWidth / 2, titleY);
 
-    // Subtitle: Lighter, smaller, secondary information (always show something)
+    // Subtitle: Elegant secondary text
+    const subtitleY = titleY + Math.floor(70 * scaleFactor);
     const displaySubtitle = subtitle || 'Strava Activity';
-    ctx.fillStyle = '#666666';
-    ctx.font = `${Math.floor(24 * scaleFactor)}px -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif`;
+    ctx.fillStyle = '#64748b';
+    ctx.font = `${Math.floor(28 * scaleFactor)}px -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif`;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'top';
     ctx.fillText(displaySubtitle, previewWidth / 2, subtitleY);
 
-    // MIDDLE SECTION: Hero Map Block (floating, not touching edges)
-    const mapBlockTop = subtitleY + Math.floor(40 * scaleFactor);
-    const mapBlockHeight = Math.floor(280 * scaleFactor);
-    const mapBlockMargin = Math.floor(60 * scaleFactor);
+    // MIDDLE SECTION: Hero Map Block with beautiful styling
+    const mapBlockTop = subtitleY + Math.floor(50 * scaleFactor);
+    const mapBlockHeight = Math.floor(300 * scaleFactor);
+    const mapBlockMargin = Math.floor(80 * scaleFactor);
     const mapBlockWidth = previewWidth - (mapBlockMargin * 2);
     const mapBlockX = mapBlockMargin;
     const mapBlockY = mapBlockTop;
 
-    // Map background block with strong single color (user-chosen theme)
-    let mapBackgroundColor;
+    // Beautiful map container with shadow and rounded corners effect
+    const mapContainerRadius = Math.floor(20 * scaleFactor);
+    
+    // Map container shadow
+    ctx.shadowColor = 'rgba(0, 0, 0, 0.1)';
+    ctx.shadowBlur = Math.floor(20 * scaleFactor);
+    ctx.shadowOffsetX = 0;
+    ctx.shadowOffsetY = Math.floor(8 * scaleFactor);
+    
+    // Map background with theme-appropriate colors
+    let mapBackgroundColor, mapGradient;
     if (theme === 'dark') {
-      mapBackgroundColor = '#1a1a1a'; // Deep black
+      mapBackgroundColor = '#0f172a';
+      mapGradient = ctx.createLinearGradient(mapBlockX, mapBlockY, mapBlockX, mapBlockY + mapBlockHeight);
+      mapGradient.addColorStop(0, '#1e293b');
+      mapGradient.addColorStop(1, '#0f172a');
     } else if (theme === 'accent') {
-      mapBackgroundColor = '#f0f8ff'; // Light blue for satellite
+      mapBackgroundColor = '#eff6ff';
+      mapGradient = ctx.createLinearGradient(mapBlockX, mapBlockY, mapBlockX, mapBlockY + mapBlockHeight);
+      mapGradient.addColorStop(0, '#f0f9ff');
+      mapGradient.addColorStop(1, '#e0f2fe');
     } else {
-      mapBackgroundColor = '#f8f9fa'; // Light gray for classic
+      mapBackgroundColor = '#f8fafc';
+      mapGradient = ctx.createLinearGradient(mapBlockX, mapBlockY, mapBlockX, mapBlockY + mapBlockHeight);
+      mapGradient.addColorStop(0, '#ffffff');
+      mapGradient.addColorStop(1, '#f1f5f9');
     }
     
-    // Fill background first
-    ctx.fillStyle = mapBackgroundColor;
-    ctx.fillRect(mapBlockX, mapBlockY, mapBlockWidth, mapBlockHeight);
+    // Draw map container
+    ctx.fillStyle = mapGradient;
+    roundRect(ctx, mapBlockX, mapBlockY, mapBlockWidth, mapBlockHeight, mapContainerRadius);
+    ctx.fill();
     
-    // Draw actual map tiles for terrain
-    drawMapTiles(ctx, mapBlockX, mapBlockY, mapBlockWidth, mapBlockHeight, theme);
+    // Reset shadow for content
+    ctx.shadowColor = 'transparent';
+    ctx.shadowBlur = 0;
+    ctx.shadowOffsetX = 0;
+    ctx.shadowOffsetY = 0;
 
-    // Draw the actual GPS route from coordinates
+    // Draw enhanced map tiles for terrain
+    drawEnhancedMapTiles(ctx, mapBlockX, mapBlockY, mapBlockWidth, mapBlockHeight, theme);
+
+    // Draw the GPS route with beautiful styling
     if (coordinates.length > 1) {
       // Calculate bounds of the route
       let minLat = coordinates[0][0], maxLat = coordinates[0][0];
@@ -151,18 +189,33 @@ function PreviewContent() {
         return { x, y };
       };
 
-      // Draw the route path with high contrast
-      let routeColor;
+      // Draw the route with beautiful styling
+      let routeColor, routeGradient;
       if (theme === 'dark') {
-        routeColor = '#ffffff'; // White on black
+        routeColor = '#60a5fa';
+        routeGradient = ctx.createLinearGradient(0, 0, 0, previewHeight);
+        routeGradient.addColorStop(0, '#60a5fa');
+        routeGradient.addColorStop(1, '#3b82f6');
       } else if (theme === 'accent') {
-        routeColor = '#ff6b35'; // Orange on light blue
+        routeColor = '#f97316';
+        routeGradient = ctx.createLinearGradient(0, 0, 0, previewHeight);
+        routeGradient.addColorStop(0, '#f97316');
+        routeGradient.addColorStop(1, '#ea580c');
       } else {
-        routeColor = '#007AFF'; // Blue on light gray
+        routeColor = '#3b82f6';
+        routeGradient = ctx.createLinearGradient(0, 0, 0, previewHeight);
+        routeGradient.addColorStop(0, '#3b82f6');
+        routeGradient.addColorStop(1, '#2563eb');
       }
       
-      ctx.strokeStyle = routeColor;
-      ctx.lineWidth = Math.max(4, Math.floor(8 * scaleFactor));
+      // Route glow effect
+      ctx.shadowColor = routeColor;
+      ctx.shadowBlur = Math.floor(15 * scaleFactor);
+      ctx.shadowOffsetX = 0;
+      ctx.shadowOffsetY = 0;
+      
+      ctx.strokeStyle = routeGradient;
+      ctx.lineWidth = Math.max(6, Math.floor(10 * scaleFactor));
       ctx.lineCap = 'round';
       ctx.lineJoin = 'round';
       
@@ -177,113 +230,131 @@ function PreviewContent() {
       }
       
       ctx.stroke();
+      
+      // Reset shadow
+      ctx.shadowColor = 'transparent';
+      ctx.shadowBlur = 0;
 
-      // Add start and end markers (subtle, not competing)
+      // Add beautiful start and end markers
       const start = gpsToCanvas(coordinates[0][0], coordinates[0][1]);
       const end = gpsToCanvas(coordinates[coordinates.length - 1][0], coordinates[coordinates.length - 1][1]);
       
-      // Start marker (subtle circle)
-      ctx.fillStyle = routeColor;
+      // Start marker (green with glow)
+      ctx.shadowColor = '#10b981';
+      ctx.shadowBlur = Math.floor(10 * scaleFactor);
+      ctx.fillStyle = '#10b981';
       ctx.beginPath();
-      ctx.arc(start.x, start.y, Math.floor(6 * scaleFactor), 0, 2 * Math.PI);
+      ctx.arc(start.x, start.y, Math.floor(8 * scaleFactor), 0, 2 * Math.PI);
       ctx.fill();
       
-      // End marker (subtle circle)
+      // End marker (red with glow)
+      ctx.shadowColor = '#ef4444';
+      ctx.shadowBlur = Math.floor(10 * scaleFactor);
+      ctx.fillStyle = '#ef4444';
       ctx.beginPath();
-      ctx.arc(end.x, end.y, Math.floor(6 * scaleFactor), 0, 2 * Math.PI);
+      ctx.arc(end.x, end.y, Math.floor(8 * scaleFactor), 0, 2 * Math.PI);
       ctx.fill();
+      
+      // Reset shadow
+      ctx.shadowColor = 'transparent';
+      ctx.shadowBlur = 0;
     }
 
-    // BOTTOM SECTION: Stats Bar (Apple-like status bar)
-    const statsBarTop = mapBlockY + mapBlockHeight + Math.floor(40 * scaleFactor);
-    const statsBarHeight = Math.floor(80 * scaleFactor);
+    // BOTTOM SECTION: Beautiful stats bar
+    const statsBarTop = mapBlockY + mapBlockHeight + Math.floor(50 * scaleFactor);
+    const statsBarHeight = Math.floor(100 * scaleFactor);
     const statsBarY = statsBarTop;
+    
+    // Stats container with beautiful background
+    const statsGradient = ctx.createLinearGradient(0, statsBarY, 0, statsBarY + statsBarHeight);
+    statsGradient.addColorStop(0, '#f8fafc');
+    statsGradient.addColorStop(1, '#e2e8f0');
+    
+    ctx.fillStyle = statsGradient;
+    roundRect(ctx, 0, statsBarY, previewWidth, statsBarHeight, Math.floor(15 * scaleFactor));
+    ctx.fill();
     
     // Calculate stats (mock data for now)
     const distance = '8.85 mi';
     const elevation = '+1,247 ft';
     const duration = '1:23:45';
     
-    // Stats container background (subtle, not competing)
-    ctx.fillStyle = '#f8f9fa';
-    ctx.fillRect(0, statsBarY, previewWidth, statsBarHeight);
-    
-    // Draw stats with tiny icons and proper hierarchy
+    // Draw stats with beautiful styling
     const statSpacing = previewWidth / 3;
-    const statTextSize = Math.floor(20 * scaleFactor);
-    const statLabelSize = Math.floor(12 * scaleFactor);
+    const statTextSize = Math.floor(24 * scaleFactor);
+    const statLabelSize = Math.floor(14 * scaleFactor);
     
     // Distance stat
     const distanceX = statSpacing * 0.5;
-    ctx.fillStyle = '#000000';
+    ctx.fillStyle = '#1e293b';
     ctx.font = `bold ${statTextSize}px -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif`;
     ctx.textAlign = 'center';
-    ctx.fillText(distance, distanceX, statsBarY + Math.floor(25 * scaleFactor));
+    ctx.fillText(distance, distanceX, statsBarY + Math.floor(30 * scaleFactor));
     
-    // Distance icon (simple line icon)
-    ctx.strokeStyle = '#666666';
-    ctx.lineWidth = 2;
+    // Distance icon (beautiful line icon)
+    ctx.strokeStyle = '#64748b';
+    ctx.lineWidth = 3;
     ctx.beginPath();
-    ctx.moveTo(distanceX - Math.floor(15 * scaleFactor), statsBarY + Math.floor(55 * scaleFactor));
-    ctx.lineTo(distanceX + Math.floor(15 * scaleFactor), statsBarY + Math.floor(55 * scaleFactor));
+    ctx.moveTo(distanceX - Math.floor(20 * scaleFactor), statsBarY + Math.floor(65 * scaleFactor));
+    ctx.lineTo(distanceX + Math.floor(20 * scaleFactor), statsBarY + Math.floor(65 * scaleFactor));
     ctx.stroke();
     
     // Distance label
-    ctx.fillStyle = '#666666';
+    ctx.fillStyle = '#64748b';
     ctx.font = `${statLabelSize}px -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif`;
     ctx.textAlign = 'center';
-    ctx.fillText('DISTANCE', distanceX, statsBarY + Math.floor(70 * scaleFactor));
+    ctx.fillText('DISTANCE', distanceX, statsBarY + Math.floor(80 * scaleFactor));
     
     // Elevation stat
     const elevationX = statSpacing * 1.5;
-    ctx.fillStyle = '#000000';
+    ctx.fillStyle = '#1e293b';
     ctx.font = `bold ${statTextSize}px -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif`;
     ctx.textAlign = 'center';
-    ctx.fillText(elevation, elevationX, statsBarY + Math.floor(25 * scaleFactor));
+    ctx.fillText(elevation, elevationX, statsBarY + Math.floor(30 * scaleFactor));
     
-    // Elevation icon (mountain peak)
-    ctx.strokeStyle = '#666666';
-    ctx.lineWidth = 2;
+    // Elevation icon (beautiful mountain peak)
+    ctx.strokeStyle = '#64748b';
+    ctx.lineWidth = 3;
     ctx.beginPath();
-    ctx.moveTo(elevationX - Math.floor(15 * scaleFactor), statsBarY + Math.floor(55 * scaleFactor));
-    ctx.lineTo(elevationX, statsBarY + Math.floor(45 * scaleFactor));
-    ctx.lineTo(elevationX + Math.floor(15 * scaleFactor), statsBarY + Math.floor(55 * scaleFactor));
+    ctx.moveTo(elevationX - Math.floor(20 * scaleFactor), statsBarY + Math.floor(65 * scaleFactor));
+    ctx.lineTo(elevationX, statsBarY + Math.floor(55 * scaleFactor));
+    ctx.lineTo(elevationX + Math.floor(20 * scaleFactor), statsBarY + Math.floor(65 * scaleFactor));
     ctx.stroke();
     
     // Elevation label
-    ctx.fillStyle = '#666666';
+    ctx.fillStyle = '#64748b';
     ctx.font = `${statLabelSize}px -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif`;
     ctx.textAlign = 'center';
-    ctx.fillText('ELEVATION', elevationX, statsBarY + Math.floor(70 * scaleFactor));
+    ctx.fillText('ELEVATION', elevationX, statsBarY + Math.floor(80 * scaleFactor));
     
     // Duration stat
     const durationX = statSpacing * 2.5;
-    ctx.fillStyle = '#000000';
+    ctx.fillStyle = '#1e293b';
     ctx.font = `bold ${statTextSize}px -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif`;
     ctx.textAlign = 'center';
-    ctx.fillText(duration, durationX, statsBarY + Math.floor(25 * scaleFactor));
+    ctx.fillText(duration, durationX, statsBarY + Math.floor(30 * scaleFactor));
     
-    // Duration icon (clock)
-    ctx.strokeStyle = '#666666';
-    ctx.lineWidth = 2;
+    // Duration icon (beautiful clock)
+    ctx.strokeStyle = '#64748b';
+    ctx.lineWidth = 3;
     ctx.beginPath();
-    ctx.arc(durationX, statsBarY + Math.floor(50 * scaleFactor), Math.floor(8 * scaleFactor), 0, 2 * Math.PI);
+    ctx.arc(durationX, statsBarY + Math.floor(60 * scaleFactor), Math.floor(12 * scaleFactor), 0, 2 * Math.PI);
     ctx.stroke();
     ctx.beginPath();
-    ctx.moveTo(durationX, statsBarY + Math.floor(50 * scaleFactor));
-    ctx.lineTo(durationX + Math.floor(6 * scaleFactor), statsBarY + Math.floor(50 * scaleFactor));
+    ctx.moveTo(durationX, statsBarY + Math.floor(60 * scaleFactor));
+    ctx.lineTo(durationX + Math.floor(8 * scaleFactor), statsBarY + Math.floor(60 * scaleFactor));
     ctx.stroke();
     
     // Duration label
-    ctx.fillStyle = '#666666';
+    ctx.fillStyle = '#64748b';
     ctx.font = `${statLabelSize}px -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif`;
     ctx.textAlign = 'center';
-    ctx.fillText('DURATION', durationX, statsBarY + Math.floor(70 * scaleFactor));
+    ctx.fillText('DURATION', durationX, statsBarY + Math.floor(80 * scaleFactor));
 
-    // FOOTER: Branding (subtle, not competing)
-    const footerY = previewHeight - Math.floor(40 * scaleFactor);
-    ctx.fillStyle = '#999999';
-    ctx.font = `${Math.floor(14 * scaleFactor)}px -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif`;
+    // FOOTER: Beautiful branding
+    const footerY = previewHeight - Math.floor(50 * scaleFactor);
+    ctx.fillStyle = '#94a3b8';
+    ctx.font = `${Math.floor(16 * scaleFactor)}px -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif`;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'bottom';
     ctx.fillText(`${selectedSize.toUpperCase()} • TRACE PRINTS`, previewWidth / 2, footerY);
@@ -998,6 +1069,79 @@ function PreviewContent() {
         }
       }
     }
+  };
+
+  // Function to draw enhanced map tiles for terrain
+  const drawEnhancedMapTiles = (ctx: CanvasRenderingContext2D, x: number, y: number, width: number, height: number, theme: string) => {
+    const tileSize = 24; // Smaller tiles for better detail
+    
+    // Draw enhanced grid pattern for map tiles
+    ctx.strokeStyle = theme === 'dark' ? 'rgba(148, 163, 184, 0.3)' : theme === 'accent' ? 'rgba(59, 130, 246, 0.2)' : 'rgba(148, 163, 184, 0.2)';
+    ctx.lineWidth = 1;
+    
+    // Draw vertical lines
+    for (let tileX = x; tileX <= x + width; tileX += tileSize) {
+      ctx.beginPath();
+      ctx.moveTo(tileX, y);
+      ctx.lineTo(tileX, y + height);
+      ctx.stroke();
+    }
+    
+    // Draw horizontal lines
+    for (let tileY = y; tileY <= y + height; tileY += tileSize) {
+      ctx.beginPath();
+      ctx.moveTo(x, tileY);
+      ctx.lineTo(x + width, tileY);
+      ctx.stroke();
+    }
+    
+    // Add beautiful terrain variation
+    if (theme === 'accent') {
+      // Satellite theme - add aerial texture
+      for (let tileX = x; tileX < x + width; tileX += tileSize * 2) {
+        for (let tileY = y; tileY < y + height; tileY += tileSize * 2) {
+          if (Math.random() > 0.7) {
+            ctx.fillStyle = `rgba(59, 130, 246, 0.1)`;
+            ctx.fillRect(tileX, tileY, tileSize, tileSize);
+          }
+        }
+      }
+    } else if (theme === 'dark') {
+      // Dark theme - add subtle variation
+      for (let tileX = x; tileX < x + width; tileX += tileSize * 3) {
+        for (let tileY = y; tileY < y + height; tileY += tileSize * 3) {
+          if (Math.random() > 0.8) {
+            ctx.fillStyle = `rgba(148, 163, 184, 0.1)`;
+            ctx.fillRect(tileX, tileY, tileSize, tileSize);
+          }
+        }
+      }
+    } else {
+      // Light theme - add subtle variation
+      for (let tileX = x; tileX < x + width; tileX += tileSize * 3) {
+        for (let tileY = y; tileY < y + height; tileY += tileSize * 3) {
+          if (Math.random() > 0.8) {
+            ctx.fillStyle = `rgba(148, 163, 184, 0.1)`;
+            ctx.fillRect(tileX, tileY, tileSize, tileSize);
+          }
+        }
+      }
+    }
+  };
+
+  // Helper function for rounded rectangles (browser compatibility)
+  const roundRect = (ctx: CanvasRenderingContext2D, x: number, y: number, width: number, height: number, radius: number) => {
+    ctx.beginPath();
+    ctx.moveTo(x + radius, y);
+    ctx.lineTo(x + width - radius, y);
+    ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+    ctx.lineTo(x + width, y + height - radius);
+    ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+    ctx.lineTo(x + radius, y + height);
+    ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+    ctx.lineTo(x, y + radius);
+    ctx.quadraticCurveTo(x, y, x + radius, y);
+    ctx.closePath();
   };
 
   // Render poster preview whenever relevant state changes
