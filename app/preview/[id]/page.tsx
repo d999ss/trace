@@ -96,27 +96,89 @@ function PreviewContent() {
     const mapAreaWidth = previewWidth - Math.floor(200 * scaleFactor);
     const mapAreaHeight = previewHeight - Math.floor(500 * scaleFactor);
 
-    ctx.fillStyle = theme === 'dark' ? '#2a2a2a' : '#f0f0f0';
+    // Draw map background with theme-appropriate color
+    ctx.fillStyle = theme === 'dark' ? '#2a2a2a' : theme === 'accent' ? '#e8f4f8' : '#f0f0f0';
     ctx.fillRect(mapAreaX, mapAreaY, mapAreaWidth, mapAreaHeight);
 
-    // Add route visualization
-    ctx.strokeStyle = theme === 'dark' ? '#ffffff' : '#000000';
-    ctx.lineWidth = Math.max(2, Math.floor(4 * scaleFactor));
-    ctx.beginPath();
-    
-    const routeStartX = mapAreaX + Math.floor(100 * scaleFactor);
-    const routeStartY = mapAreaY + (mapAreaHeight / 2);
-    const routeEndX = mapAreaX + mapAreaWidth - Math.floor(100 * scaleFactor);
-    const routeEndY = mapAreaY + (mapAreaHeight / 2);
-    
-    ctx.moveTo(routeStartX, routeStartY);
-    ctx.quadraticCurveTo(
-      (routeStartX + routeEndX) / 2, 
-      routeStartY - Math.floor(100 * scaleFactor), 
-      routeEndX, 
-      routeEndY
-    );
-    ctx.stroke();
+    // Add subtle map grid pattern
+    ctx.strokeStyle = theme === 'dark' ? '#444444' : theme === 'accent' ? '#d0e8f0' : '#e0e0e0';
+    ctx.lineWidth = 1;
+    const gridSize = Math.floor(20 * scaleFactor);
+    for (let x = mapAreaX; x < mapAreaX + mapAreaWidth; x += gridSize) {
+      ctx.beginPath();
+      ctx.moveTo(x, mapAreaY);
+      ctx.lineTo(x, mapAreaY + mapAreaHeight);
+      ctx.stroke();
+    }
+    for (let y = mapAreaY; y < mapAreaY + mapAreaHeight; y += gridSize) {
+      ctx.beginPath();
+      ctx.moveTo(mapAreaX, y);
+      ctx.lineTo(mapAreaX + mapAreaWidth, y);
+      ctx.stroke();
+    }
+
+    // Draw the actual GPS route from coordinates
+    if (coordinates.length > 1) {
+      // Calculate bounds of the route
+      let minLat = coordinates[0][0], maxLat = coordinates[0][0];
+      let minLng = coordinates[0][1], maxLng = coordinates[0][1];
+      
+      coordinates.forEach(coord => {
+        minLat = Math.min(minLat, coord[0]);
+        maxLat = Math.max(maxLat, coord[0]);
+        minLng = Math.min(minLng, coord[1]);
+        maxLng = Math.max(maxLng, coord[1]);
+      });
+
+      // Add padding to bounds
+      const latPadding = (maxLat - minLat) * 0.1;
+      const lngPadding = (maxLng - minLng) * 0.1;
+      minLat -= latPadding;
+      maxLat += latPadding;
+      minLng -= lngPadding;
+      maxLng += lngPadding;
+
+      // Function to convert GPS coordinates to canvas coordinates
+      const gpsToCanvas = (lat: number, lng: number) => {
+        const x = mapAreaX + ((lng - minLng) / (maxLng - minLng)) * mapAreaWidth;
+        const y = mapAreaY + ((maxLat - lat) / (maxLat - minLat)) * mapAreaHeight;
+        return { x, y };
+      };
+
+      // Draw the actual route path
+      ctx.strokeStyle = theme === 'dark' ? '#00ff88' : theme === 'accent' ? '#0066cc' : '#ff6b35';
+      ctx.lineWidth = Math.max(3, Math.floor(6 * scaleFactor));
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      
+      ctx.beginPath();
+      const startPoint = gpsToCanvas(coordinates[0][0], coordinates[0][1]);
+      ctx.moveTo(startPoint.x, startPoint.y);
+      
+      // Draw each segment of the route
+      for (let i = 1; i < coordinates.length; i++) {
+        const point = gpsToCanvas(coordinates[i][0], coordinates[i][1]);
+        ctx.lineTo(point.x, point.y);
+      }
+      
+      ctx.stroke();
+
+      // Add start and end markers
+      const start = gpsToCanvas(coordinates[0][0], coordinates[0][1]);
+      const end = gpsToCanvas(coordinates[coordinates.length - 1][0], coordinates[coordinates.length - 1][1]);
+      
+      // Start marker (green circle)
+      ctx.fillStyle = '#00ff00';
+      ctx.beginPath();
+      ctx.arc(start.x, start.y, Math.floor(8 * scaleFactor), 0, 2 * Math.PI);
+      ctx.fill();
+      
+      // End marker (red circle)
+      ctx.fillStyle = '#ff0000';
+      ctx.beginPath();
+      ctx.arc(end.x, end.y, Math.floor(8 * scaleFactor), 0, 2 * Math.PI);
+      ctx.fill();
+    }
 
     // Add route points indicator
     ctx.fillStyle = theme === 'dark' ? '#ffffff' : '#000000';
@@ -303,29 +365,88 @@ function PreviewContent() {
       const mapAreaWidth = posterWidth - (200 * sizeMultiplier);
       const mapAreaHeight = posterHeight - (500 * sizeMultiplier);
 
-      ctx.fillStyle = theme === 'dark' ? '#2a2a2a' : '#f0f0f0';
+      ctx.fillStyle = theme === 'dark' ? '#2a2a2a' : theme === 'accent' ? '#e8f4f8' : '#f0f0f0';
       ctx.fillRect(mapAreaX, mapAreaY, mapAreaWidth, mapAreaHeight);
 
-      // Add map placeholder with route visualization
-      ctx.strokeStyle = theme === 'dark' ? '#ffffff' : '#000000';
-      ctx.lineWidth = 4 * sizeMultiplier;
-      ctx.beginPath();
-      
-      // Create a simplified route visualization
-      const routeStartX = mapAreaX + (100 * sizeMultiplier);
-      const routeStartY = mapAreaY + (mapAreaHeight / 2);
-      const routeEndX = mapAreaX + mapAreaWidth - (100 * sizeMultiplier);
-      const routeEndY = mapAreaY + (mapAreaHeight / 2);
-      
-      // Draw a curved route path
-      ctx.moveTo(routeStartX, routeStartY);
-      ctx.quadraticCurveTo(
-        (routeStartX + routeEndX) / 2, 
-        routeStartY - (100 * sizeMultiplier), 
-        routeEndX, 
-        routeEndY
-      );
-      ctx.stroke();
+      // Add subtle map grid pattern
+      ctx.strokeStyle = theme === 'dark' ? '#444444' : theme === 'accent' ? '#d0e8f0' : '#e0e0e0';
+      ctx.lineWidth = 2 * sizeMultiplier;
+      const gridSize = 50 * sizeMultiplier;
+      for (let x = mapAreaX; x < mapAreaX + mapAreaWidth; x += gridSize) {
+        ctx.beginPath();
+        ctx.moveTo(x, mapAreaY);
+        ctx.lineTo(x, mapAreaY + mapAreaHeight);
+        ctx.stroke();
+      }
+      for (let y = mapAreaY; y < mapAreaY + mapAreaHeight; y += gridSize) {
+        ctx.beginPath();
+        ctx.moveTo(mapAreaX, y);
+        ctx.lineTo(mapAreaX + mapAreaWidth, y);
+        ctx.stroke();
+      }
+
+      // Draw the actual GPS route from coordinates
+      if (coordinates.length > 1) {
+        // Calculate bounds of the route
+        let minLat = coordinates[0][0], maxLat = coordinates[0][0];
+        let minLng = coordinates[0][1], maxLng = coordinates[0][1];
+        
+        coordinates.forEach(coord => {
+          minLat = Math.min(minLat, coord[0]);
+          maxLat = Math.max(maxLat, coord[0]);
+          minLng = Math.min(minLng, coord[1]);
+          maxLng = Math.max(maxLng, coord[1]);
+        });
+
+        // Add padding to bounds
+        const latPadding = (maxLat - minLat) * 0.1;
+        const lngPadding = (maxLng - minLng) * 0.1;
+        minLat -= latPadding;
+        maxLat += latPadding;
+        minLng -= lngPadding;
+        maxLng += lngPadding;
+
+        // Function to convert GPS coordinates to canvas coordinates
+        const gpsToCanvas = (lat: number, lng: number) => {
+          const x = mapAreaX + ((lng - minLng) / (maxLng - minLng)) * mapAreaWidth;
+          const y = mapAreaY + ((maxLat - lat) / (maxLat - minLat)) * mapAreaHeight;
+          return { x, y };
+        };
+
+        // Draw the actual route path
+        ctx.strokeStyle = theme === 'dark' ? '#00ff88' : theme === 'accent' ? '#0066cc' : '#ff6b35';
+        ctx.lineWidth = 8 * sizeMultiplier;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        
+        ctx.beginPath();
+        const startPoint = gpsToCanvas(coordinates[0][0], coordinates[0][1]);
+        ctx.moveTo(startPoint.x, startPoint.y);
+        
+        // Draw each segment of the route
+        for (let i = 1; i < coordinates.length; i++) {
+          const point = gpsToCanvas(coordinates[i][0], coordinates[i][1]);
+          ctx.lineTo(point.x, point.y);
+        }
+        
+        ctx.stroke();
+
+        // Add start and end markers
+        const start = gpsToCanvas(coordinates[0][0], coordinates[0][1]);
+        const end = gpsToCanvas(coordinates[coordinates.length - 1][0], coordinates[coordinates.length - 1][1]);
+        
+        // Start marker (green circle)
+        ctx.fillStyle = '#00ff00';
+        ctx.beginPath();
+        ctx.arc(start.x, start.y, 20 * sizeMultiplier, 0, 2 * Math.PI);
+        ctx.fill();
+        
+        // End marker (red circle)
+        ctx.fillStyle = '#ff0000';
+        ctx.beginPath();
+        ctx.arc(end.x, end.y, 20 * sizeMultiplier, 0, 2 * Math.PI);
+        ctx.fill();
+      }
 
       // Add route points indicator
       ctx.fillStyle = theme === 'dark' ? '#ffffff' : '#000000';
