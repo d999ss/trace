@@ -211,96 +211,151 @@ function PreviewContent() {
 
   return (
     <div className="min-h-screen bg-gray-50 flex">
-      <div className="w-1/3 p-8 bg-white shadow-lg">
+      <div className="w-1/3 p-8 bg-white shadow-lg overflow-y-auto">
         <h1 className="text-2xl font-bold text-gray-900 mb-6">{activity?.name}</h1>
         
         <div className="space-y-6">
+          {/* Map Style Selection */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-3">Theme</label>
-            <div className="flex gap-2">
+            <label className="block text-sm font-medium text-gray-700 mb-3">Map Style</label>
+            <div className="grid grid-cols-3 gap-2">
               <button
                 onClick={() => setTheme('light')}
-                className={`px-3 py-1.5 text-xs rounded ${
+                className={`p-3 rounded-lg border-2 transition-all ${
                   theme === 'light' 
-                    ? 'bg-blue-600 text-white' 
-                    : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
+                    ? 'border-blue-500 bg-blue-50 text-blue-700' 
+                    : 'border-gray-200 bg-white text-gray-700 hover:border-gray-300 hover:bg-gray-50'
                 }`}
               >
-                Light
+                <div className="text-xs font-medium">Classic</div>
+                <div className="text-xs text-gray-500">Clean & Simple</div>
               </button>
               <button
                 onClick={() => setTheme('dark')}
-                className={`px-3 py-1.5 text-xs rounded ${
+                className={`p-3 rounded-lg border-2 transition-all ${
                   theme === 'dark' 
-                    ? 'bg-blue-600 text-white' 
-                    : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
+                    ? 'border-blue-500 bg-blue-50 text-blue-700' 
+                    : 'border-gray-200 bg-white text-gray-700 hover:border-gray-300 hover:bg-gray-50'
                 }`}
               >
-                Dark
+                <div className="text-xs font-medium">Modern</div>
+                <div className="text-xs text-gray-500">Dark & Sleek</div>
               </button>
               <button
                 onClick={() => setTheme('accent')}
-                className={`px-3 py-1.5 text-xs rounded ${
+                className={`p-3 rounded-lg border-2 transition-all ${
                   theme === 'accent' 
-                    ? 'bg-blue-600 text-white' 
-                    : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
+                    ? 'border-blue-500 bg-blue-50 text-blue-700' 
+                    : 'border-gray-200 bg-white text-gray-700 hover:border-gray-300 hover:bg-gray-50'
                 }`}
               >
-                Accent
+                <div className="text-xs font-medium">Satellite</div>
+                <div className="text-xs text-gray-500">Aerial View</div>
               </button>
             </div>
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Title</label>
-            <input
-              type="text"
-              placeholder="Enter title..."
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Subtitle</label>
-            <input
-              type="text"
-              placeholder="Enter subtitle..."
-              value={subtitle}
-              onChange={(e) => setSubtitle(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            />
-          </div>
-
-          <div className="space-y-3">
-            <button
-              onClick={handleRenderPrint}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg transition-colors duration-200"
-            >
-              Download SVG
-            </button>
+          {/* Customization Options */}
+          <div className="border-t pt-6">
+            <h3 className="text-sm font-medium text-gray-700 mb-4">Customize Your Print</h3>
             
-            <button
-              onClick={handleBuyPrint}
-              className="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-3 px-4 rounded-lg transition-colors duration-200"
-            >
-              Buy Print ($25)
-            </button>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Title</label>
+                <input
+                  type="text"
+                  placeholder="Enter a memorable title..."
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Subtitle</label>
+                <input
+                  type="text"
+                  placeholder="Add a personal message..."
+                  value={subtitle}
+                  onChange={(e) => setSubtitle(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+            </div>
           </div>
+
+          {/* Print Options */}
+          <div className="border-t pt-6">
+            <h3 className="text-sm font-medium text-gray-700 mb-4">Print Options</h3>
+            
+            <div className="space-y-3">
+              <button
+                onClick={handleRenderPrint}
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center gap-2"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                Download Preview
+              </button>
+              
+              <button
+                onClick={handleBuyPrint}
+                className="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-3 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center gap-2"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                </svg>
+                Order Print - $25
+              </button>
+            </div>
+          </div>
+
+          {/* Activity Info */}
+          {activity && (
+            <div className="border-t pt-6">
+              <h3 className="text-sm font-medium text-gray-700 mb-3">Activity Details</h3>
+              <div className="text-xs text-gray-500 space-y-1">
+                <div>Route points: {coordinates.length}</div>
+                <div>Map style: {theme.charAt(0).toUpperCase() + theme.slice(1)}</div>
+                {title && <div>Custom title: {title}</div>}
+                {subtitle && <div>Custom subtitle: {subtitle}</div>}
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
-      <div className="flex-1 relative">
-        {coordinates.length > 0 ? (
+      <div className="flex-1 relative bg-gray-100">
+        {loading ? (
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+              <div className="text-gray-600">Loading your route...</div>
+            </div>
+          </div>
+        ) : coordinates.length > 0 ? (
           <div ref={mapContainer} className="absolute inset-0" />
         ) : (
-          <div className="absolute inset-0 bg-gray-100 flex items-center justify-center">
-            <div className="text-center text-gray-500">
-              <div className="text-lg font-medium mb-2">No GPS Data Available</div>
-              <div className="text-sm">This activity doesn&apos;t have GPS coordinates to display on the map.</div>
-              <div className="text-xs mt-2">Check the browser console for debugging information.</div>
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="text-center max-w-md mx-auto px-4">
+              <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-1.447-.894L15 4m0 13V4m-6 3l6-3" />
+                </svg>
+              </div>
+              <div className="text-lg font-medium text-gray-900 mb-2">No GPS Data Available</div>
+              <div className="text-gray-600 mb-4">This activity doesn&apos;t have GPS coordinates to display on the map.</div>
+              <div className="text-sm text-gray-500">Try selecting a different activity with GPS tracking enabled.</div>
             </div>
+          </div>
+        )}
+        
+        {/* Map Controls Overlay */}
+        {coordinates.length > 0 && (
+          <div className="absolute top-4 right-4 bg-white rounded-lg shadow-lg p-2">
+            <div className="text-xs text-gray-600 mb-2">Map Style: {theme.charAt(0).toUpperCase() + theme.slice(1)}</div>
+            <div className="text-xs text-gray-500">Route points: {coordinates.length}</div>
           </div>
         )}
       </div>
