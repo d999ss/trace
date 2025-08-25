@@ -43,9 +43,9 @@ function PreviewContent() {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    // Set canvas dimensions for preview (smaller than full poster)
-    const previewWidth = 400;
-    const previewHeight = 225;
+    // Set canvas dimensions for preview (larger for better visibility)
+    const previewWidth = 600;
+    const previewHeight = 400;
     canvas.width = previewWidth;
     canvas.height = previewHeight;
 
@@ -771,38 +771,48 @@ function PreviewContent() {
             </div>
           </div>
         ) : coordinates.length > 0 ? (
-          <div className="absolute inset-0 flex">
-            {/* Map on the left */}
-            <div className="w-1/2 relative">
-              <div ref={mapContainer} className="absolute inset-0" />
+          <div className="absolute inset-0 flex flex-col">
+            {/* Poster as the main focus */}
+            <div className="flex-1 flex items-center justify-center p-8">
+              <div className="bg-white rounded-lg shadow-2xl p-6 max-w-4xl w-full">
+                <div className="text-center mb-6">
+                  <h2 className="text-2xl font-bold text-gray-900 mb-2">Your Custom Poster</h2>
+                  <p className="text-gray-600">Live preview - customize on the left, see results here</p>
+                </div>
+                
+                {/* Poster Canvas - Large and prominent */}
+                <div className="bg-gray-50 rounded-lg p-4 mb-6">
+                  <canvas 
+                    id="posterCanvas"
+                    className="w-full h-auto border border-gray-200 rounded shadow-lg"
+                    style={{ maxHeight: '600px' }}
+                  />
+                </div>
+                
+                {/* Poster Details */}
+                <div className="grid grid-cols-3 gap-4 text-center text-sm text-gray-600">
+                  <div className="bg-gray-50 rounded-lg p-3">
+                    <div className="font-medium text-gray-900">Size</div>
+                    <div>{selectedSize === '16x20' ? '16" x 20"' : selectedSize === '20x24' ? '20" x 24"' : '24" x 36"'}</div>
+                  </div>
+                  <div className="bg-gray-50 rounded-lg p-3">
+                    <div className="font-medium text-gray-900">Theme</div>
+                    <div>{theme.charAt(0).toUpperCase() + theme.slice(1)}</div>
+                  </div>
+                  <div className="bg-gray-50 rounded-lg p-3">
+                    <div className="font-medium text-gray-900">GPS Points</div>
+                    <div>{coordinates.length}</div>
+                  </div>
+                </div>
+              </div>
             </div>
             
-            {/* Real-time poster preview on the right */}
-            <div className="w-1/2 bg-white p-4 overflow-auto">
-              <div className="text-center mb-4">
-                <h3 className="text-lg font-medium text-gray-900 mb-2">Live Poster Preview</h3>
-                <p className="text-sm text-gray-600">Your poster updates in real-time as you customize</p>
-              </div>
-              
-              {/* Poster Canvas */}
-              <div className="bg-gray-50 rounded-lg p-4 mb-4">
-                <canvas 
-                  id="posterCanvas"
-                  className="w-full h-auto border border-gray-200 rounded"
-                  style={{ maxHeight: '500px' }}
-                />
-              </div>
-              
-              {/* Poster Info */}
-              <div className="text-center text-sm text-gray-600">
-                <div className="mb-2">
-                  <strong>Size:</strong> {selectedSize === '16x20' ? '16" x 20"' : selectedSize === '20x24' ? '20" x 24"' : '24" x 36"'}
-                </div>
-                <div className="mb-2">
-                  <strong>Theme:</strong> {theme.charAt(0).toUpperCase() + theme.slice(1)}
-                </div>
-                <div>
-                  <strong>GPS Points:</strong> {coordinates.length}
+            {/* Small map at the bottom for reference */}
+            <div className="h-48 bg-white border-t border-gray-200">
+              <div className="p-4">
+                <div className="text-sm font-medium text-gray-700 mb-2">Route Reference</div>
+                <div className="h-32 relative">
+                  <div ref={mapContainer} className="absolute inset-0 rounded border border-gray-200" />
                 </div>
               </div>
             </div>
@@ -822,9 +832,9 @@ function PreviewContent() {
           </div>
         )}
         
-        {/* Map Controls Overlay */}
+        {/* Map Controls Overlay - moved to bottom map */}
         {coordinates.length > 0 && (
-          <div className="absolute top-4 left-4 bg-white rounded-lg shadow-lg p-2">
+          <div className="absolute bottom-52 right-4 bg-white rounded-lg shadow-lg p-2">
             <div className="text-xs text-gray-600 mb-2">Map Style: {theme.charAt(0).toUpperCase() + theme.slice(1)}</div>
             <div className="text-xs text-gray-500">Route points: {coordinates.length}</div>
           </div>
