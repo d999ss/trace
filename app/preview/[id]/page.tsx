@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useRef } from 'react';
+import { Suspense, useEffect, useState, useRef } from 'react';
 import { useParams, useSearchParams } from 'next/navigation';
 import { getActivity, decodePolyline } from '@/lib/strava';
 import mapboxgl from 'mapbox-gl';
@@ -8,7 +8,7 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 
 type Theme = 'light' | 'dark' | 'accent';
 
-export default function Preview() {
+function PreviewContent() {
   const params = useParams();
   const searchParams = useSearchParams();
   const mapContainer = useRef<HTMLDivElement>(null);
@@ -233,5 +233,13 @@ export default function Preview() {
         <div ref={mapContainer} className="absolute inset-0" />
       </div>
     </div>
+  );
+}
+
+export default function Preview() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-gray-50 flex items-center justify-center">Loading...</div>}>
+      <PreviewContent />
+    </Suspense>
   );
 }
