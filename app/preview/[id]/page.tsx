@@ -80,7 +80,7 @@ function PreviewContent() {
     ctx.fillRect(0, 0, previewWidth, previewHeight);
 
     // TOP SECTION: Beautiful title area with subtle background
-    const topSectionHeight = Math.floor(120 * scaleFactor);
+    const topSectionHeight = Math.floor(100 * scaleFactor);
     const topGradient = ctx.createLinearGradient(0, 0, 0, topSectionHeight);
     topGradient.addColorStop(0, 'rgba(59, 130, 246, 0.05)');
     topGradient.addColorStop(1, 'rgba(59, 130, 246, 0.02)');
@@ -88,12 +88,12 @@ function PreviewContent() {
     ctx.fillRect(0, 0, previewWidth, topSectionHeight);
 
     // Title: Beautiful, modern typography
-    const titleY = Math.floor(40 * scaleFactor);
+    const titleY = Math.floor(30 * scaleFactor);
     const displayTitle = title || 'YOUR ACTIVITY';
     
     // Title shadow for depth
     ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
-    ctx.font = `bold ${Math.floor(52 * scaleFactor)}px -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif`;
+    ctx.font = `bold ${Math.floor(48 * scaleFactor)}px -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif`;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'top';
     ctx.fillText(displayTitle.toUpperCase(), previewWidth / 2 + 2, titleY + 2);
@@ -103,18 +103,18 @@ function PreviewContent() {
     ctx.fillText(displayTitle.toUpperCase(), previewWidth / 2, titleY);
 
     // Subtitle: Elegant secondary text
-    const subtitleY = titleY + Math.floor(70 * scaleFactor);
+    const subtitleY = titleY + Math.floor(60 * scaleFactor);
     const displaySubtitle = subtitle || 'Strava Activity';
     ctx.fillStyle = '#64748b';
-    ctx.font = `${Math.floor(28 * scaleFactor)}px -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif`;
+    ctx.font = `${Math.floor(24 * scaleFactor)}px -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif`;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'top';
     ctx.fillText(displaySubtitle, previewWidth / 2, subtitleY);
 
-    // MIDDLE SECTION: Hero Map Block with beautiful styling
-    const mapBlockTop = subtitleY + Math.floor(50 * scaleFactor);
-    const mapBlockHeight = Math.floor(300 * scaleFactor);
-    const mapBlockMargin = Math.floor(80 * scaleFactor);
+    // MIDDLE SECTION: Hero Map Block - MUCH LARGER to fill the poster
+    const mapBlockTop = subtitleY + Math.floor(30 * scaleFactor);
+    const mapBlockHeight = Math.floor(380 * scaleFactor); // Increased from 300 to 380
+    const mapBlockMargin = Math.floor(40 * scaleFactor); // Reduced from 80 to 40 for more space
     const mapBlockWidth = previewWidth - (mapBlockMargin * 2);
     const mapBlockX = mapBlockMargin;
     const mapBlockY = mapBlockTop;
@@ -215,7 +215,7 @@ function PreviewContent() {
       ctx.shadowOffsetY = 0;
       
       ctx.strokeStyle = routeGradient;
-      ctx.lineWidth = Math.max(6, Math.floor(10 * scaleFactor));
+      ctx.lineWidth = Math.max(8, Math.floor(12 * scaleFactor)); // Increased line width
       ctx.lineCap = 'round';
       ctx.lineJoin = 'round';
       
@@ -244,7 +244,7 @@ function PreviewContent() {
       ctx.shadowBlur = Math.floor(10 * scaleFactor);
       ctx.fillStyle = '#10b981';
       ctx.beginPath();
-      ctx.arc(start.x, start.y, Math.floor(8 * scaleFactor), 0, 2 * Math.PI);
+      ctx.arc(start.x, start.y, Math.floor(10 * scaleFactor), 0, 2 * Math.PI); // Increased size
       ctx.fill();
       
       // End marker (red with glow)
@@ -252,7 +252,7 @@ function PreviewContent() {
       ctx.shadowBlur = Math.floor(10 * scaleFactor);
       ctx.fillStyle = '#ef4444';
       ctx.beginPath();
-      ctx.arc(end.x, end.y, Math.floor(8 * scaleFactor), 0, 2 * Math.PI);
+      ctx.arc(end.x, end.y, Math.floor(10 * scaleFactor), 0, 2 * Math.PI); // Increased size
       ctx.fill();
       
       // Reset shadow
@@ -261,8 +261,8 @@ function PreviewContent() {
     }
 
     // BOTTOM SECTION: Beautiful stats bar
-    const statsBarTop = mapBlockY + mapBlockHeight + Math.floor(50 * scaleFactor);
-    const statsBarHeight = Math.floor(100 * scaleFactor);
+    const statsBarTop = mapBlockY + mapBlockHeight + Math.floor(30 * scaleFactor); // Reduced spacing
+    const statsBarHeight = Math.floor(80 * scaleFactor); // Reduced height
     const statsBarY = statsBarTop;
     
     // Stats container with beautiful background
@@ -281,80 +281,80 @@ function PreviewContent() {
     
     // Draw stats with beautiful styling
     const statSpacing = previewWidth / 3;
-    const statTextSize = Math.floor(24 * scaleFactor);
-    const statLabelSize = Math.floor(14 * scaleFactor);
+    const statTextSize = Math.floor(22 * scaleFactor); // Slightly smaller
+    const statLabelSize = Math.floor(12 * scaleFactor); // Smaller labels
     
     // Distance stat
     const distanceX = statSpacing * 0.5;
     ctx.fillStyle = '#1e293b';
     ctx.font = `bold ${statTextSize}px -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif`;
     ctx.textAlign = 'center';
-    ctx.fillText(distance, distanceX, statsBarY + Math.floor(30 * scaleFactor));
+    ctx.fillText(distance, distanceX, statsBarY + Math.floor(25 * scaleFactor));
     
     // Distance icon (beautiful line icon)
     ctx.strokeStyle = '#64748b';
     ctx.lineWidth = 3;
     ctx.beginPath();
-    ctx.moveTo(distanceX - Math.floor(20 * scaleFactor), statsBarY + Math.floor(65 * scaleFactor));
-    ctx.lineTo(distanceX + Math.floor(20 * scaleFactor), statsBarY + Math.floor(65 * scaleFactor));
+    ctx.moveTo(distanceX - Math.floor(18 * scaleFactor), statsBarY + Math.floor(55 * scaleFactor));
+    ctx.lineTo(distanceX + Math.floor(18 * scaleFactor), statsBarY + Math.floor(55 * scaleFactor));
     ctx.stroke();
     
     // Distance label
     ctx.fillStyle = '#64748b';
     ctx.font = `${statLabelSize}px -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif`;
     ctx.textAlign = 'center';
-    ctx.fillText('DISTANCE', distanceX, statsBarY + Math.floor(80 * scaleFactor));
+    ctx.fillText('DISTANCE', distanceX, statsBarY + Math.floor(70 * scaleFactor));
     
     // Elevation stat
     const elevationX = statSpacing * 1.5;
     ctx.fillStyle = '#1e293b';
     ctx.font = `bold ${statTextSize}px -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif`;
     ctx.textAlign = 'center';
-    ctx.fillText(elevation, elevationX, statsBarY + Math.floor(30 * scaleFactor));
+    ctx.fillText(elevation, elevationX, statsBarY + Math.floor(25 * scaleFactor));
     
     // Elevation icon (beautiful mountain peak)
     ctx.strokeStyle = '#64748b';
     ctx.lineWidth = 3;
     ctx.beginPath();
-    ctx.moveTo(elevationX - Math.floor(20 * scaleFactor), statsBarY + Math.floor(65 * scaleFactor));
-    ctx.lineTo(elevationX, statsBarY + Math.floor(55 * scaleFactor));
-    ctx.lineTo(elevationX + Math.floor(20 * scaleFactor), statsBarY + Math.floor(65 * scaleFactor));
+    ctx.moveTo(elevationX - Math.floor(18 * scaleFactor), statsBarY + Math.floor(55 * scaleFactor));
+    ctx.lineTo(elevationX, statsBarY + Math.floor(45 * scaleFactor));
+    ctx.lineTo(elevationX + Math.floor(18 * scaleFactor), statsBarY + Math.floor(55 * scaleFactor));
     ctx.stroke();
     
     // Elevation label
     ctx.fillStyle = '#64748b';
     ctx.font = `${statLabelSize}px -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif`;
     ctx.textAlign = 'center';
-    ctx.fillText('ELEVATION', elevationX, statsBarY + Math.floor(80 * scaleFactor));
+    ctx.fillText('ELEVATION', elevationX, statsBarY + Math.floor(70 * scaleFactor));
     
     // Duration stat
     const durationX = statSpacing * 2.5;
     ctx.fillStyle = '#1e293b';
     ctx.font = `bold ${statTextSize}px -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif`;
     ctx.textAlign = 'center';
-    ctx.fillText(duration, durationX, statsBarY + Math.floor(30 * scaleFactor));
+    ctx.fillText(duration, durationX, statsBarY + Math.floor(25 * scaleFactor));
     
     // Duration icon (beautiful clock)
     ctx.strokeStyle = '#64748b';
     ctx.lineWidth = 3;
     ctx.beginPath();
-    ctx.arc(durationX, statsBarY + Math.floor(60 * scaleFactor), Math.floor(12 * scaleFactor), 0, 2 * Math.PI);
+    ctx.arc(durationX, statsBarY + Math.floor(50 * scaleFactor), Math.floor(10 * scaleFactor), 0, 2 * Math.PI);
     ctx.stroke();
     ctx.beginPath();
-    ctx.moveTo(durationX, statsBarY + Math.floor(60 * scaleFactor));
-    ctx.lineTo(durationX + Math.floor(8 * scaleFactor), statsBarY + Math.floor(60 * scaleFactor));
+    ctx.moveTo(durationX, statsBarY + Math.floor(50 * scaleFactor));
+    ctx.lineTo(durationX + Math.floor(6 * scaleFactor), statsBarY + Math.floor(50 * scaleFactor));
     ctx.stroke();
     
     // Duration label
     ctx.fillStyle = '#64748b';
     ctx.font = `${statLabelSize}px -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif`;
     ctx.textAlign = 'center';
-    ctx.fillText('DURATION', durationX, statsBarY + Math.floor(80 * scaleFactor));
+    ctx.fillText('DURATION', durationX, statsBarY + Math.floor(70 * scaleFactor));
 
     // FOOTER: Beautiful branding
-    const footerY = previewHeight - Math.floor(50 * scaleFactor);
+    const footerY = previewHeight - Math.floor(30 * scaleFactor); // Reduced spacing
     ctx.fillStyle = '#94a3b8';
-    ctx.font = `${Math.floor(16 * scaleFactor)}px -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif`;
+    ctx.font = `${Math.floor(14 * scaleFactor)}px -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif`;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'bottom';
     ctx.fillText(`${selectedSize.toUpperCase()} • TRACE PRINTS`, previewWidth / 2, footerY);
@@ -362,26 +362,25 @@ function PreviewContent() {
 
   // Function to render art print poster preview
   const renderArtPrintPreview = (ctx: CanvasRenderingContext2D, previewWidth: number, previewHeight: number, scaleFactor: number) => {
-    // Fill background with pure white for art print framing
+    // Pure white background for minimalist aesthetic
     ctx.fillStyle = '#ffffff';
     ctx.fillRect(0, 0, previewWidth, previewHeight);
 
-    // ROUTE SECTION: Upper two-thirds, very wide margins, centered
-    const routeTop = Math.floor(80 * scaleFactor);
-    const routeHeight = Math.floor((previewHeight * 0.65) - routeTop);
-    const routeMargin = Math.floor(100 * scaleFactor); // Very wide margins
+    // ROUTE SECTION: Upper two-thirds with wide margins
+    const routeMargin = Math.floor(60 * scaleFactor);
     const routeWidth = previewWidth - (routeMargin * 2);
+    const routeHeight = Math.floor(400 * scaleFactor); // Increased height
     const routeX = routeMargin;
-    const routeY = routeTop;
+    const routeY = Math.floor(40 * scaleFactor); // Reduced top margin
 
-    // Very light gray background for route area
+    // Route background with very light gray
     ctx.fillStyle = '#fafafa';
     ctx.fillRect(routeX, routeY, routeWidth, routeHeight);
-    
-    // Draw subtle map tiles for terrain context
-    drawMapTiles(ctx, routeX, routeY, routeWidth, routeHeight, 'light');
 
-    // Draw the GPS route with thin, neutral stroke
+    // Draw enhanced terrain tiles for the route area
+    drawEnhancedMapTiles(ctx, routeX, routeY, routeWidth, routeHeight, 'light');
+
+    // Draw the GPS route with thin, neutral styling
     if (coordinates.length > 1) {
       // Calculate bounds of the route
       let minLat = coordinates[0][0], maxLat = coordinates[0][0];
@@ -394,9 +393,9 @@ function PreviewContent() {
         maxLng = Math.max(maxLng, coord[1]);
       });
 
-      // Add padding to bounds for breathing room
-      const latPadding = (maxLat - minLat) * 0.2;
-      const lngPadding = (maxLng - minLng) * 0.2;
+      // Add padding to bounds
+      const latPadding = (maxLat - minLat) * 0.15;
+      const lngPadding = (maxLng - minLng) * 0.15;
       minLat -= latPadding;
       maxLat += latPadding;
       minLng -= lngPadding;
@@ -409,9 +408,9 @@ function PreviewContent() {
         return { x, y };
       };
 
-      // Draw the route with very thin, neutral stroke
-      ctx.strokeStyle = '#2a2a2a'; // Very dark gray, almost black
-      ctx.lineWidth = Math.max(1, Math.floor(2 * scaleFactor)); // 1-2px stroke
+      // Thin, neutral route line
+      ctx.strokeStyle = '#2a2a2a';
+      ctx.lineWidth = Math.max(2, Math.floor(3 * scaleFactor));
       ctx.lineCap = 'round';
       ctx.lineJoin = 'round';
       
@@ -427,149 +426,120 @@ function PreviewContent() {
       
       ctx.stroke();
 
-      // Add start/finish labels in small, delicate italic type
+      // Add subtle start and end markers
       const start = gpsToCanvas(coordinates[0][0], coordinates[0][1]);
       const end = gpsToCanvas(coordinates[coordinates.length - 1][0], coordinates[coordinates.length - 1][1]);
       
-      // Start label
-      ctx.fillStyle = '#666666';
-      ctx.font = `italic ${Math.floor(12 * scaleFactor)}px "Times New Roman", Times, serif`;
-      ctx.textAlign = 'left';
-      ctx.textBaseline = 'middle';
-      ctx.fillText('start', start.x + Math.floor(8 * scaleFactor), start.y);
+      // Start marker (subtle)
+      ctx.fillStyle = '#2a2a2a';
+      ctx.beginPath();
+      ctx.arc(start.x, start.y, Math.floor(4 * scaleFactor), 0, 2 * Math.PI);
+      ctx.fill();
       
-      // Finish label
-      ctx.fillText('finish', end.x + Math.floor(8 * scaleFactor), end.y);
+      // End marker (subtle)
+      ctx.fillStyle = '#2a2a2a';
+      ctx.beginPath();
+      ctx.arc(end.x, end.y, Math.floor(4 * scaleFactor), 0, 2 * Math.PI);
+      ctx.fill();
     }
 
-    // TITLE SECTION: Centered at bottom, serif typography
-    const titleAreaTop = routeY + routeHeight + Math.floor(60 * scaleFactor);
-    const titleY = titleAreaTop + Math.floor(30 * scaleFactor);
-    const subtitleY = titleY + Math.floor(40 * scaleFactor);
+    // TITLE SECTION: Bottom third, centered
+    const titleY = routeY + routeHeight + Math.floor(40 * scaleFactor);
+    const displayTitle = title || 'YOUR ACTIVITY';
+    
+    // Title in serif typeface, sentence case
+    ctx.fillStyle = '#2a2a2a';
+    ctx.font = `${Math.floor(42 * scaleFactor)}px "Times New Roman", Times, serif`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'top';
+    ctx.fillText(displayTitle, previewWidth / 2, titleY);
 
-    // Primary title in serif, sentence case
-    if (title) {
-      ctx.fillStyle = '#000000';
-      ctx.font = `${Math.floor(36 * scaleFactor)}px "Times New Roman", Times, serif`;
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'top';
-      ctx.fillText(title, previewWidth / 2, titleY);
-    }
+    // Subtitle
+    const subtitleY = titleY + Math.floor(50 * scaleFactor);
+    const displaySubtitle = subtitle || 'Strava Activity';
+    ctx.fillStyle = '#6b7280';
+    ctx.font = `${Math.floor(24 * scaleFactor)}px "Times New Roman", Times, serif`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'top';
+    ctx.fillText(displaySubtitle, previewWidth / 2, subtitleY);
 
-    // Secondary line in lighter serif or sans-serif
-    if (subtitle) {
-      ctx.fillStyle = '#666666';
-      ctx.font = `${Math.floor(20 * scaleFactor)}px -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif`;
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'top';
-      ctx.fillText(subtitle, previewWidth / 2, subtitleY);
-    }
-
-    // FOOTER SECTION: Stats row with micro-visuals
-    const footerTop = titleAreaTop + Math.floor(120 * scaleFactor);
-    const footerHeight = Math.floor(80 * scaleFactor);
-    const footerY = footerTop;
-
-    // Optional subtle separator line
-    ctx.strokeStyle = '#e0e0e0';
-    ctx.lineWidth = 1;
-    ctx.beginPath();
-    ctx.moveTo(routeMargin, footerTop - Math.floor(20 * scaleFactor));
-    ctx.lineTo(previewWidth - routeMargin, footerTop - Math.floor(20 * scaleFactor));
-    ctx.stroke();
-
-    // Stats container
-    ctx.fillStyle = '#f8f9fa';
-    ctx.fillRect(0, footerY, previewWidth, footerHeight);
-
-    // Calculate stats (mock data for now)
-    const distance = '8.85 mi';
-    const pace = '6:42/mi';
-    const elevation = '+1,247 ft';
-
-    // Stats row: evenly spaced, all on one line
+    // FOOTER ROW: Stats with micro charts
+    const footerY = previewHeight - Math.floor(60 * scaleFactor);
     const statSpacing = previewWidth / 3;
-    const statTextSize = Math.floor(18 * scaleFactor);
-    const statLabelSize = Math.floor(10 * scaleFactor);
-
-    // Distance stat with micro chart
+    const statTextSize = Math.floor(20 * scaleFactor);
+    const statLabelSize = Math.floor(12 * scaleFactor);
+    
+    // Distance stat
     const distanceX = statSpacing * 0.5;
-    ctx.fillStyle = '#000000';
-    ctx.font = `bold ${statTextSize}px -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif`;
+    ctx.fillStyle = '#2a2a2a';
+    ctx.font = `${statTextSize}px "Times New Roman", Times, serif`;
     ctx.textAlign = 'center';
-    ctx.fillText(distance, distanceX, footerY + Math.floor(25 * scaleFactor));
-
+    ctx.fillText('8.85 mi', distanceX, footerY);
+    
     // Distance micro chart (simple line)
-    ctx.strokeStyle = '#666666';
+    ctx.strokeStyle = '#2a2a2a';
     ctx.lineWidth = 1;
     ctx.beginPath();
-    ctx.moveTo(distanceX - Math.floor(20 * scaleFactor), footerY + Math.floor(50 * scaleFactor));
-    ctx.lineTo(distanceX, footerY + Math.floor(45 * scaleFactor));
-    ctx.lineTo(distanceX + Math.floor(20 * scaleFactor), footerY + Math.floor(50 * scaleFactor));
+    ctx.moveTo(distanceX - Math.floor(15 * scaleFactor), footerY + Math.floor(25 * scaleFactor));
+    ctx.lineTo(distanceX + Math.floor(15 * scaleFactor), footerY + Math.floor(25 * scaleFactor));
     ctx.stroke();
-
+    
     // Distance label
-    ctx.fillStyle = '#666666';
-    ctx.font = `${statLabelSize}px -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif`;
+    ctx.fillStyle = '#6b7280';
+    ctx.font = `${statLabelSize}px "Times New Roman", Times, serif`;
     ctx.textAlign = 'center';
-    ctx.fillText('DISTANCE', distanceX, footerY + Math.floor(65 * scaleFactor));
-
-    // Pace stat with micro chart
-    const paceX = statSpacing * 1.5;
-    ctx.fillStyle = '#000000';
-    ctx.font = `bold ${statTextSize}px -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif`;
+    ctx.fillText('DISTANCE', distanceX, footerY + Math.floor(40 * scaleFactor));
+    
+    // Elevation stat
+    const elevationX = statSpacing * 1.5;
+    ctx.fillStyle = '#2a2a2a';
+    ctx.font = `${statTextSize}px "Times New Roman", Times, serif`;
     ctx.textAlign = 'center';
-    ctx.fillText(pace, paceX, footerY + Math.floor(25 * scaleFactor));
-
-    // Pace micro chart (pace line)
-    ctx.strokeStyle = '#666666';
+    ctx.fillText('+1,247 ft', elevationX, footerY);
+    
+    // Elevation micro chart (mountain shape)
+    ctx.strokeStyle = '#2a2a2a';
     ctx.lineWidth = 1;
     ctx.beginPath();
-    ctx.moveTo(paceX - Math.floor(20 * scaleFactor), footerY + Math.floor(50 * scaleFactor));
-    ctx.lineTo(paceX - Math.floor(10 * scaleFactor), footerY + Math.floor(48 * scaleFactor));
-    ctx.lineTo(paceX, footerY + Math.floor(52 * scaleFactor));
-    ctx.lineTo(paceX + Math.floor(10 * scaleFactor), footerY + Math.floor(47 * scaleFactor));
-    ctx.lineTo(paceX + Math.floor(20 * scaleFactor), footerY + Math.floor(50 * scaleFactor));
+    ctx.moveTo(elevationX - Math.floor(15 * scaleFactor), footerY + Math.floor(25 * scaleFactor));
+    ctx.lineTo(elevationX, footerY + Math.floor(20 * scaleFactor));
+    ctx.lineTo(elevationX + Math.floor(15 * scaleFactor), footerY + Math.floor(25 * scaleFactor));
     ctx.stroke();
-
-    // Pace label
-    ctx.fillStyle = '#666666';
-    ctx.font = `${statLabelSize}px -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif`;
-    ctx.textAlign = 'center';
-    ctx.fillText('PACE', paceX, footerY + Math.floor(65 * scaleFactor));
-
-    // Elevation stat with micro chart
-    const elevationX = statSpacing * 2.5;
-    ctx.fillStyle = '#000000';
-    ctx.font = `bold ${statTextSize}px -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif`;
-    ctx.textAlign = 'center';
-    ctx.fillText(elevation, elevationX, footerY + Math.floor(25 * scaleFactor));
-
-    // Elevation micro chart (elevation profile)
-    ctx.strokeStyle = '#666666';
-    ctx.lineWidth = 1;
-    ctx.beginPath();
-    ctx.moveTo(elevationX - Math.floor(20 * scaleFactor), footerY + Math.floor(50 * scaleFactor));
-    ctx.lineTo(elevationX - Math.floor(15 * scaleFactor), footerY + Math.floor(45 * scaleFactor));
-    ctx.lineTo(elevationX - Math.floor(10 * scaleFactor), footerY + Math.floor(48 * scaleFactor));
-    ctx.lineTo(elevationX - Math.floor(5 * scaleFactor), footerY + Math.floor(42 * scaleFactor));
-    ctx.lineTo(elevationX, footerY + Math.floor(47 * scaleFactor));
-    ctx.lineTo(elevationX + Math.floor(5 * scaleFactor), footerY + Math.floor(44 * scaleFactor));
-    ctx.lineTo(elevationX + Math.floor(10 * scaleFactor), footerY + Math.floor(49 * scaleFactor));
-    ctx.lineTo(elevationX + Math.floor(15 * scaleFactor), footerY + Math.floor(46 * scaleFactor));
-    ctx.lineTo(elevationX + Math.floor(20 * scaleFactor), footerY + Math.floor(50 * scaleFactor));
-    ctx.stroke();
-
+    
     // Elevation label
-    ctx.fillStyle = '#666666';
-    ctx.font = `${statLabelSize}px -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif`;
+    ctx.fillStyle = '#6b7280';
+    ctx.font = `${statLabelSize}px "Times New Roman", Times, serif`;
     ctx.textAlign = 'center';
-    ctx.fillText('ELEVATION', elevationX, footerY + Math.floor(65 * scaleFactor));
+    ctx.fillText('ELEVATION', elevationX, footerY + Math.floor(40 * scaleFactor));
+    
+    // Duration stat
+    const durationX = statSpacing * 2.5;
+    ctx.fillStyle = '#2a2a2a';
+    ctx.font = `${statTextSize}px "Times New Roman", Times, serif`;
+    ctx.textAlign = 'center';
+    ctx.fillText('1:23:45', durationX, footerY);
+    
+    // Duration micro chart (clock shape)
+    ctx.strokeStyle = '#2a2a2a';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.arc(durationX, footerY + Math.floor(22 * scaleFactor), Math.floor(8 * scaleFactor), 0, 2 * Math.PI);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(durationX, footerY + Math.floor(22 * scaleFactor));
+    ctx.lineTo(durationX + Math.floor(5 * scaleFactor), footerY + Math.floor(22 * scaleFactor));
+    ctx.stroke();
+    
+    // Duration label
+    ctx.fillStyle = '#6b7280';
+    ctx.font = `${statLabelSize}px "Times New Roman", Times, serif`;
+    ctx.textAlign = 'center';
+    ctx.fillText('DURATION', durationX, footerY + Math.floor(40 * scaleFactor));
 
-    // Branding (very subtle)
-    const brandY = previewHeight - Math.floor(30 * scaleFactor);
-    ctx.fillStyle = '#cccccc';
-    ctx.font = `${Math.floor(12 * scaleFactor)}px -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif`;
+    // Branding at very bottom
+    const brandY = previewHeight - Math.floor(20 * scaleFactor);
+    ctx.fillStyle = '#9ca3af';
+    ctx.font = `${Math.floor(12 * scaleFactor)}px "Times New Roman", Times, serif`;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'bottom';
     ctx.fillText(`${selectedSize.toUpperCase()} • TRACE PRINTS`, previewWidth / 2, brandY);
@@ -1073,11 +1043,31 @@ function PreviewContent() {
 
   // Function to draw enhanced map tiles for terrain
   const drawEnhancedMapTiles = (ctx: CanvasRenderingContext2D, x: number, y: number, width: number, height: number, theme: string) => {
-    const tileSize = 24; // Smaller tiles for better detail
+    const tileSize = 16; // Smaller tiles for more detail
     
-    // Draw enhanced grid pattern for map tiles
-    ctx.strokeStyle = theme === 'dark' ? 'rgba(148, 163, 184, 0.3)' : theme === 'accent' ? 'rgba(59, 130, 246, 0.2)' : 'rgba(148, 163, 184, 0.2)';
-    ctx.lineWidth = 1;
+    // Base terrain colors based on theme
+    let baseColor, gridColor, featureColor;
+    if (theme === 'dark') {
+      baseColor = '#0f172a';
+      gridColor = 'rgba(148, 163, 184, 0.2)';
+      featureColor = 'rgba(148, 163, 184, 0.3)';
+    } else if (theme === 'accent') {
+      baseColor = '#f0f9ff';
+      gridColor = 'rgba(59, 130, 246, 0.15)';
+      featureColor = 'rgba(59, 130, 246, 0.25)';
+    } else {
+      baseColor = '#f8fafc';
+      gridColor = 'rgba(148, 163, 184, 0.15)';
+      featureColor = 'rgba(148, 163, 184, 0.25)';
+    }
+    
+    // Fill base terrain
+    ctx.fillStyle = baseColor;
+    ctx.fillRect(x, y, width, height);
+    
+    // Draw subtle grid for map reference
+    ctx.strokeStyle = gridColor;
+    ctx.lineWidth = 0.5;
     
     // Draw vertical lines
     for (let tileX = x; tileX <= x + width; tileX += tileSize) {
@@ -1095,33 +1085,70 @@ function PreviewContent() {
       ctx.stroke();
     }
     
-    // Add beautiful terrain variation
+    // Add realistic terrain features
     if (theme === 'accent') {
-      // Satellite theme - add aerial texture
-      for (let tileX = x; tileX < x + width; tileX += tileSize * 2) {
-        for (let tileY = y; tileY < y + height; tileY += tileSize * 2) {
-          if (Math.random() > 0.7) {
-            ctx.fillStyle = `rgba(59, 130, 246, 0.1)`;
+      // Satellite theme - add aerial terrain features
+      for (let tileX = x; tileX < x + width; tileX += tileSize) {
+        for (let tileY = y; tileY < y + height; tileY += tileSize) {
+          const rand = Math.random();
+          
+          if (rand > 0.85) {
+            // Trees/forest areas
+            ctx.fillStyle = 'rgba(34, 197, 94, 0.4)';
+            ctx.fillRect(tileX, tileY, tileSize, tileSize);
+          } else if (rand > 0.75) {
+            // Grass/meadow areas
+            ctx.fillStyle = 'rgba(134, 239, 172, 0.3)';
+            ctx.fillRect(tileX, tileY, tileSize, tileSize);
+          } else if (rand > 0.65) {
+            // Water features
+            ctx.fillStyle = 'rgba(59, 130, 246, 0.2)';
+            ctx.fillRect(tileX, tileY, tileSize, tileSize);
+          } else if (rand > 0.55) {
+            // Rock/mountain areas
+            ctx.fillStyle = 'rgba(148, 163, 184, 0.3)';
             ctx.fillRect(tileX, tileY, tileSize, tileSize);
           }
         }
       }
     } else if (theme === 'dark') {
-      // Dark theme - add subtle variation
-      for (let tileX = x; tileX < x + width; tileX += tileSize * 3) {
-        for (let tileY = y; tileY < y + height; tileY += tileSize * 3) {
-          if (Math.random() > 0.8) {
-            ctx.fillStyle = `rgba(148, 163, 184, 0.1)`;
+      // Dark theme - add subtle terrain variation
+      for (let tileX = x; tileX < x + width; tileX += tileSize * 2) {
+        for (let tileY = y; tileY < y + height; tileY += tileSize * 2) {
+          const rand = Math.random();
+          
+          if (rand > 0.8) {
+            // Subtle elevation changes
+            ctx.fillStyle = 'rgba(148, 163, 184, 0.2)';
+            ctx.fillRect(tileX, tileY, tileSize, tileSize);
+          } else if (rand > 0.7) {
+            // Darker areas
+            ctx.fillStyle = 'rgba(71, 85, 105, 0.3)';
             ctx.fillRect(tileX, tileY, tileSize, tileSize);
           }
         }
       }
     } else {
-      // Light theme - add subtle variation
-      for (let tileX = x; tileX < x + width; tileX += tileSize * 3) {
-        for (let tileY = y; tileY < y + height; tileY += tileSize * 3) {
-          if (Math.random() > 0.8) {
-            ctx.fillStyle = `rgba(148, 163, 184, 0.1)`;
+      // Light theme - add natural terrain features
+      for (let tileX = x; tileX < x + width; tileX += tileSize) {
+        for (let tileY = y; tileY < y + height; tileY += tileSize) {
+          const rand = Math.random();
+          
+          if (rand > 0.9) {
+            // Trees
+            ctx.fillStyle = 'rgba(34, 197, 94, 0.2)';
+            ctx.fillRect(tileX, tileY, tileSize, tileSize);
+          } else if (rand > 0.8) {
+            // Grass
+            ctx.fillStyle = 'rgba(134, 239, 172, 0.15)';
+            ctx.fillRect(tileX, tileY, tileSize, tileSize);
+          } else if (rand > 0.7) {
+            // Water
+            ctx.fillStyle = 'rgba(59, 130, 246, 0.1)';
+            ctx.fillRect(tileX, tileY, tileSize, tileSize);
+          } else if (rand > 0.6) {
+            // Paths/trails
+            ctx.fillStyle = 'rgba(245, 245, 244, 0.3)';
             ctx.fillRect(tileX, tileY, tileSize, tileSize);
           }
         }
