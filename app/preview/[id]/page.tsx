@@ -89,14 +89,14 @@ function PreviewContent() {
 
   // Function to render classic poster preview
   const renderClassicPreview = (ctx: CanvasRenderingContext2D, previewWidth: number, previewHeight: number, scaleFactor: number) => {
-    // Create beautiful gradient background
+    // Create beautiful gradient background that fills the entire poster
     const gradient = ctx.createLinearGradient(0, 0, 0, previewHeight);
     gradient.addColorStop(0, '#ffffff');
     gradient.addColorStop(1, '#f8fafc');
     ctx.fillStyle = gradient;
     ctx.fillRect(0, 0, previewWidth, previewHeight);
 
-    // TOP SECTION: Beautiful title area with subtle background
+    // TOP SECTION: Beautiful title area with subtle background - NO SHADOW, full width
     const topSectionHeight = Math.floor(100 * scaleFactor);
     const topGradient = ctx.createLinearGradient(0, 0, 0, topSectionHeight);
     topGradient.addColorStop(0, 'rgba(59, 130, 246, 0.05)');
@@ -128,24 +128,14 @@ function PreviewContent() {
     ctx.textBaseline = 'top';
     ctx.fillText(displaySubtitle, previewWidth / 2, subtitleY);
 
-    // MIDDLE SECTION: Hero Map Block - MUCH LARGER to fill the poster
+    // MIDDLE SECTION: Hero Map Block - FULL WIDTH, NO SHADOW, NO ROUNDED CORNERS
     const mapBlockTop = subtitleY + Math.floor(30 * scaleFactor);
-    const mapBlockHeight = Math.floor(380 * scaleFactor); // Increased from 300 to 380
-    const mapBlockMargin = Math.floor(40 * scaleFactor); // Reduced from 80 to 40 for more space
-    const mapBlockWidth = previewWidth - (mapBlockMargin * 2);
-    const mapBlockX = mapBlockMargin;
+    const mapBlockHeight = Math.floor(380 * scaleFactor);
+    const mapBlockX = 0; // Start from left edge
     const mapBlockY = mapBlockTop;
+    const mapBlockWidth = previewWidth; // Full width
 
-    // Beautiful map container with shadow and rounded corners effect
-    const mapContainerRadius = Math.floor(20 * scaleFactor);
-    
-    // Map container shadow
-    ctx.shadowColor = 'rgba(0, 0, 0, 0.1)';
-    ctx.shadowBlur = Math.floor(20 * scaleFactor);
-    ctx.shadowOffsetX = 0;
-    ctx.shadowOffsetY = Math.floor(8 * scaleFactor);
-    
-    // Map background with theme-appropriate colors
+    // Map background with theme-appropriate colors - NO SHADOW, NO ROUNDED CORNERS
     let mapBackgroundColor, mapGradient;
     if (theme === 'dark') {
       mapBackgroundColor = '#0f172a';
@@ -164,16 +154,9 @@ function PreviewContent() {
       mapGradient.addColorStop(1, '#f1f5f9');
     }
     
-    // Draw map container
+    // Draw map container - NO SHADOW, NO ROUNDED CORNERS, FULL WIDTH
     ctx.fillStyle = mapGradient;
-    roundRect(ctx, mapBlockX, mapBlockY, mapBlockWidth, mapBlockHeight, mapContainerRadius);
-    ctx.fill();
-    
-    // Reset shadow for content
-    ctx.shadowColor = 'transparent';
-    ctx.shadowBlur = 0;
-    ctx.shadowOffsetX = 0;
-    ctx.shadowOffsetY = 0;
+    ctx.fillRect(mapBlockX, mapBlockY, mapBlockWidth, mapBlockHeight);
 
     // Draw enhanced map tiles for terrain
     drawEnhancedMapTiles(ctx, mapBlockX, mapBlockY, mapBlockWidth, mapBlockHeight, theme);
@@ -232,7 +215,7 @@ function PreviewContent() {
       ctx.shadowOffsetY = 0;
       
       ctx.strokeStyle = routeGradient;
-      ctx.lineWidth = Math.max(8, Math.floor(12 * scaleFactor)); // Increased line width
+      ctx.lineWidth = Math.max(8, Math.floor(12 * scaleFactor));
       ctx.lineCap = 'round';
       ctx.lineJoin = 'round';
       
@@ -261,7 +244,7 @@ function PreviewContent() {
       ctx.shadowBlur = Math.floor(10 * scaleFactor);
       ctx.fillStyle = '#10b981';
       ctx.beginPath();
-      ctx.arc(start.x, start.y, Math.floor(10 * scaleFactor), 0, 2 * Math.PI); // Increased size
+      ctx.arc(start.x, start.y, Math.floor(10 * scaleFactor), 0, 2 * Math.PI);
       ctx.fill();
       
       // End marker (red with glow)
@@ -269,7 +252,7 @@ function PreviewContent() {
       ctx.shadowBlur = Math.floor(10 * scaleFactor);
       ctx.fillStyle = '#ef4444';
       ctx.beginPath();
-      ctx.arc(end.x, end.y, Math.floor(10 * scaleFactor), 0, 2 * Math.PI); // Increased size
+      ctx.arc(end.x, end.y, Math.floor(10 * scaleFactor), 0, 2 * Math.PI);
       ctx.fill();
       
       // Reset shadow
@@ -277,19 +260,18 @@ function PreviewContent() {
       ctx.shadowBlur = 0;
     }
 
-    // BOTTOM SECTION: Beautiful stats bar
-    const statsBarTop = mapBlockY + mapBlockHeight + Math.floor(30 * scaleFactor); // Reduced spacing
-    const statsBarHeight = Math.floor(80 * scaleFactor); // Reduced height
+    // BOTTOM SECTION: Beautiful stats bar - FULL WIDTH, NO SHADOW
+    const statsBarTop = mapBlockY + mapBlockHeight;
+    const statsBarHeight = Math.floor(80 * scaleFactor);
     const statsBarY = statsBarTop;
     
-    // Stats container with beautiful background
+    // Stats container with beautiful background - NO SHADOW, NO ROUNDED CORNERS
     const statsGradient = ctx.createLinearGradient(0, statsBarY, 0, statsBarY + statsBarHeight);
     statsGradient.addColorStop(0, '#f8fafc');
     statsGradient.addColorStop(1, '#e2e8f0');
     
     ctx.fillStyle = statsGradient;
-    roundRect(ctx, 0, statsBarY, previewWidth, statsBarHeight, Math.floor(15 * scaleFactor));
-    ctx.fill();
+    ctx.fillRect(0, statsBarY, previewWidth, statsBarHeight);
     
     // Calculate stats (mock data for now)
     const distance = '8.85 mi';
@@ -298,8 +280,8 @@ function PreviewContent() {
     
     // Draw stats with beautiful styling
     const statSpacing = previewWidth / 3;
-    const statTextSize = Math.floor(22 * scaleFactor); // Slightly smaller
-    const statLabelSize = Math.floor(12 * scaleFactor); // Smaller labels
+    const statTextSize = Math.floor(22 * scaleFactor);
+    const statLabelSize = Math.floor(12 * scaleFactor);
     
     // Distance stat
     const distanceX = statSpacing * 0.5;
@@ -369,7 +351,7 @@ function PreviewContent() {
     ctx.fillText('DURATION', durationX, statsBarY + Math.floor(70 * scaleFactor));
 
     // FOOTER: Beautiful branding
-    const footerY = previewHeight - Math.floor(30 * scaleFactor); // Reduced spacing
+    const footerY = previewHeight - Math.floor(30 * scaleFactor);
     ctx.fillStyle = '#94a3b8';
     ctx.font = `${Math.floor(14 * scaleFactor)}px -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif`;
     ctx.textAlign = 'center';
@@ -383,12 +365,12 @@ function PreviewContent() {
     ctx.fillStyle = '#ffffff';
     ctx.fillRect(0, 0, previewWidth, previewHeight);
 
-    // ROUTE SECTION: Upper two-thirds with wide margins
-    const routeMargin = Math.floor(60 * scaleFactor);
+    // ROUTE SECTION: Upper two-thirds with minimal margins - FULL WIDTH
+    const routeMargin = Math.floor(20 * scaleFactor); // Reduced margins for more content
     const routeWidth = previewWidth - (routeMargin * 2);
-    const routeHeight = Math.floor(400 * scaleFactor); // Increased height
+    const routeHeight = Math.floor(420 * scaleFactor); // Increased height to fill more space
     const routeX = routeMargin;
-    const routeY = Math.floor(40 * scaleFactor); // Reduced top margin
+    const routeY = Math.floor(20 * scaleFactor); // Reduced top margin
 
     // Route background with very light gray
     ctx.fillStyle = '#fafafa';
@@ -461,7 +443,7 @@ function PreviewContent() {
     }
 
     // TITLE SECTION: Bottom third, centered
-    const titleY = routeY + routeHeight + Math.floor(40 * scaleFactor);
+    const titleY = routeY + routeHeight + Math.floor(30 * scaleFactor); // Reduced spacing
     const displayTitle = title || 'YOUR ACTIVITY';
     
     // Title in serif typeface, sentence case
@@ -1060,31 +1042,32 @@ function PreviewContent() {
 
   // Function to draw enhanced map tiles for terrain
   const drawEnhancedMapTiles = (ctx: CanvasRenderingContext2D, x: number, y: number, width: number, height: number, theme: string) => {
-    const tileSize = 16; // Smaller tiles for more detail
+    const tileSize = 12; // Even smaller tiles for more detail
     
     // Base terrain colors based on theme
     let baseColor, gridColor, featureColor;
     if (theme === 'dark') {
       baseColor = '#0f172a';
-      gridColor = 'rgba(148, 163, 184, 0.2)';
-      featureColor = 'rgba(148, 163, 184, 0.3)';
-    } else if (theme === 'accent') {
-      baseColor = '#f0f9ff';
-      gridColor = 'rgba(59, 130, 246, 0.15)';
-      featureColor = 'rgba(59, 130, 246, 0.25)';
-    } else {
-      baseColor = '#f8fafc';
       gridColor = 'rgba(148, 163, 184, 0.15)';
       featureColor = 'rgba(148, 163, 184, 0.25)';
+    } else if (theme === 'accent') {
+      // Satellite theme - use realistic aerial colors
+      baseColor = '#e8f4f8'; // Light blue-gray base for aerial view
+      gridColor = 'rgba(59, 130, 246, 0.05)'; // Very subtle blue grid
+      featureColor = 'rgba(59, 130, 246, 0.1)'; // Subtle blue features
+    } else {
+      baseColor = '#f8fafc';
+      gridColor = 'rgba(148, 163, 184, 0.1)';
+      featureColor = 'rgba(148, 163, 184, 0.15)';
     }
     
     // Fill base terrain
     ctx.fillStyle = baseColor;
     ctx.fillRect(x, y, width, height);
     
-    // Draw subtle grid for map reference
+    // Draw very subtle grid for map reference (barely visible)
     ctx.strokeStyle = gridColor;
-    ctx.lineWidth = 0.5;
+    ctx.lineWidth = 0.3;
     
     // Draw vertical lines
     for (let tileX = x; tileX <= x + width; tileX += tileSize) {
@@ -1102,45 +1085,68 @@ function PreviewContent() {
       ctx.stroke();
     }
     
-    // Add realistic terrain features
+    // Add realistic terrain features with higher density
     if (theme === 'accent') {
-      // Satellite theme - add aerial terrain features
+      // Satellite theme - create realistic aerial terrain appearance
       for (let tileX = x; tileX < x + width; tileX += tileSize) {
         for (let tileY = y; tileY < y + height; tileY += tileSize) {
           const rand = Math.random();
           
-          if (rand > 0.85) {
-            // Trees/forest areas
-            ctx.fillStyle = 'rgba(34, 197, 94, 0.4)';
-            ctx.fillRect(tileX, tileY, tileSize, tileSize);
-          } else if (rand > 0.75) {
-            // Grass/meadow areas
-            ctx.fillStyle = 'rgba(134, 239, 172, 0.3)';
-            ctx.fillRect(tileX, tileY, tileSize, tileSize);
-          } else if (rand > 0.65) {
-            // Water features
-            ctx.fillStyle = 'rgba(59, 130, 246, 0.2)';
+          if (rand > 0.7) {
+            // Dense forest areas - dark green clusters
+            ctx.fillStyle = 'rgba(21, 128, 61, 0.7)';
             ctx.fillRect(tileX, tileY, tileSize, tileSize);
           } else if (rand > 0.55) {
-            // Rock/mountain areas
-            ctx.fillStyle = 'rgba(148, 163, 184, 0.3)';
+            // Grass/meadow areas - light green patches
+            ctx.fillStyle = 'rgba(134, 239, 172, 0.6)';
+            ctx.fillRect(tileX, tileY, tileSize, tileSize);
+          } else if (rand > 0.4) {
+            // Water features - blue with varying opacity
+            ctx.fillStyle = `rgba(59, 130, 246, ${0.3 + Math.random() * 0.3})`;
+            ctx.fillRect(tileX, tileY, tileSize, tileSize);
+          } else if (rand > 0.25) {
+            // Rock/mountain areas - gray-brown variations
+            ctx.fillStyle = `rgba(148, 163, 184, ${0.4 + Math.random() * 0.3})`;
+            ctx.fillRect(tileX, tileY, tileSize, tileSize);
+          } else if (rand > 0.15) {
+            // Urban/developed areas - light gray
+            ctx.fillStyle = 'rgba(245, 245, 244, 0.5)';
+            ctx.fillRect(tileX, tileY, tileSize, tileSize);
+          } else if (rand > 0.1) {
+            // Agricultural areas - tan/brown
+            ctx.fillStyle = 'rgba(245, 158, 11, 0.4)';
+            ctx.fillRect(tileX, tileY, tileSize, tileSize);
+          }
+        }
+      }
+      
+      // Add aerial texture overlay for more realism
+      for (let tileX = x; tileX < x + width; tileX += tileSize * 2) {
+        for (let tileY = y; tileY < y + height; tileY += tileSize * 2) {
+          if (Math.random() > 0.8) {
+            // Add subtle aerial texture variations
+            ctx.fillStyle = `rgba(255, 255, 255, ${0.1 + Math.random() * 0.1})`;
             ctx.fillRect(tileX, tileY, tileSize, tileSize);
           }
         }
       }
     } else if (theme === 'dark') {
       // Dark theme - add subtle terrain variation
-      for (let tileX = x; tileX < x + width; tileX += tileSize * 2) {
-        for (let tileY = y; tileY < y + height; tileY += tileSize * 2) {
+      for (let tileX = x; tileX < x + width; tileX += tileSize) {
+        for (let tileY = y; tileY < y + height; tileY += tileSize) {
           const rand = Math.random();
           
-          if (rand > 0.8) {
+          if (rand > 0.7) {
             // Subtle elevation changes
-            ctx.fillStyle = 'rgba(148, 163, 184, 0.2)';
+            ctx.fillStyle = 'rgba(148, 163, 184, 0.3)';
             ctx.fillRect(tileX, tileY, tileSize, tileSize);
-          } else if (rand > 0.7) {
+          } else if (rand > 0.6) {
             // Darker areas
-            ctx.fillStyle = 'rgba(71, 85, 105, 0.3)';
+            ctx.fillStyle = 'rgba(71, 85, 105, 0.4)';
+            ctx.fillRect(tileX, tileY, tileSize, tileSize);
+          } else if (rand > 0.5) {
+            // Very subtle variations
+            ctx.fillStyle = 'rgba(148, 163, 184, 0.2)';
             ctx.fillRect(tileX, tileY, tileSize, tileSize);
           }
         }
@@ -1151,21 +1157,25 @@ function PreviewContent() {
         for (let tileY = y; tileY < y + height; tileY += tileSize) {
           const rand = Math.random();
           
-          if (rand > 0.9) {
-            // Trees
-            ctx.fillStyle = 'rgba(34, 197, 94, 0.2)';
+          if (rand > 0.8) {
+            // Trees - more visible
+            ctx.fillStyle = 'rgba(34, 197, 94, 0.35)';
             ctx.fillRect(tileX, tileY, tileSize, tileSize);
-          } else if (rand > 0.8) {
-            // Grass
-            ctx.fillStyle = 'rgba(134, 239, 172, 0.15)';
+          } else if (rand > 0.65) {
+            // Grass - more prominent
+            ctx.fillStyle = 'rgba(134, 239, 172, 0.3)';
             ctx.fillRect(tileX, tileY, tileSize, tileSize);
-          } else if (rand > 0.7) {
-            // Water
-            ctx.fillStyle = 'rgba(59, 130, 246, 0.1)';
+          } else if (rand > 0.5) {
+            // Water - more visible
+            ctx.fillStyle = 'rgba(59, 130, 246, 0.25)';
             ctx.fillRect(tileX, tileY, tileSize, tileSize);
-          } else if (rand > 0.6) {
-            // Paths/trails
-            ctx.fillStyle = 'rgba(245, 245, 244, 0.3)';
+          } else if (rand > 0.35) {
+            // Paths/trails - subtle but visible
+            ctx.fillStyle = 'rgba(245, 245, 244, 0.4)';
+            ctx.fillRect(tileX, tileY, tileSize, tileSize);
+          } else if (rand > 0.25) {
+            // Very subtle elevation changes
+            ctx.fillStyle = 'rgba(148, 163, 184, 0.2)';
             ctx.fillRect(tileX, tileY, tileSize, tileSize);
           }
         }
@@ -1260,16 +1270,73 @@ function PreviewContent() {
     });
 
     // Add tile layer based on theme
-    let tileLayer;
+    let tileLayer: L.TileLayer;
     if (theme === 'dark') {
       tileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '©OpenStreetMap contributors'
       });
     } else if (theme === 'accent') {
-      // Satellite view - use Esri satellite tiles
-      tileLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-        attribution: '©Esri',
-        maxZoom: 19
+      // Satellite view - try multiple satellite providers with fallbacks
+      console.log('Attempting to load satellite imagery...');
+      
+      // Try Google Satellite first (most reliable)
+      tileLayer = L.tileLayer('https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
+        attribution: '©Google',
+        maxZoom: 20
+      });
+      
+      // Add error handling for satellite tiles
+      tileLayer.on('tileerror', (e) => {
+        console.error('Google satellite tile error:', e);
+        
+        if (map.current) {
+          // Remove the failed layer
+          map.current.removeLayer(tileLayer);
+          
+          // Try Esri World Imagery as first fallback
+          console.log('Trying Esri World Imagery as fallback...');
+          const esriLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+            attribution: '©Esri',
+            maxZoom: 19
+          });
+          
+          esriLayer.addTo(map.current);
+          
+          // If Esri also fails, try Bing Aerial
+          esriLayer.on('tileerror', (e2) => {
+            console.error('Esri satellite tile error:', e2);
+            
+            if (map.current) {
+              map.current.removeLayer(esriLayer);
+              
+              console.log('Trying Bing Aerial as final fallback...');
+              const bingLayer = L.tileLayer('https://ecn.t3.tiles.virtualearth.net/tiles/a{q}.jpeg?g=1', {
+                attribution: '©Bing Maps',
+                maxZoom: 19,
+                subdomains: ['0', '1', '2', '3']
+              });
+              
+              bingLayer.addTo(map.current);
+              
+              // If all satellite providers fail, use OpenStreetMap with warning
+              bingLayer.on('tileerror', (e3) => {
+                console.error('All satellite providers failed, using OpenStreetMap fallback');
+                
+                if (map.current) {
+                  map.current.removeLayer(bingLayer);
+                  
+                  const fallbackLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '©OpenStreetMap contributors (satellite fallback)'
+                  });
+                  fallbackLayer.addTo(map.current);
+                  
+                  // Show user notification that satellite view failed
+                  console.warn('Satellite view unavailable - showing map view instead');
+                }
+              });
+            }
+          });
+        }
       });
     } else {
       // Light theme - use OpenStreetMap
