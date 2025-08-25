@@ -3,7 +3,6 @@
 import { Suspense, useEffect, useState, useRef } from 'react';
 import { useParams, useSearchParams } from 'next/navigation';
 import { getActivity, decodePolyline } from '@/lib/strava';
-import { Text, Loading, Note } from '@geist-ui/core';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 
@@ -149,16 +148,16 @@ function PreviewContent() {
 
   if (loading) {
     return (
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
-        <Loading>Loading activity...</Loading>
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-gray-600">Loading activity...</div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
-        <Note type="error">{error}</Note>
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-red-600 bg-red-50 border border-red-200 rounded-lg p-4">{error}</div>
       </div>
     );
   }
@@ -166,51 +165,39 @@ function PreviewContent() {
   return (
     <div className="min-h-screen bg-gray-50 flex">
       <div className="w-1/3 p-8 bg-white shadow-lg">
-        <Text h2 style={{ marginBottom: '24px' }}>{activity?.name}</Text>
+        <h1 className="text-2xl font-bold text-gray-900 mb-6">{activity?.name}</h1>
         
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+        <div className="space-y-6">
           <div>
-            <Text h5>Theme</Text>
-            <div style={{ display: 'flex', gap: '8px' }}>
+            <label className="block text-sm font-medium text-gray-700 mb-3">Theme</label>
+            <div className="flex gap-2">
               <button
                 onClick={() => setTheme('light')}
-                style={{ 
-                  padding: '6px 12px',
-                  border: '1px solid #eaeaea',
-                  borderRadius: '4px',
-                  background: theme === 'light' ? '#0070f3' : 'white',
-                  color: theme === 'light' ? 'white' : 'black',
-                  cursor: 'pointer',
-                  fontSize: '12px'
-                }}
+                className={`px-3 py-1.5 text-xs rounded ${
+                  theme === 'light' 
+                    ? 'bg-blue-600 text-white' 
+                    : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
+                }`}
               >
                 Light
               </button>
               <button
                 onClick={() => setTheme('dark')}
-                style={{ 
-                  padding: '6px 12px',
-                  border: '1px solid #eaeaea',
-                  borderRadius: '4px',
-                  background: theme === 'dark' ? '#0070f3' : 'white',
-                  color: theme === 'dark' ? 'white' : 'black',
-                  cursor: 'pointer',
-                  fontSize: '12px'
-                }}
+                className={`px-3 py-1.5 text-xs rounded ${
+                  theme === 'dark' 
+                    ? 'bg-blue-600 text-white' 
+                    : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
+                }`}
               >
                 Dark
               </button>
               <button
                 onClick={() => setTheme('accent')}
-                style={{ 
-                  padding: '6px 12px',
-                  border: '1px solid #eaeaea',
-                  borderRadius: '4px',
-                  background: theme === 'accent' ? '#0070f3' : 'white',
-                  color: theme === 'accent' ? 'white' : 'black',
-                  cursor: 'pointer',
-                  fontSize: '12px'
-                }}
+                className={`px-3 py-1.5 text-xs rounded ${
+                  theme === 'accent' 
+                    ? 'bg-blue-600 text-white' 
+                    : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
+                }`}
               >
                 Accent
               </button>
@@ -218,52 +205,30 @@ function PreviewContent() {
           </div>
 
           <div>
-            <Text h5>Title</Text>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Title</label>
             <input
               type="text"
               placeholder="Enter title..."
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              style={{
-                width: '100%',
-                padding: '8px 12px',
-                border: '1px solid #eaeaea',
-                borderRadius: '4px',
-                fontSize: '14px'
-              }}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             />
           </div>
 
           <div>
-            <Text h5>Subtitle</Text>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Subtitle</label>
             <input
               type="text"
               placeholder="Enter subtitle..."
               value={subtitle}
               onChange={(e) => setSubtitle(e.target.value)}
-              style={{
-                width: '100%',
-                padding: '8px 12px',
-                border: '1px solid #eaeaea',
-                borderRadius: '4px',
-                fontSize: '14px'
-              }}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             />
           </div>
 
           <button
             onClick={handleRenderPrint}
-            style={{ 
-              width: '100%',
-              padding: '12px 24px',
-              border: '1px solid #eaeaea',
-              borderRadius: '5px',
-              background: '#0070f3',
-              color: 'white',
-              cursor: 'pointer',
-              fontSize: '14px',
-              fontWeight: '500'
-            }}
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg transition-colors duration-200"
           >
             Render print file
           </button>
