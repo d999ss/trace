@@ -3,7 +3,7 @@
 import { Suspense, useEffect, useState, useRef } from 'react';
 import { useParams, useSearchParams } from 'next/navigation';
 import { getActivity, decodePolyline } from '@/lib/strava';
-import { Input, Text, Loading, Note } from '@geist-ui/core';
+import { Text, Loading, Note } from '@geist-ui/core';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 
@@ -219,21 +219,35 @@ function PreviewContent() {
 
           <div>
             <Text h5>Title</Text>
-            <Input
+            <input
+              type="text"
               placeholder="Enter title..."
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              width="100%"
+              style={{
+                width: '100%',
+                padding: '8px 12px',
+                border: '1px solid #eaeaea',
+                borderRadius: '4px',
+                fontSize: '14px'
+              }}
             />
           </div>
 
           <div>
             <Text h5>Subtitle</Text>
-            <Input
+            <input
+              type="text"
               placeholder="Enter subtitle..."
               value={subtitle}
               onChange={(e) => setSubtitle(e.target.value)}
-              width="100%"
+              style={{
+                width: '100%',
+                padding: '8px 12px',
+                border: '1px solid #eaeaea',
+                borderRadius: '4px',
+                fontSize: '14px'
+              }}
             />
           </div>
 
