@@ -96,18 +96,45 @@ function PreviewContent() {
 
     // Add tile layer based on theme
     const tileLayer = theme === 'dark' 
-      ? L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-          attribution: '©OpenStreetMap, ©CartoDB'
+      ? L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
+          attribution: '©OpenStreetMap contributors, ©CartoDB',
+          maxZoom: 19
         })
       : theme === 'accent'
       ? L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-          attribution: '©Esri'
+          attribution: '©Esri',
+          maxZoom: 19
         })
       : L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-          attribution: '©OpenStreetMap contributors'
+          attribution: '©OpenStreetMap contributors',
+          maxZoom: 19
         });
 
+    console.log('Adding tile layer for theme:', theme);
     tileLayer.addTo(map.current);
+
+    // Add fallback tile layer in case the main one fails
+    const fallbackTile = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+      attribution: '©OpenStreetMap contributors, ©CartoDB',
+      maxZoom: 19
+    });
+
+    // Try to load fallback if main tiles fail
+    setTimeout(() => {
+      if (map.current && !map.current.hasLayer(tileLayer)) {
+        console.log('Main tiles failed, loading fallback');
+        fallbackTile.addTo(map.current);
+      }
+    }, 3000);
+
+    // Add error handling for tile loading
+    tileLayer.on('tileerror', (e) => {
+      console.error('Tile loading error:', e);
+      if (map.current && !map.current.hasLayer(fallbackTile)) {
+        console.log('Loading fallback tiles due to error');
+        fallbackTile.addTo(map.current);
+      }
+    });
 
     // Create polyline from coordinates
     const polyline = L.polyline(coordinates, {
