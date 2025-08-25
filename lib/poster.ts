@@ -18,13 +18,9 @@ export async function generatePoster({
   const height = 7200;
   const margin = 400;
   
-  // Calculate bounds
+  // Calculate bounds (for future use)
   const lngs = coords.map(c => c[0]);
   const lats = coords.map(c => c[1]);
-  const minLng = Math.min(...lngs);
-  const maxLng = Math.max(...lngs);
-  const minLat = Math.min(...lats);
-  const maxLat = Math.max(...lats);
   
   // Create Mercator projection
   const projection = geoMercator()
