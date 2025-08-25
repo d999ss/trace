@@ -3,6 +3,7 @@
 import { Suspense, useEffect, useState, useRef } from 'react';
 import { useParams, useSearchParams } from 'next/navigation';
 import { getActivity, decodePolyline } from '@/lib/strava';
+import { createCheckout, updateCheckoutAttributes } from '@/lib/shopify';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 
@@ -146,6 +147,36 @@ function PreviewContent() {
     }
   };
 
+  const handleBuyPrint = async () => {
+    try {
+      if (!process.env.NEXT_PUBLIC_SHOPIFY_DOMAIN || !process.env.NEXT_PUBLIC_SHOPIFY_STOREFRONT_ACCESS_TOKEN) {
+        alert('Shopify is not configured yet. Please use the render button to download your print file.');
+        return;
+      }
+
+      // Create checkout with the print product
+      // For now, we'll use a placeholder product ID - this should be replaced with actual product ID
+      const PRINT_PRODUCT_VARIANT_ID = 'YOUR_PRODUCT_VARIANT_ID';
+      
+      const checkout = await createCheckout(PRINT_PRODUCT_VARIANT_ID, 1);
+      
+      // Add custom attributes for the design
+      await updateCheckoutAttributes(checkout.id, [
+        { key: 'activity_id', value: params.id as string },
+        { key: 'theme', value: theme },
+        { key: 'title', value: title },
+        { key: 'subtitle', value: subtitle },
+        { key: 'coordinates', value: JSON.stringify(coordinates) }
+      ]);
+
+      // Redirect to Shopify checkout
+      window.location.href = checkout.webUrl;
+    } catch (err) {
+      console.error('Failed to create checkout:', err);
+      alert('Failed to create checkout. Please try again.');
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -226,12 +257,21 @@ function PreviewContent() {
             />
           </div>
 
-          <button
-            onClick={handleRenderPrint}
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg transition-colors duration-200"
-          >
-            Render print file
-          </button>
+          <div className="space-y-3">
+            <button
+              onClick={handleRenderPrint}
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg transition-colors duration-200"
+            >
+              Download SVG
+            </button>
+            
+            <button
+              onClick={handleBuyPrint}
+              className="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-3 px-4 rounded-lg transition-colors duration-200"
+            >
+              Buy Print ($25)
+            </button>
+          </div>
         </div>
       </div>
 
