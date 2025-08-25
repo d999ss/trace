@@ -548,7 +548,7 @@ function PreviewContent() {
                 </button>
               </div>
               <div className="text-xs text-gray-500 mb-3">
-                Your poster has been generated! Click "View Full Size" to see the complete design.
+                Your poster has been generated! Click &quot;View Full Size&quot; to see the complete design.
               </div>
               <img 
                 src={posterPreview} 
