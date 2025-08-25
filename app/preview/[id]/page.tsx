@@ -90,54 +90,33 @@ function PreviewContent() {
 
     // Create map
     map.current = L.map(mapContainer.current, {
-      zoomControl: false,
-      attributionControl: false
+      center: [coordinates[0][1], coordinates[0][0]], // Leaflet expects [lat, lng]
+      zoom: 13, // Initial zoom level
+      zoomControl: false
     });
 
     // Add tile layer based on theme
     const tileLayer = theme === 'dark' 
-      ? L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
-          attribution: '©OpenStreetMap contributors, ©CartoDB',
-          maxZoom: 19
+      ? L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          attribution: '©OpenStreetMap contributors'
         })
       : theme === 'accent'
       ? L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-          attribution: '©Esri',
-          maxZoom: 19
+          attribution: '©Esri'
         })
       : L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-          attribution: '©OpenStreetMap contributors',
-          maxZoom: 19
+          attribution: '©OpenStreetMap contributors'
         });
 
-    console.log('Adding tile layer for theme:', theme);
     tileLayer.addTo(map.current);
-
-    // Add fallback tile layer in case the main one fails
-    const fallbackTile = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-      attribution: '©OpenStreetMap contributors, ©CartoDB',
-      maxZoom: 19
-    });
-
-    // Try to load fallback if main tiles fail
-    setTimeout(() => {
-      if (map.current && !map.current.hasLayer(tileLayer)) {
-        console.log('Main tiles failed, loading fallback');
-        fallbackTile.addTo(map.current);
-      }
-    }, 3000);
 
     // Add error handling for tile loading
     tileLayer.on('tileerror', (e) => {
-      console.error('Tile loading error:', e);
-      if (map.current && !map.current.hasLayer(fallbackTile)) {
-        console.log('Loading fallback tiles due to error');
-        fallbackTile.addTo(map.current);
-      }
+      console.error('Map tile loading error:', e);
     });
 
     // Create polyline from coordinates
-    const polyline = L.polyline(coordinates, {
+    const polyline = L.polyline(coordinates.map(coord => [coord[1], coord[0]]), {
       color: theme === 'dark' ? '#ffffff' : '#000000',
       weight: 3,
       opacity: 0.8
@@ -146,7 +125,8 @@ function PreviewContent() {
     polyline.addTo(map.current);
 
     // Fit map to polyline bounds
-    map.current.fitBounds(polyline.getBounds(), { padding: [20, 20] });
+    const bounds = polyline.getBounds();
+    map.current.fitBounds(bounds, { padding: [20, 20] });
 
     // Add zoom control
     L.control.zoom({ position: 'bottomright' }).addTo(map.current);
