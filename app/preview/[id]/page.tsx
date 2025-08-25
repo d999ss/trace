@@ -4,8 +4,16 @@ import { Suspense, useEffect, useState, useRef } from 'react';
 import { useParams, useSearchParams } from 'next/navigation';
 import { getActivity, decodePolyline } from '@/lib/strava';
 import { createCheckout, updateCheckoutAttributes } from '@/lib/shopify';
-import mapboxgl from 'mapbox-gl';
-import 'mapbox-gl/dist/mapbox-gl.css';
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
+
+// Fix for Leaflet marker icons in Next.js
+delete (L.Icon.Default.prototype as any)._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
+  iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
+  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+});
 
 type Theme = 'light' | 'dark' | 'accent';
 
@@ -13,7 +21,7 @@ function PreviewContent() {
   const params = useParams();
   const searchParams = useSearchParams();
   const mapContainer = useRef<HTMLDivElement>(null);
-  const map = useRef<mapboxgl.Map | null>(null);
+  const map = useRef<L.Map | null>(null);
   
   const [activity, setActivity] = useState<{name?: string; map?: {summary_polyline?: string}} | null>(null);
   const [loading, setLoading] = useState(true);
@@ -70,78 +78,51 @@ function PreviewContent() {
       return;
     }
 
-    const mapboxToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
-    if (!mapboxToken) {
-      console.error('Mapbox token is missing!');
-      setError('Mapbox configuration is missing');
-      return;
-    }
-
-    console.log('Initializing map with:', { 
+    console.log('Initializing Leaflet map with:', { 
       coordinates: coordinates.length, 
-      theme, 
-      hasToken: !!mapboxToken 
+      theme
     });
-
-    mapboxgl.accessToken = mapboxToken;
-
-    const mapStyle = theme === 'dark' 
-      ? 'mapbox://styles/mapbox/dark-v11'
-      : theme === 'accent'
-      ? 'mapbox://styles/mapbox/satellite-v9'
-      : 'mapbox://styles/mapbox/light-v11';
 
     if (map.current) {
-      map.current.setStyle(mapStyle);
-      return;
+      map.current.remove();
+      map.current = null;
     }
 
-    const bounds = new mapboxgl.LngLatBounds();
-    coordinates.forEach(coord => bounds.extend(coord as [number, number]));
-
-    console.log('Creating map with bounds:', bounds);
-
-    map.current = new mapboxgl.Map({
-      container: mapContainer.current,
-      style: mapStyle,
-      bounds: bounds,
-      fitBoundsOptions: { padding: 50 },
-      interactive: false
+    // Create map
+    map.current = L.map(mapContainer.current, {
+      zoomControl: false,
+      attributionControl: false
     });
 
-    map.current.on('load', () => {
-      console.log('Map loaded, adding route layer');
-      map.current!.addSource('route', {
-        type: 'geojson',
-        data: {
-          type: 'Feature',
-          properties: {},
-          geometry: {
-            type: 'LineString',
-            coordinates: coordinates
-          }
-        }
-      });
+    // Add tile layer based on theme
+    const tileLayer = theme === 'dark' 
+      ? L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+          attribution: '©OpenStreetMap, ©CartoDB'
+        })
+      : theme === 'accent'
+      ? L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+          attribution: '©Esri'
+        })
+      : L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          attribution: '©OpenStreetMap contributors'
+        });
 
-      map.current!.addLayer({
-        id: 'route',
-        type: 'line',
-        source: 'route',
-        layout: {
-          'line-join': 'round',
-          'line-cap': 'round'
-        },
-        paint: {
-          'line-color': theme === 'dark' ? '#ffffff' : '#000000',
-          'line-width': 3
-        }
-      });
+    tileLayer.addTo(map.current);
+
+    // Create polyline from coordinates
+    const polyline = L.polyline(coordinates, {
+      color: theme === 'dark' ? '#ffffff' : '#000000',
+      weight: 3,
+      opacity: 0.8
     });
 
-    map.current.on('error', (e) => {
-      console.error('Mapbox error:', e);
-      setError('Failed to load map');
-    });
+    polyline.addTo(map.current);
+
+    // Fit map to polyline bounds
+    map.current.fitBounds(polyline.getBounds(), { padding: [20, 20] });
+
+    // Add zoom control
+    L.control.zoom({ position: 'bottomright' }).addTo(map.current);
 
     return () => {
       if (map.current) {
