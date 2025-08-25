@@ -1,31 +1,20 @@
 import Link from 'next/link';
-import { Page, Text, Spacer } from '@geist-ui/core';
 
 export default function Home() {
   return (
-    <Page>
-      <Page.Content>
-        <div style={{ textAlign: 'center', padding: '80px 20px' }}>
-          <Text h1>Trace Prints</Text>
-          <Spacer h={1} />
-          <Text p>Transform your Strava activities into beautiful prints</Text>
-          <Spacer h={2} />
-          <Link href="/api/strava/auth">
-            <button style={{ 
-              padding: '12px 24px', 
-              border: '1px solid #eaeaea', 
-              borderRadius: '5px', 
-              background: '#0070f3', 
-              color: 'white',
-              cursor: 'pointer',
-              fontSize: '16px',
-              fontWeight: '500'
-            }}>
-              Connect with Strava
-            </button>
-          </Link>
-        </div>
-      </Page.Content>
-    </Page>
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="text-center max-w-md mx-auto px-4">
+        <h1 className="text-4xl font-bold text-gray-900 mb-4">Trace Prints</h1>
+        <p className="text-lg text-gray-600 mb-8">
+          Transform your Strava activities into beautiful prints
+        </p>
+        <Link 
+          href="/api/strava/auth"
+          className="inline-block bg-orange-600 hover:bg-orange-700 text-white font-medium py-3 px-6 rounded-lg transition-colors duration-200"
+        >
+          Connect with Strava
+        </Link>
+      </div>
+    </div>
   );
 }
