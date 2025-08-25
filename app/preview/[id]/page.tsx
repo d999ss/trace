@@ -3,6 +3,7 @@
 import { Suspense, useEffect, useState, useRef } from 'react';
 import { useParams, useSearchParams } from 'next/navigation';
 import { getActivity, decodePolyline } from '@/lib/strava';
+import { Button, ButtonGroup, Input, Text, Loading, Note } from '@geist-ui/core';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 
@@ -148,16 +149,16 @@ function PreviewContent() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-gray-600">Loading activity...</div>
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
+        <Loading size="large">Loading activity...</Loading>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-red-600">{error}</div>
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
+        <Note type="error">{error}</Note>
       </div>
     );
   }
@@ -165,67 +166,64 @@ function PreviewContent() {
   return (
     <div className="min-h-screen bg-gray-50 flex">
       <div className="w-1/3 p-8 bg-white shadow-lg">
-        <h1 className="text-2xl font-bold mb-4">{activity?.name}</h1>
+        <Text h2 style={{ marginBottom: '24px' }}>{activity?.name}</Text>
         
-        <div className="space-y-4">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
           <div>
-            <label className="block text-sm font-medium mb-2">Theme</label>
-            <div className="space-x-2">
-              <button
+            <Text h5>Theme</Text>
+            <ButtonGroup>
+              <Button
+                size="small"
+                type={theme === 'light' ? 'success' : 'default'}
                 onClick={() => setTheme('light')}
-                className={`px-4 py-2 rounded ${theme === 'light' ? 'bg-blue-600 text-white' : 'bg-gray-200'}`}
               >
                 Light
-              </button>
-              <button
+              </Button>
+              <Button
+                size="small"
+                type={theme === 'dark' ? 'success' : 'default'}
                 onClick={() => setTheme('dark')}
-                className={`px-4 py-2 rounded ${theme === 'dark' ? 'bg-blue-600 text-white' : 'bg-gray-200'}`}
               >
                 Dark
-              </button>
-              <button
+              </Button>
+              <Button
+                size="small"
+                type={theme === 'accent' ? 'success' : 'default'}
                 onClick={() => setTheme('accent')}
-                className={`px-4 py-2 rounded ${theme === 'accent' ? 'bg-blue-600 text-white' : 'bg-gray-200'}`}
               >
                 Accent
-              </button>
-            </div>
+              </Button>
+            </ButtonGroup>
           </div>
 
           <div>
-            <label htmlFor="title" className="block text-sm font-medium mb-2">
-              Title
-            </label>
-            <input
-              id="title"
-              type="text"
+            <Text h5>Title</Text>
+            <Input
+              placeholder="Enter title..."
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className="w-full px-3 py-2 border rounded"
-              placeholder="Enter title..."
+              width="100%"
             />
           </div>
 
           <div>
-            <label htmlFor="subtitle" className="block text-sm font-medium mb-2">
-              Subtitle
-            </label>
-            <input
-              id="subtitle"
-              type="text"
+            <Text h5>Subtitle</Text>
+            <Input
+              placeholder="Enter subtitle..."
               value={subtitle}
               onChange={(e) => setSubtitle(e.target.value)}
-              className="w-full px-3 py-2 border rounded"
-              placeholder="Enter subtitle..."
+              width="100%"
             />
           </div>
 
-          <button
+          <Button
             onClick={handleRenderPrint}
-            className="w-full bg-blue-600 text-white py-3 rounded hover:bg-blue-700 transition font-medium"
+            type="success"
+            width="100%"
+            size="large"
           >
             Render print file
-          </button>
+          </Button>
         </div>
       </div>
 

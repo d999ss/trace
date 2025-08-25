@@ -4,6 +4,7 @@ import { Suspense, useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { getActivities } from '@/lib/strava';
 import Link from 'next/link';
+import { Page, Card, Text, Button, Loading, Note, Spacer } from '@geist-ui/core';
 
 interface Activity {
   id: number;
@@ -46,48 +47,58 @@ function DashboardContent() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-gray-600">Loading activities...</div>
-      </div>
+      <Page>
+        <Page.Content>
+          <div style={{ textAlign: 'center', padding: '100px 0' }}>
+            <Loading size="large">Loading activities...</Loading>
+          </div>
+        </Page.Content>
+      </Page>
     );
   }
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-red-600">{error}</div>
-      </div>
+      <Page>
+        <Page.Content>
+          <div style={{ textAlign: 'center', padding: '100px 0' }}>
+            <Note type="error">{error}</Note>
+          </div>
+        </Page.Content>
+      </Page>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-6xl mx-auto px-4">
-        <h1 className="text-3xl font-bold mb-8">Your Activities</h1>
+    <Page>
+      <Page.Content>
+        <Text h1>Your Activities</Text>
+        <Spacer h={2} />
         
-        <div className="grid gap-4">
+        <div style={{ display: 'grid', gap: '16px' }}>
           {activities.map((activity) => (
-            <div key={activity.id} className="bg-white rounded-lg shadow p-6 flex justify-between items-center">
-              <div>
-                <h2 className="text-xl font-semibold">{activity.name}</h2>
-                <p className="text-gray-600">
-                  {activity.type} • {(activity.distance / 1000).toFixed(2)} km • {Math.floor(activity.moving_time / 60)} min
-                </p>
-                <p className="text-sm text-gray-500">
-                  {new Date(activity.start_date).toLocaleDateString()}
-                </p>
-              </div>
-              <Link
-                href={`/preview/${activity.id}?access_token=${searchParams.get('access_token')}`}
-                className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
-              >
-                Preview
-              </Link>
-            </div>
+            <Card key={activity.id}>
+              <Card.Content>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div>
+                    <Text h4 margin={0}>{activity.name}</Text>
+                    <Text p margin="8px 0 4px 0">
+                      {activity.type} • {(activity.distance / 1000).toFixed(2)} km • {Math.floor(activity.moving_time / 60)} min
+                    </Text>
+                    <Text small type="secondary">
+                      {new Date(activity.start_date).toLocaleDateString()}
+                    </Text>
+                  </div>
+                  <Link href={`/preview/${activity.id}?access_token=${searchParams.get('access_token')}`}>
+                    <Button type="secondary">Preview</Button>
+                  </Link>
+                </div>
+              </Card.Content>
+            </Card>
           ))}
         </div>
-      </div>
-    </div>
+      </Page.Content>
+    </Page>
   );
 }
 
