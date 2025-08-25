@@ -77,10 +77,10 @@ function PreviewContent() {
     const scaleFactor = 1.0; // This gives us full-size proportions for the preview
 
     if (posterStyle === 'art-print') {
-      console.log('Rendering Art Print style');
+      console.log('Rendering Art Print style with theme:', theme);
       renderArtPrintPreview(ctx, previewWidth, previewHeight, scaleFactor);
     } else {
-      console.log('Rendering Classic style');
+      console.log('Rendering Classic style with theme:', theme);
       renderClassicPreview(ctx, previewWidth, previewHeight, scaleFactor);
     }
     
@@ -1042,6 +1042,8 @@ function PreviewContent() {
 
   // Function to draw enhanced map tiles for terrain
   const drawEnhancedMapTiles = (ctx: CanvasRenderingContext2D, x: number, y: number, width: number, height: number, theme: string) => {
+    console.log('drawEnhancedMapTiles called with theme:', theme);
+    
     const tileSize = 12; // Even smaller tiles for more detail
     
     // Base terrain colors based on theme
@@ -1665,7 +1667,10 @@ function PreviewContent() {
                           name="theme"
                           value="accent"
                           checked={theme === 'accent'}
-                          onChange={(e) => setTheme(e.target.value as 'light' | 'dark' | 'accent')}
+                          onChange={(e) => {
+                            console.log('Theme changed to:', e.target.value);
+                            setTheme(e.target.value as 'light' | 'dark' | 'accent');
+                          }}
                           className="text-blue-600 focus:ring-blue-500"
                         />
                         <span className="text-sm text-gray-700">Satellite</span>
