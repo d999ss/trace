@@ -36,7 +36,7 @@ export async function createCheckout(variantId: string, quantity: number = 1) {
   }
 }
 
-export async function updateCheckoutAttributes(checkoutId: string, customAttributes: any[]) {
+export async function updateCheckoutAttributes(checkoutId: string, customAttributes: Array<{key: string, value: string}>) {
   try {
     const checkout = await client.checkout.updateAttributes(checkoutId, {
       customAttributes

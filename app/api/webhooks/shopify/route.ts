@@ -53,7 +53,7 @@ export async function POST(request: NextRequest) {
   }
 }
 
-async function handleOrderPaid(order: any) {
+async function handleOrderPaid(order: Record<string, unknown>) {
   console.log('Processing paid order:', order.id);
   
   // Extract custom attributes from the order
@@ -109,7 +109,7 @@ async function handleOrderPaid(order: any) {
   console.log('Order processed successfully for activity:', activityId);
 }
 
-async function handleOrderCancelled(order: any) {
+async function handleOrderCancelled(order: Record<string, unknown>) {
   console.log('Processing cancelled order:', order.id);
   
   // TODO: Cancel any pending Printify orders
