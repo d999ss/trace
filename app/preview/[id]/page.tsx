@@ -14,7 +14,7 @@ export default function Preview() {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
   
-  const [activity, setActivity] = useState<object | null>(null);
+  const [activity, setActivity] = useState<{name?: string; map?: {summary_polyline?: string}} | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [theme, setTheme] = useState<Theme>('light');
