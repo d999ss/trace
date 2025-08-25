@@ -1,6 +1,6 @@
 'use client';
 
-import { Suspense, useEffect, useState, useRef } from 'react';
+import { Suspense, useEffect, useState, useRef, useCallback } from 'react';
 import { useParams, useSearchParams } from 'next/navigation';
 import { getActivity, decodePolyline } from '@/lib/strava';
 import { createCheckout, updateCheckoutAttributes } from '@/lib/shopify';
@@ -32,8 +32,109 @@ function PreviewContent() {
   const [coordinates, setCoordinates] = useState<[number, number][]>([]);
   const [activeTab, setActiveTab] = useState<'routes' | 'style' | 'text' | 'size'>('routes');
   const [selectedSize, setSelectedSize] = useState('20x24');
-  const [posterPreview, setPosterPreview] = useState<string | null>(null);
-  const [showPreview, setShowPreview] = useState(false);
+
+  // Function to render poster in real-time
+  const renderPosterPreview = useCallback(() => {
+    if (!coordinates.length) return;
+    
+    const canvas = document.getElementById('posterCanvas') as HTMLCanvasElement;
+    if (!canvas) return;
+    
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    // Set canvas dimensions for preview (smaller than full poster)
+    const previewWidth = 400;
+    const previewHeight = 225;
+    canvas.width = previewWidth;
+    canvas.height = previewHeight;
+
+    // Calculate scale factor for preview
+    const scaleFactor = previewWidth / (2400 * (selectedSize === '16x20' ? 1 : selectedSize === '20x24' ? 1.25 : 1.5));
+
+    // Fill background
+    ctx.fillStyle = theme === 'dark' ? '#1a1a1a' : theme === 'accent' ? '#f8f9fa' : '#ffffff';
+    ctx.fillRect(0, 0, previewWidth, previewHeight);
+
+    // Add title
+    if (title) {
+      ctx.fillStyle = theme === 'dark' ? '#ffffff' : '#000000';
+      ctx.font = `bold ${Math.floor(72 * scaleFactor)}px Arial, sans-serif`;
+      ctx.textAlign = 'center';
+      ctx.fillText(title, previewWidth / 2, Math.floor(120 * scaleFactor));
+    }
+
+    // Add subtitle
+    if (subtitle) {
+      ctx.fillStyle = theme === 'dark' ? '#cccccc' : '#666666';
+      ctx.font = `${Math.floor(36 * scaleFactor)}px Arial, sans-serif`;
+      ctx.textAlign = 'center';
+      ctx.fillText(subtitle, previewWidth / 2, Math.floor(180 * scaleFactor));
+    }
+
+    // Add activity name
+    ctx.fillStyle = theme === 'dark' ? '#888888' : '#333333';
+    ctx.font = `${Math.floor(24 * scaleFactor)}px Arial, sans-serif`;
+    ctx.textAlign = 'center';
+    ctx.fillText(activity?.name || 'Strava Activity', previewWidth / 2, Math.floor(220 * scaleFactor));
+
+    // Add activity statistics
+    const statsY = Math.floor(260 * scaleFactor);
+    ctx.fillStyle = theme === 'dark' ? '#666666' : '#999999';
+    ctx.font = `${Math.floor(18 * scaleFactor)}px Arial, sans-serif`;
+    ctx.textAlign = 'center';
+    
+    const distance = '8.85 mi';
+    const duration = '1:23:45';
+    const avgSpeed = '6.4 mph';
+    
+    ctx.fillText(`${distance} • ${duration} • ${avgSpeed}`, previewWidth / 2, statsY);
+
+    // Add map area background
+    const mapAreaX = Math.floor(100 * scaleFactor);
+    const mapAreaY = Math.floor(320 * scaleFactor);
+    const mapAreaWidth = previewWidth - Math.floor(200 * scaleFactor);
+    const mapAreaHeight = previewHeight - Math.floor(500 * scaleFactor);
+
+    ctx.fillStyle = theme === 'dark' ? '#2a2a2a' : '#f0f0f0';
+    ctx.fillRect(mapAreaX, mapAreaY, mapAreaWidth, mapAreaHeight);
+
+    // Add route visualization
+    ctx.strokeStyle = theme === 'dark' ? '#ffffff' : '#000000';
+    ctx.lineWidth = Math.max(2, Math.floor(4 * scaleFactor));
+    ctx.beginPath();
+    
+    const routeStartX = mapAreaX + Math.floor(100 * scaleFactor);
+    const routeStartY = mapAreaY + (mapAreaHeight / 2);
+    const routeEndX = mapAreaX + mapAreaWidth - Math.floor(100 * scaleFactor);
+    const routeEndY = mapAreaY + (mapAreaHeight / 2);
+    
+    ctx.moveTo(routeStartX, routeStartY);
+    ctx.quadraticCurveTo(
+      (routeStartX + routeEndX) / 2, 
+      routeStartY - Math.floor(100 * scaleFactor), 
+      routeEndX, 
+      routeEndY
+    );
+    ctx.stroke();
+
+    // Add route points indicator
+    ctx.fillStyle = theme === 'dark' ? '#ffffff' : '#000000';
+    ctx.font = `${Math.floor(16 * scaleFactor)}px Arial, sans-serif`;
+    ctx.textAlign = 'center';
+    ctx.fillText(`${coordinates.length} GPS points`, previewWidth / 2, mapAreaY + mapAreaHeight + Math.floor(40 * scaleFactor));
+
+    // Add footer
+    ctx.fillStyle = theme === 'dark' ? '#666666' : '#999999';
+    ctx.font = `${Math.floor(16 * scaleFactor)}px Arial, sans-serif`;
+    ctx.textAlign = 'center';
+    ctx.fillText(`${selectedSize.toUpperCase()} • Trace Prints`, previewWidth / 2, previewHeight - Math.floor(50 * scaleFactor));
+  }, [coordinates, title, subtitle, theme, selectedSize, activity]);
+
+  // Render poster preview whenever relevant state changes
+  useEffect(() => {
+    renderPosterPreview();
+  }, [renderPosterPreview]);
 
   useEffect(() => {
     const accessToken = searchParams.get('access_token');
@@ -240,8 +341,8 @@ function PreviewContent() {
 
       // Create preview image
       const previewUrl = canvas.toDataURL('image/png');
-      setPosterPreview(previewUrl);
-      setShowPreview(true);
+      // setPosterPreview(previewUrl); // Removed
+      // setShowPreview(true); // Removed
 
       // Convert to blob and download
       canvas.toBlob((blob) => {
@@ -521,7 +622,7 @@ function PreviewContent() {
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
-              {posterPreview ? 'Download Poster Again' : 'Generate & Download Poster'}
+              Download High-Resolution Poster
             </button>
             
             <button
@@ -536,79 +637,9 @@ function PreviewContent() {
           </div>
           
           {/* Poster Preview Section */}
-          {posterPreview && (
-            <div className="mt-6 p-4 bg-gray-50 rounded-lg">
-              <div className="flex items-center justify-between mb-3">
-                <h4 className="text-sm font-medium text-gray-700">Poster Preview</h4>
-                <button
-                  onClick={() => setShowPreview(true)}
-                  className="text-sm text-blue-600 hover:text-blue-700 font-medium"
-                >
-                  View Full Size
-                </button>
-              </div>
-              <div className="text-xs text-gray-500 mb-3">
-                Your poster has been generated! Click &quot;View Full Size&quot; to see the complete design.
-              </div>
-              <img 
-                src={posterPreview} 
-                alt="Poster Preview" 
-                className="w-full h-32 object-cover rounded border border-gray-200"
-              />
-            </div>
-          )}
+          {/* Removed Poster Preview Section */}
         </div>
       </div>
-
-      {/* Poster Preview Modal */}
-      {showPreview && posterPreview && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg max-w-4xl max-h-[90vh] overflow-auto">
-            <div className="p-4 border-b border-gray-200 flex items-center justify-between">
-              <h3 className="text-lg font-medium text-gray-900">Poster Preview - {selectedSize}</h3>
-              <button
-                onClick={() => setShowPreview(false)}
-                className="text-gray-400 hover:text-gray-600"
-              >
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L6 6l12 12" />
-                </svg>
-              </button>
-            </div>
-            <div className="p-4">
-              <img 
-                src={posterPreview} 
-                alt="Poster Preview" 
-                className="w-full h-auto rounded"
-              />
-            </div>
-            <div className="p-4 border-t border-gray-200 bg-gray-50">
-              <div className="text-sm text-gray-600 mb-3">
-                Your poster has been downloaded. The file includes your custom title, subtitle, and route visualization.
-              </div>
-              <div className="flex gap-3">
-                <button
-                  onClick={() => {
-                    const a = document.createElement('a');
-                    a.href = posterPreview;
-                    a.download = `trace-poster-${selectedSize}-${params.id}.png`;
-                    a.click();
-                  }}
-                  className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded transition-colors"
-                >
-                  Download Again
-                </button>
-                <button
-                  onClick={() => setShowPreview(false)}
-                  className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-2 px-4 rounded transition-colors"
-                >
-                  Close
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
 
       <div className="flex-1 relative bg-gray-100">
         {loading ? (
@@ -619,7 +650,42 @@ function PreviewContent() {
             </div>
           </div>
         ) : coordinates.length > 0 ? (
-          <div ref={mapContainer} className="absolute inset-0" />
+          <div className="absolute inset-0 flex">
+            {/* Map on the left */}
+            <div className="w-1/2 relative">
+              <div ref={mapContainer} className="absolute inset-0" />
+            </div>
+            
+            {/* Real-time poster preview on the right */}
+            <div className="w-1/2 bg-white p-4 overflow-auto">
+              <div className="text-center mb-4">
+                <h3 className="text-lg font-medium text-gray-900 mb-2">Live Poster Preview</h3>
+                <p className="text-sm text-gray-600">Your poster updates in real-time as you customize</p>
+              </div>
+              
+              {/* Poster Canvas */}
+              <div className="bg-gray-50 rounded-lg p-4 mb-4">
+                <canvas 
+                  id="posterCanvas"
+                  className="w-full h-auto border border-gray-200 rounded"
+                  style={{ maxHeight: '500px' }}
+                />
+              </div>
+              
+              {/* Poster Info */}
+              <div className="text-center text-sm text-gray-600">
+                <div className="mb-2">
+                  <strong>Size:</strong> {selectedSize === '16x20' ? '16" x 20"' : selectedSize === '20x24' ? '20" x 24"' : '24" x 36"'}
+                </div>
+                <div className="mb-2">
+                  <strong>Theme:</strong> {theme.charAt(0).toUpperCase() + theme.slice(1)}
+                </div>
+                <div>
+                  <strong>GPS Points:</strong> {coordinates.length}
+                </div>
+              </div>
+            </div>
+          </div>
         ) : (
           <div className="absolute inset-0 flex items-center justify-center">
             <div className="text-center max-w-md mx-auto px-4">
@@ -637,7 +703,7 @@ function PreviewContent() {
         
         {/* Map Controls Overlay */}
         {coordinates.length > 0 && (
-          <div className="absolute top-4 right-4 bg-white rounded-lg shadow-lg p-2">
+          <div className="absolute top-4 left-4 bg-white rounded-lg shadow-lg p-2">
             <div className="text-xs text-gray-600 mb-2">Map Style: {theme.charAt(0).toUpperCase() + theme.slice(1)}</div>
             <div className="text-xs text-gray-500">Route points: {coordinates.length}</div>
           </div>
