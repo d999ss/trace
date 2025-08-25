@@ -50,23 +50,18 @@ function PreviewContent() {
     canvas.width = previewWidth;
     canvas.height = previewHeight;
 
-    // Use a fixed scale factor for preview to ensure proper sizing
-    const scaleFactor = 0.2; // This gives us good proportions for the 400x600 preview
-
-    console.log('Rendering poster preview:', { posterStyle, theme, selectedSize, coordinates: coordinates.length });
+    // Use a proper scale factor for preview to ensure good proportions
+    const scaleFactor = 1.0; // This gives us full-size proportions for the 400x600 preview
 
     if (posterStyle === 'art-print') {
-      console.log('Calling renderArtPrintPreview');
       renderArtPrintPreview(ctx, previewWidth, previewHeight, scaleFactor);
     } else {
-      console.log('Calling renderClassicPreview');
       renderClassicPreview(ctx, previewWidth, previewHeight, scaleFactor);
     }
   }, [coordinates, title, subtitle, theme, selectedSize, activity, posterStyle]);
 
   // Function to render classic poster preview
   const renderClassicPreview = (ctx: CanvasRenderingContext2D, previewWidth: number, previewHeight: number, scaleFactor: number) => {
-    console.log('renderClassicPreview called with:', { previewWidth, previewHeight, scaleFactor });
     
     // Fill background with pure white for Apple-like framing
     ctx.fillStyle = '#ffffff';
@@ -76,8 +71,6 @@ function PreviewContent() {
     const topMargin = Math.floor(80 * scaleFactor);
     const titleY = topMargin;
     const subtitleY = titleY + Math.floor(60 * scaleFactor);
-
-    console.log('Drawing title at:', { topMargin, titleY, subtitleY });
 
     // Title: Bold, all caps, instantly recognizable (always show something)
     const displayTitle = title || 'YOUR ACTIVITY';
