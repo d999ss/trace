@@ -21,7 +21,7 @@ export async function POST(request: NextRequest) {
       subtitle
     });
 
-    return new NextResponse(pngBuffer, {
+    return new NextResponse(pngBuffer as any, {
       status: 200,
       headers: {
         'Content-Type': 'image/png',

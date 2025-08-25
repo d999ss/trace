@@ -18,9 +18,7 @@ export async function generatePoster({
   const height = 7200;
   const margin = 400;
   
-  // Calculate bounds (for future use)
-  const lngs = coords.map(c => c[0]);
-  const lats = coords.map(c => c[1]);
+  // Bounds calculated automatically by d3-geo fitExtent
   
   // Create Mercator projection
   const projection = geoMercator()
