@@ -45,13 +45,23 @@ function PreviewContent() {
     if (!ctx) return;
 
     // Set canvas dimensions for preview (portrait orientation - 2:3 ratio)
-    const previewWidth = 400;
-    const previewHeight = 600; // 2:3 ratio to match poster dimensions
+    const displayWidth = 400;
+    const displayHeight = 600; // 2:3 ratio to match poster dimensions
+    
+    // Use high-resolution canvas to prevent pixelation
+    const canvasScale = 2; // Retina/HD scaling
+    const previewWidth = displayWidth * canvasScale;
+    const previewHeight = displayHeight * canvasScale;
+    
     canvas.width = previewWidth;
     canvas.height = previewHeight;
+    
+    // Scale the canvas CSS to maintain display size
+    canvas.style.width = `${displayWidth}px`;
+    canvas.style.height = `${displayHeight}px`;
 
     // Use a proper scale factor for preview to ensure good proportions
-    const scaleFactor = 1.0; // This gives us full-size proportions for the 400x600 preview
+    const scaleFactor = 1.0; // This gives us full-size proportions for the preview
 
     if (posterStyle === 'art-print') {
       renderArtPrintPreview(ctx, previewWidth, previewHeight, scaleFactor);
@@ -106,8 +116,12 @@ function PreviewContent() {
       mapBackgroundColor = '#f8f9fa'; // Light gray for classic
     }
     
+    // Fill background first
     ctx.fillStyle = mapBackgroundColor;
     ctx.fillRect(mapBlockX, mapBlockY, mapBlockWidth, mapBlockHeight);
+    
+    // Draw actual map tiles for terrain
+    drawMapTiles(ctx, mapBlockX, mapBlockY, mapBlockWidth, mapBlockHeight, theme);
 
     // Draw the actual GPS route from coordinates
     if (coordinates.length > 1) {
@@ -292,6 +306,9 @@ function PreviewContent() {
     // Very light gray background for route area
     ctx.fillStyle = '#fafafa';
     ctx.fillRect(routeX, routeY, routeWidth, routeHeight);
+    
+    // Draw subtle map tiles for terrain context
+    drawMapTiles(ctx, routeX, routeY, routeWidth, routeHeight, 'light');
 
     // Draw the GPS route with thin, neutral stroke
     if (coordinates.length > 1) {
@@ -724,6 +741,9 @@ function PreviewContent() {
     // Very light gray background for route area
     ctx.fillStyle = '#fafafa';
     ctx.fillRect(routeX, routeY, routeWidth, routeHeight);
+    
+    // Draw subtle map tiles for terrain context
+    drawMapTiles(ctx, routeX, routeY, routeWidth, routeHeight, 'light');
 
     // Draw the GPS route with thin, neutral stroke
     if (coordinates.length > 1) {
@@ -917,6 +937,67 @@ function PreviewContent() {
     ctx.textAlign = 'center';
     ctx.textBaseline = 'bottom';
     ctx.fillText(`${selectedSize.toUpperCase()} • TRACE PRINTS`, posterWidth / 2, brandY);
+  };
+
+  // Function to draw map tiles for terrain
+  const drawMapTiles = (ctx: CanvasRenderingContext2D, x: number, y: number, width: number, height: number, theme: string) => {
+    const tileSize = 32; // Size of each map tile
+    
+    // Draw grid pattern for map tiles
+    ctx.strokeStyle = theme === 'dark' ? '#444444' : theme === 'accent' ? '#d0e8f0' : '#e0e0e0';
+    ctx.lineWidth = 1;
+    
+    // Draw vertical lines
+    for (let tileX = x; tileX <= x + width; tileX += tileSize) {
+      ctx.beginPath();
+      ctx.moveTo(tileX, y);
+      ctx.lineTo(tileX, y + height);
+      ctx.stroke();
+    }
+    
+    // Draw horizontal lines
+    for (let tileY = y; tileY <= y + height; tileY += tileSize) {
+      ctx.beginPath();
+      ctx.moveTo(x, tileY);
+      ctx.lineTo(x + width, tileY);
+      ctx.stroke();
+    }
+    
+    // Add some terrain variation
+    if (theme === 'accent') {
+      // Satellite theme - add some "aerial" texture
+      ctx.fillStyle = '#f0f8ff';
+      for (let tileX = x; tileX < x + width; tileX += tileSize * 2) {
+        for (let tileY = y; tileY < y + height; tileY += tileSize * 2) {
+          if (Math.random() > 0.7) {
+            ctx.fillStyle = `rgba(200, 220, 240, 0.3)`;
+            ctx.fillRect(tileX, tileY, tileSize, tileSize);
+          }
+        }
+      }
+    } else if (theme === 'dark') {
+      // Dark theme - add some subtle variation
+      ctx.fillStyle = '#2a2a2a';
+      for (let tileX = x; tileX < x + width; tileX += tileSize * 3) {
+        for (let tileY = y; tileY < y + height; tileY += tileSize * 3) {
+          if (Math.random() > 0.8) {
+            ctx.fillStyle = `rgba(100, 100, 100, 0.2)`;
+            ctx.fillRect(tileX, tileY, tileSize, tileSize);
+          }
+        }
+      }
+    } else {
+      // Light theme - add some subtle variation
+      ctx.fillStyle = '#f8f9fa';
+      for (let tileX = x; tileX < x + width; tileX += tileSize * 3) {
+        for (let tileY = y; tileY < y + height; tileY += tileSize * 3) {
+          if (Math.random() > 0.8) {
+            ctx.fillStyle = `rgba(200, 200, 200, 0.3)`;
+            ctx.fillRect(tileX, tileY, tileSize, tileSize);
+          }
+        }
+      }
+    }
   };
 
   // Render poster preview whenever relevant state changes
