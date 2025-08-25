@@ -8,7 +8,7 @@ import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
 // Fix for Leaflet marker icons in Next.js
-delete (L.Icon.Default.prototype as any)._getIconUrl;
+delete (L.Icon.Default.prototype as unknown as Record<string, unknown>)._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
   iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
@@ -298,7 +298,7 @@ function PreviewContent() {
           <div className="absolute inset-0 bg-gray-100 flex items-center justify-center">
             <div className="text-center text-gray-500">
               <div className="text-lg font-medium mb-2">No GPS Data Available</div>
-              <div className="text-sm">This activity doesn't have GPS coordinates to display on the map.</div>
+              <div className="text-sm">This activity doesn&apos;t have GPS coordinates to display on the map.</div>
               <div className="text-xs mt-2">Check the browser console for debugging information.</div>
             </div>
           </div>
