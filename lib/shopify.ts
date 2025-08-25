@@ -3,6 +3,7 @@ import Client from 'shopify-buy';
 const shopifyConfig = {
   domain: process.env.NEXT_PUBLIC_SHOPIFY_DOMAIN!,
   storefrontAccessToken: process.env.NEXT_PUBLIC_SHOPIFY_STOREFRONT_ACCESS_TOKEN!,
+  apiVersion: '2024-10',
 };
 
 const client = Client.buildClient(shopifyConfig);
