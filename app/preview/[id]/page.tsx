@@ -274,30 +274,44 @@ function PreviewContent() {
     });
 
     // Add tile layer based on theme
-    const tileLayer = theme === 'dark' 
-      ? L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-          attribution: '©OpenStreetMap contributors'
-        })
-      : theme === 'accent'
-      ? L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-          attribution: '©Esri'
-        })
-      : L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-          attribution: '©OpenStreetMap contributors'
-        });
+    let tileLayer;
+    if (theme === 'dark') {
+      tileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '©OpenStreetMap contributors'
+      });
+    } else if (theme === 'accent') {
+      // Satellite view - use Esri satellite tiles
+      tileLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+        attribution: '©Esri',
+        maxZoom: 19
+      });
+    } else {
+      // Light theme - use OpenStreetMap
+      tileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '©OpenStreetMap contributors'
+      });
+    }
 
     tileLayer.addTo(map.current);
 
-    // Add error handling for tile loading
+    // Add error handling for tile loading with fallback
     tileLayer.on('tileerror', (e) => {
       console.error('Map tile loading error:', e);
+      // If satellite fails, fall back to OpenStreetMap
+      if (theme === 'accent' && map.current) {
+        console.log('Falling back to OpenStreetMap due to satellite tile error');
+        const fallbackLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          attribution: '©OpenStreetMap contributors (fallback)'
+        });
+        fallbackLayer.addTo(map.current);
+      }
     });
 
     // Create polyline from coordinates
     const polyline = L.polyline(coordinates.map(coord => [coord[1], coord[0]]), {
-      color: theme === 'dark' ? '#ffffff' : '#000000',
-      weight: 3,
-      opacity: 0.8
+      color: theme === 'dark' ? '#ffffff' : theme === 'accent' ? '#ffff00' : '#000000', // Yellow for satellite, white for dark, black for light
+      weight: 4, // Slightly thicker for better visibility
+      opacity: 0.9
     });
 
     polyline.addTo(map.current);
