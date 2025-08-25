@@ -31,7 +31,7 @@ function PreviewContent() {
   const [subtitle, setSubtitle] = useState('');
   const [coordinates, setCoordinates] = useState<[number, number][]>([]);
   const [activeTab, setActiveTab] = useState<'routes' | 'style' | 'text' | 'size'>('routes');
-  const [selectedSize, setSelectedSize] = useState('20x24');
+  const [selectedSize, setSelectedSize] = useState('medium');
 
   // Function to render poster in real-time
   const renderPosterPreview = useCallback(() => {
@@ -43,14 +43,25 @@ function PreviewContent() {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    // Set canvas dimensions for preview (larger for better visibility)
-    const previewWidth = 600;
-    const previewHeight = 400;
+    // Set canvas dimensions for preview (portrait orientation)
+    const previewWidth = 400;
+    const previewHeight = 600;
     canvas.width = previewWidth;
     canvas.height = previewHeight;
 
-    // Calculate scale factor for preview
-    const scaleFactor = previewWidth / (2400 * (selectedSize === '16x20' ? 1 : selectedSize === '20x24' ? 1.25 : 1.5));
+    // Calculate scale factor for preview based on new size options
+    const getSizeDimensions = (size: string) => {
+      switch (size) {
+        case 'digital': return { width: 2400, height: 3600 }; // 2:3 ratio
+        case 'small': return { width: 2400, height: 3600 }; // 2:3 ratio
+        case 'medium': return { width: 3000, height: 4500 }; // 2:3 ratio
+        case 'large': return { width: 3600, height: 5400 }; // 2:3 ratio
+        default: return { width: 3000, height: 4500 }; // medium default
+      }
+    };
+    
+    const { width: posterWidth, height: posterHeight } = getSizeDimensions(selectedSize);
+    const scaleFactor = previewWidth / posterWidth;
 
     // Fill background
     ctx.fillStyle = theme === 'dark' ? '#1a1a1a' : theme === 'accent' ? '#f8f9fa' : '#ffffff';
@@ -313,10 +324,18 @@ function PreviewContent() {
       const ctx = canvas.getContext('2d');
       if (!ctx) return;
 
-      // Set poster dimensions based on selected size
-      const sizeMultiplier = selectedSize === '16x20' ? 1 : selectedSize === '20x24' ? 1.25 : 1.5;
-      const posterWidth = 2400 * sizeMultiplier;
-      const posterHeight = 1350 * sizeMultiplier;
+      // Set poster dimensions based on selected size (portrait orientation)
+      const getSizeDimensions = (size: string) => {
+        switch (size) {
+          case 'digital': return { width: 2400, height: 3600 }; // 2:3 ratio
+          case 'small': return { width: 2400, height: 3600 }; // 2:3 ratio
+          case 'medium': return { width: 3000, height: 4500 }; // 2:3 ratio
+          case 'large': return { width: 3600, height: 5400 }; // 2:3 ratio
+          default: return { width: 3000, height: 4500 }; // medium default
+        }
+      };
+      
+      const { width: posterWidth, height: posterHeight } = getSizeDimensions(selectedSize);
       canvas.width = posterWidth;
       canvas.height = posterHeight;
 
@@ -327,29 +346,29 @@ function PreviewContent() {
       // Add title
       if (title) {
         ctx.fillStyle = theme === 'dark' ? '#ffffff' : '#000000';
-        ctx.font = `bold ${72 * sizeMultiplier}px Arial, sans-serif`;
+        ctx.font = `bold ${Math.floor(72 * (posterWidth / 3000))}px Arial, sans-serif`;
         ctx.textAlign = 'center';
-        ctx.fillText(title, posterWidth / 2, 120 * sizeMultiplier);
+        ctx.fillText(title, posterWidth / 2, Math.floor(120 * (posterWidth / 3000)));
       }
 
       // Add subtitle
       if (subtitle) {
         ctx.fillStyle = theme === 'dark' ? '#cccccc' : '#666666';
-        ctx.font = `${36 * sizeMultiplier}px Arial, sans-serif`;
+        ctx.font = `${Math.floor(36 * (posterWidth / 3000))}px Arial, sans-serif`;
         ctx.textAlign = 'center';
-        ctx.fillText(subtitle, posterWidth / 2, 180 * sizeMultiplier);
+        ctx.fillText(subtitle, posterWidth / 2, Math.floor(180 * (posterWidth / 3000)));
       }
 
       // Add activity name
       ctx.fillStyle = theme === 'dark' ? '#888888' : '#333333';
-      ctx.font = `${24 * sizeMultiplier}px Arial, sans-serif`;
+      ctx.font = `${Math.floor(24 * (posterWidth / 3000))}px Arial, sans-serif`;
       ctx.textAlign = 'center';
-      ctx.fillText(activity?.name || 'Strava Activity', posterWidth / 2, 220 * sizeMultiplier);
+      ctx.fillText(activity?.name || 'Strava Activity', posterWidth / 2, Math.floor(220 * (posterWidth / 3000)));
 
       // Add activity statistics
-      const statsY = 260 * sizeMultiplier;
+      const statsY = Math.floor(260 * (posterWidth / 3000));
       ctx.fillStyle = theme === 'dark' ? '#666666' : '#999999';
-      ctx.font = `${18 * sizeMultiplier}px Arial, sans-serif`;
+      ctx.font = `${Math.floor(18 * (posterWidth / 3000))}px Arial, sans-serif`;
       ctx.textAlign = 'center';
       
       // Calculate some mock stats (in real app, get these from Strava API)
@@ -360,18 +379,18 @@ function PreviewContent() {
       ctx.fillText(`${distance} • ${duration} • ${avgSpeed}`, posterWidth / 2, statsY);
 
       // Add map area background
-      const mapAreaX = 100 * sizeMultiplier;
-      const mapAreaY = 320 * sizeMultiplier;
-      const mapAreaWidth = posterWidth - (200 * sizeMultiplier);
-      const mapAreaHeight = posterHeight - (500 * sizeMultiplier);
+      const mapAreaX = Math.floor(100 * (posterWidth / 3000));
+      const mapAreaY = Math.floor(320 * (posterWidth / 3000));
+      const mapAreaWidth = posterWidth - Math.floor(200 * (posterWidth / 3000));
+      const mapAreaHeight = posterHeight - Math.floor(500 * (posterWidth / 3000));
 
       ctx.fillStyle = theme === 'dark' ? '#2a2a2a' : theme === 'accent' ? '#e8f4f8' : '#f0f0f0';
       ctx.fillRect(mapAreaX, mapAreaY, mapAreaWidth, mapAreaHeight);
 
       // Add subtle map grid pattern
       ctx.strokeStyle = theme === 'dark' ? '#444444' : theme === 'accent' ? '#d0e8f0' : '#e0e0e0';
-      ctx.lineWidth = 2 * sizeMultiplier;
-      const gridSize = 50 * sizeMultiplier;
+      ctx.lineWidth = Math.floor(2 * (posterWidth / 3000));
+      const gridSize = Math.floor(50 * (posterWidth / 3000));
       for (let x = mapAreaX; x < mapAreaX + mapAreaWidth; x += gridSize) {
         ctx.beginPath();
         ctx.moveTo(x, mapAreaY);
@@ -415,7 +434,7 @@ function PreviewContent() {
 
         // Draw the actual route path
         ctx.strokeStyle = theme === 'dark' ? '#00ff88' : theme === 'accent' ? '#0066cc' : '#ff6b35';
-        ctx.lineWidth = 8 * sizeMultiplier;
+        ctx.lineWidth = Math.floor(8 * (posterWidth / 3000));
         ctx.lineCap = 'round';
         ctx.lineJoin = 'round';
         
@@ -438,27 +457,27 @@ function PreviewContent() {
         // Start marker (green circle)
         ctx.fillStyle = '#00ff00';
         ctx.beginPath();
-        ctx.arc(start.x, start.y, 20 * sizeMultiplier, 0, 2 * Math.PI);
+        ctx.arc(start.x, start.y, Math.floor(20 * (posterWidth / 3000)), 0, 2 * Math.PI);
         ctx.fill();
         
         // End marker (red circle)
         ctx.fillStyle = '#ff0000';
         ctx.beginPath();
-        ctx.arc(end.x, end.y, 20 * sizeMultiplier, 0, 2 * Math.PI);
+        ctx.arc(end.x, end.y, Math.floor(20 * (posterWidth / 3000)), 0, 2 * Math.PI);
         ctx.fill();
       }
 
       // Add route points indicator
       ctx.fillStyle = theme === 'dark' ? '#ffffff' : '#000000';
-      ctx.font = `${16 * sizeMultiplier}px Arial, sans-serif`;
+      ctx.font = `${Math.floor(16 * (posterWidth / 3000))}px Arial, sans-serif`;
       ctx.textAlign = 'center';
-      ctx.fillText(`${coordinates.length} GPS points`, posterWidth / 2, mapAreaY + mapAreaHeight + (40 * sizeMultiplier));
+      ctx.fillText(`${coordinates.length} GPS points`, posterWidth / 2, mapAreaY + mapAreaHeight + Math.floor(40 * (posterWidth / 3000)));
 
       // Add footer with size and branding
       ctx.fillStyle = theme === 'dark' ? '#666666' : '#999999';
-      ctx.font = `${16 * sizeMultiplier}px Arial, sans-serif`;
+      ctx.font = `${Math.floor(16 * (posterWidth / 3000))}px Arial, sans-serif`;
       ctx.textAlign = 'center';
-      ctx.fillText(`${selectedSize.toUpperCase()} • Generated by Trace Prints`, posterWidth / 2, posterHeight - (50 * sizeMultiplier));
+      ctx.fillText(`${selectedSize.toUpperCase()} • Generated by Trace Prints`, posterWidth / 2, posterHeight - Math.floor(50 * (posterWidth / 3000)));
 
       // Create preview image
       const previewUrl = canvas.toDataURL('image/png');
@@ -691,42 +710,55 @@ function PreviewContent() {
               <h3 className="text-sm font-medium text-gray-700 mb-4">Print Size</h3>
               <div className="space-y-3">
                 <button
-                  onClick={() => setSelectedSize('16x20')}
+                  onClick={() => setSelectedSize('digital')}
                   className={`w-full p-4 rounded-lg border-2 transition-all text-left ${
-                    selectedSize === '16x20'
-                      ? 'border-blue-500 bg-blue-50'
+                    selectedSize === 'digital'
+                      ? 'border-purple-500 bg-purple-50'
                       : 'border-gray-200 bg-white hover:border-gray-300'
                   }`}
                 >
-                  <div className="font-medium text-gray-900">16&quot; x 20&quot;</div>
-                  <div className="text-sm text-gray-600">Perfect for smaller spaces</div>
-                  <div className="text-sm font-medium text-blue-600 mt-1">$19</div>
+                  <div className="font-medium text-gray-900">Digital</div>
+                  <div className="text-sm text-gray-600">High-res digital files only</div>
+                  <div className="text-sm font-medium text-purple-600 mt-1">$20</div>
                 </button>
                 
                 <button
-                  onClick={() => setSelectedSize('20x24')}
+                  onClick={() => setSelectedSize('small')}
                   className={`w-full p-4 rounded-lg border-2 transition-all text-left ${
-                    selectedSize === '20x24'
-                      ? 'border-blue-500 bg-blue-50'
+                    selectedSize === 'small'
+                      ? 'border-purple-500 bg-purple-50'
                       : 'border-gray-200 bg-white hover:border-gray-300'
                   }`}
                 >
-                  <div className="font-medium text-gray-900">20&quot; x 24&quot;</div>
-                  <div className="text-sm text-gray-600">Most popular size</div>
-                  <div className="text-sm font-medium text-blue-600 mt-1">$25</div>
+                  <div className="font-medium text-gray-900">Small</div>
+                  <div className="text-sm text-gray-600">20×30cm / 8×12&quot;</div>
+                  <div className="text-sm font-medium text-purple-600 mt-1">$35</div>
                 </button>
                 
                 <button
-                  onClick={() => setSelectedSize('24x36')}
+                  onClick={() => setSelectedSize('medium')}
                   className={`w-full p-4 rounded-lg border-2 transition-all text-left ${
-                    selectedSize === '24x36'
-                      ? 'border-blue-500 bg-blue-50'
+                    selectedSize === 'medium'
+                      ? 'border-purple-500 bg-purple-50'
                       : 'border-gray-200 bg-white hover:border-gray-300'
                   }`}
                 >
-                  <div className="font-medium text-gray-900">24&quot; x 36&quot;</div>
-                  <div className="text-sm text-gray-600">Statement piece</div>
-                  <div className="text-sm font-medium text-blue-600 mt-1">$35</div>
+                  <div className="font-medium text-gray-900">Medium</div>
+                  <div className="text-sm text-gray-600">30×45cm / 12×18&quot;</div>
+                  <div className="text-sm font-medium text-purple-600 mt-1">$55</div>
+                </button>
+                
+                <button
+                  onClick={() => setSelectedSize('large')}
+                  className={`w-full p-4 rounded-lg border-2 transition-all text-left ${
+                    selectedSize === 'large'
+                      ? 'border-purple-500 bg-purple-50'
+                      : 'border-gray-200 bg-white hover:border-gray-300'
+                  }`}
+                >
+                  <div className="font-medium text-gray-900">Large</div>
+                  <div className="text-sm text-gray-600">40×60cm / 16×24&quot;</div>
+                  <div className="text-sm font-medium text-purple-600 mt-1">$65</div>
                 </button>
               </div>
             </div>
@@ -753,7 +785,7 @@ function PreviewContent() {
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
               </svg>
-              Order Print - ${selectedSize === '16x20' ? '19' : selectedSize === '20x24' ? '25' : '35'}
+              Order Print - ${selectedSize === 'digital' ? '20' : selectedSize === 'small' ? '35' : selectedSize === 'medium' ? '55' : '65'}
             </button>
           </div>
           
