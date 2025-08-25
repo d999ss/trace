@@ -1,0 +1,51 @@
+'use client';
+
+import { PosterState, PosterActions } from '../../hooks/usePosterState';
+
+interface TextStepProps {
+  posterState: PosterState & PosterActions;
+}
+
+export function TextStep({ posterState }: TextStepProps) {
+  return (
+    <div className="space-y-4">
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-2">Poster Title</label>
+        <input
+          type="text"
+          value={posterState.title}
+          onChange={(e) => posterState.setTitle(e.target.value)}
+          placeholder="e.g., Morning Run, Epic Ride"
+          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+        />
+      </div>
+      
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-2">Subtitle (Optional)</label>
+        <input
+          type="text"
+          value={posterState.subtitle}
+          onChange={(e) => posterState.setSubtitle(e.target.value)}
+          placeholder="e.g., January 15, 2024"
+          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+        />
+      </div>
+      
+      {/* Navigation buttons */}
+      <div className="flex space-x-3 pt-4">
+        <button
+          onClick={() => posterState.setCurrentStep(2)}
+          className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-3 px-4 rounded-lg transition-colors"
+        >
+          Back
+        </button>
+        <button
+          onClick={() => posterState.setCurrentStep(4)}
+          className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg transition-colors"
+        >
+          Continue to Size
+        </button>
+      </div>
+    </div>
+  );
+}
