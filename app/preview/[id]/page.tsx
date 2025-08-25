@@ -469,7 +469,7 @@ function PreviewContent() {
                       : 'border-gray-200 bg-white hover:border-gray-300'
                   }`}
                 >
-                  <div className="font-medium text-gray-900">16" x 20"</div>
+                  <div className="font-medium text-gray-900">16&quot; x 20&quot;</div>
                   <div className="text-sm text-gray-600">Perfect for smaller spaces</div>
                   <div className="text-sm font-medium text-blue-600 mt-1">$19</div>
                 </button>
@@ -482,7 +482,7 @@ function PreviewContent() {
                       : 'border-gray-200 bg-white hover:border-gray-300'
                   }`}
                 >
-                  <div className="font-medium text-gray-900">20" x 24"</div>
+                  <div className="font-medium text-gray-900">20&quot; x 24&quot;</div>
                   <div className="text-sm text-gray-600">Most popular size</div>
                   <div className="text-sm font-medium text-blue-600 mt-1">$25</div>
                 </button>
@@ -495,7 +495,7 @@ function PreviewContent() {
                       : 'border-gray-200 bg-white hover:border-gray-300'
                   }`}
                 >
-                  <div className="font-medium text-gray-900">24" x 36"</div>
+                  <div className="font-medium text-gray-900">24&quot; x 36&quot;</div>
                   <div className="text-sm text-gray-600">Statement piece</div>
                   <div className="text-sm font-medium text-blue-600 mt-1">$35</div>
                 </button>
