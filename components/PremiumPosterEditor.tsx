@@ -13,6 +13,7 @@ interface PremiumPosterEditorProps {
 export function PremiumPosterEditor({ ride, onUpdate, onExport }: PremiumPosterEditorProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [previewMode, setPreviewMode] = useState<'poster' | 'framed' | 'wall'>('poster');
+  const [isRendering] = useState(false);
 
   // Real-time canvas rendering
   useEffect(() => {

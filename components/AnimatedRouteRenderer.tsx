@@ -19,7 +19,7 @@ export function AnimatedRouteRenderer({
   const [progress, setProgress] = useState(0);
   const [milestones, setMilestones] = useState<{ point: number; label: string }[]>([]);
   const [storyText, setStoryText] = useState('');
-  const animationFrameRef = useRef<number>();
+  const animationFrameRef = useRef<number | undefined>(undefined);
 
   useEffect(() => {
     if (!canvasRef.current || !isAnimating) return;
@@ -118,7 +118,7 @@ export function AnimatedRouteRenderer({
         cancelAnimationFrame(animationFrameRef.current);
       }
     };
-  }, [isAnimating, ride, onAnimationComplete]);
+  }, [isAnimating, ride, onAnimationComplete]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const drawMilestones = (ctx: CanvasRenderingContext2D, progress: number) => {
     const { coordinates } = ride;
