@@ -22,23 +22,28 @@ const PosterSVG = React.forwardRef<SVGSVGElement, Props>(({
   elevation = '+1,247 ft',
   time = '1:23:45',
 }, ref) => {
-  // Simple working version - print ready canvas
+  // Professional poster layout with proper proportions
   const W = 5400; // 18 inches × 300 DPI
   const H = 7200; // 24 inches × 300 DPI
-  const MARGIN = 540; // 10% margin
-
-  // Route area - centered and large
-  const routeTop = MARGIN;
-  const routeHeight = Math.round(H * 0.6); // 60% of canvas
-  const routeWidth = W - 2 * MARGIN;
-  const routeRect = { 
-    x: MARGIN, 
-    y: routeTop, 
-    w: routeWidth, 
-    h: routeHeight 
+  
+  // Better margin system - responsive to poster size
+  const EDGE_MARGIN = W * 0.08; // 8% margins
+  const CONTENT_WIDTH = W - 2 * EDGE_MARGIN;
+  
+  // Golden ratio inspired layout sections
+  const HEADER_HEIGHT = H * 0.15; // 15% for title area
+  const ROUTE_HEIGHT = H * 0.65;  // 65% for main route display
+  const FOOTER_HEIGHT = H * 0.2;  // 20% for metrics
+  
+  // Route area - properly centered with breathing room
+  const routeRect = {
+    x: EDGE_MARGIN,
+    y: HEADER_HEIGHT,
+    w: CONTENT_WIDTH,
+    h: ROUTE_HEIGHT
   };
 
-  // Simple mercator projection
+  // Route projection with proper scaling
   const lngs = track.map(p => p[0]);
   const lats = track.map(p => p[1]);
   const minLng = Math.min(...lngs), maxLng = Math.max(...lngs);
@@ -53,8 +58,8 @@ const PosterSVG = React.forwardRef<SVGSVGElement, Props>(({
     return (tMax - t) / ((tMax - tMin) || 1);
   };
 
-  // Fit to route rectangle with padding
-  const pad = 0.1;
+  // Better padding for visual balance
+  const routePadding = 0.15; // More generous padding
   let xs = track.map(p => lng2x(p[0]));
   let ys = track.map(p => lat2y(p[1]));
   const minX = Math.min(...xs), maxX = Math.max(...xs);
@@ -62,28 +67,29 @@ const PosterSVG = React.forwardRef<SVGSVGElement, Props>(({
   const spanX = (maxX - minX) || 1;
   const spanY = (maxY - minY) || 1;
 
-  const scale = (1 - 2 * pad) / Math.max(spanX, spanY);
+  const scale = (1 - 2 * routePadding) / Math.max(spanX, spanY);
   xs = xs.map(x => (x - minX - spanX / 2) * scale + 0.5);
   ys = ys.map(y => (y - minY - spanY / 2) * scale + 0.5);
 
-  // Convert to SVG coordinates
+  // Route path
   const path = xs.length > 0 ? xs.map((_, i) => {
     const x = routeRect.x + xs[i] * routeRect.w;
     const y = routeRect.y + ys[i] * routeRect.h;
     return `${i ? 'L' : 'M'}${x.toFixed(1)},${y.toFixed(1)}`;
   }).join(' ') : '';
 
-  // Typography positioning - spacing for larger text
-  const TITLE_Y = routeTop + routeHeight + 400;
-  const SUBTITLE_Y = TITLE_Y + 200;
-  const MICRO_DATA_Y = H - MARGIN - 400;
+  // Typography with proper hierarchy
+  const TITLE_Y = HEADER_HEIGHT * 0.6;
+  const SUBTITLE_Y = HEADER_HEIGHT * 0.85;
   
-  // Column layout for micro data
-  const SAFE_W = W - 2 * MARGIN;
-  const COL_WIDTH = SAFE_W / 3;
-  const COL_1_X = MARGIN + COL_WIDTH / 2;
-  const COL_2_X = MARGIN + SAFE_W / 2;  
-  const COL_3_X = MARGIN + COL_WIDTH * 2.5;
+  // Metrics positioned in footer area
+  const METRICS_Y = H - FOOTER_HEIGHT * 0.65;
+  const LABELS_Y = H - FOOTER_HEIGHT * 0.25;
+  
+  // Better column spacing
+  const COL_1_X = W * 0.25;
+  const COL_2_X = W * 0.5;  
+  const COL_3_X = W * 0.75;
 
   // theme colors
   let bg, fg, routeColor;
@@ -146,29 +152,30 @@ const PosterSVG = React.forwardRef<SVGSVGElement, Props>(({
         strokeLinejoin="round"
       />
       
-      {/* Title Block - Large for 18x24 print */}
+      {/* Title - Proportional to layout */}
       <text 
         x={W/2} 
         y={TITLE_Y} 
         textAnchor="middle" 
         fontFamily="Times New Roman, Georgia, serif" 
-        fontSize="240"
-        fontWeight="400"
+        fontSize="180"
+        fontWeight="300"
         fill={fg}
+        letterSpacing="2"
       >
         {title}
       </text>
       
-      {/* Subtitle - Large for print */}
+      {/* Subtitle - Balanced hierarchy */}
       <text 
         x={W/2} 
         y={SUBTITLE_Y} 
         textAnchor="middle" 
         fontFamily="Helvetica Neue, Inter, Arial, sans-serif" 
-        fontSize="96"
+        fontSize="72"
         fill={fg}
-        opacity="0.8"
-        letterSpacing="3"
+        opacity="0.7"
+        letterSpacing="4"
       >
         {subtitle}
       </text>
@@ -179,24 +186,24 @@ const PosterSVG = React.forwardRef<SVGSVGElement, Props>(({
         <g>
           <text 
             x={COL_1_X} 
-            y={MICRO_DATA_Y} 
+            y={METRICS_Y} 
             textAnchor="middle" 
             fontFamily="Helvetica Neue, Arial, sans-serif" 
-            fontSize="200"
-            fontWeight="600"
+            fontSize="140"
+            fontWeight="500"
             fill={fg}
           >
             {distance}
           </text>
           <text 
             x={COL_1_X} 
-            y={MICRO_DATA_Y + 250} 
+            y={LABELS_Y} 
             textAnchor="middle" 
             fontFamily="Helvetica Neue, Arial, sans-serif" 
-            fontSize="100"
+            fontSize="54"
             fill={fg}
             opacity="0.6"
-            letterSpacing="2"
+            letterSpacing="3"
           >
             DISTANCE
           </text>
@@ -206,24 +213,24 @@ const PosterSVG = React.forwardRef<SVGSVGElement, Props>(({
         <g>
           <text 
             x={COL_2_X} 
-            y={MICRO_DATA_Y} 
+            y={METRICS_Y} 
             textAnchor="middle" 
             fontFamily="Helvetica Neue, Arial, sans-serif" 
-            fontSize="200"
-            fontWeight="600"
+            fontSize="140"
+            fontWeight="500"
             fill={fg}
           >
             {elevation}
           </text>
           <text 
             x={COL_2_X} 
-            y={MICRO_DATA_Y + 250} 
+            y={LABELS_Y} 
             textAnchor="middle" 
             fontFamily="Helvetica Neue, Arial, sans-serif" 
-            fontSize="100"
+            fontSize="54"
             fill={fg}
             opacity="0.6"
-            letterSpacing="2"
+            letterSpacing="3"
           >
             ELEVATION
           </text>
@@ -233,24 +240,24 @@ const PosterSVG = React.forwardRef<SVGSVGElement, Props>(({
         <g>
           <text 
             x={COL_3_X} 
-            y={MICRO_DATA_Y} 
+            y={METRICS_Y} 
             textAnchor="middle" 
             fontFamily="Helvetica Neue, Arial, sans-serif" 
-            fontSize="200"
-            fontWeight="600"
+            fontSize="140"
+            fontWeight="500"
             fill={fg}
           >
             {time}
           </text>
           <text 
             x={COL_3_X} 
-            y={MICRO_DATA_Y + 250} 
+            y={LABELS_Y} 
             textAnchor="middle" 
             fontFamily="Helvetica Neue, Arial, sans-serif" 
-            fontSize="100"
+            fontSize="54"
             fill={fg}
             opacity="0.6"
-            letterSpacing="2"
+            letterSpacing="3"
           >
             TIME
           </text>
