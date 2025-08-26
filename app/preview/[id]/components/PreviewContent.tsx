@@ -6,6 +6,7 @@ import { decodePolyline } from '@/lib/strava';
 import { Header } from './Header';
 import { PosterPreview } from './PosterPreview';
 import { ControlsSidebar } from './ControlsSidebar';
+import { StickyCTA } from './StickyCTA';
 import { usePosterState } from '../hooks/usePosterState';
 
 // Sample coordinates - Cursive uppercase S shape
@@ -202,14 +203,27 @@ export function PreviewContent() {
     );
   }
 
+  const routeLoaded = posterState.coordinates.length > 0;
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Header activityName={activity?.name} />
       
-      <div className="flex h-[calc(100vh-40px)]">
+      <div className="flex h-[calc(100vh-140px)]">
         <PosterPreview posterState={posterState} svgRef={svgRef} />
-        <ControlsSidebar posterState={posterState} svgRef={svgRef} />
+        <ControlsSidebar 
+          posterState={posterState} 
+          svgRef={svgRef} 
+          routeData={{
+            distance: posterState.distance || '8.85 mi',
+            duration: '48 min',
+            elevation: posterState.elevation || '+1,247 ft',
+            points: posterState.coordinates.length
+          }}
+        />
       </div>
+      
+      <StickyCTA posterState={posterState} routeLoaded={routeLoaded} />
     </div>
   );
 }

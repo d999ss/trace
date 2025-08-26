@@ -8,9 +8,10 @@ import { RefObject } from 'react';
 interface ActionButtonsProps {
   posterState: PosterState;
   svgRef: RefObject<SVGSVGElement | null>;
+  showExportButtons?: boolean;
 }
 
-export function ActionButtons({ posterState, svgRef }: ActionButtonsProps) {
+export function ActionButtons({ posterState, svgRef, showExportButtons = false }: ActionButtonsProps) {
   const handleRenderPrint = async () => {
     if (!posterState.coordinates.length || !svgRef.current) {
       alert('Poster SVG not found. Please try refreshing the page.');
@@ -65,6 +66,10 @@ export function ActionButtons({ posterState, svgRef }: ActionButtonsProps) {
     // This would integrate with a print service
     alert('Print ordering coming soon! For now, use "Save Digital Poster" to download your high-resolution file.');
   };
+
+  if (!showExportButtons) {
+    return null;
+  }
 
   return (
     <div className="fixed bottom-0 right-0 w-96 bg-black border-t border-gray-800 p-6 shadow-lg">
