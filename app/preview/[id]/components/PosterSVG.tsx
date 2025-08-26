@@ -24,18 +24,27 @@ const PosterSVG = React.forwardRef<SVGSVGElement, Props>(({
   elevation = '+1,247 ft',
   time = '1:23:45',
 }, ref) => {
-  // poster size in px for preview/export
-  const W = 2000;
-  const H = posterRatio === '2:3' ? Math.round(W * 3 / 2)
-          : posterRatio === '3:4' ? Math.round(W * 4 / 3)
-          : Math.round(W * 24 / 18);
-
-  // layout margins - tighter for better use of space
-  const M = Math.round(W * 0.06);
-  // Route takes up 65% of poster height, centered vertically with slight offset up
-  const artHeight = Math.round(H * 0.65);
-  const artTop = Math.round(H * 0.12); // Start 12% from top for visual balance
-  const artRect = { x: M, y: artTop, w: W - 2*M, h: artHeight };
+  // Print-ready canvas: 18x24 inch @ 300 DPI
+  const W = 5400; // 18 inches × 300 DPI
+  const H = 7200; // 24 inches × 300 DPI
+  
+  // 10% margins on all sides
+  const MARGIN = 540; // 10% of 5400px
+  const CONTENT_W = 4320; // Usable content width (5400 - 540*2)
+  const CONTENT_H = 6120; // Usable content height (7200 - 540*2)
+  
+  // Route trace positioning - top 70% of content area
+  const ROUTE_MAX_W = Math.round(CONTENT_W * 0.8); // 80% of usable width = 3456px
+  const ROUTE_MAX_H = Math.round(CONTENT_H * 0.65); // 65% of usable height = 3978px
+  const ROUTE_TOP = MARGIN; // 540px from canvas top
+  const ROUTE_LEFT = MARGIN + (CONTENT_W - ROUTE_MAX_W) / 2; // Centered horizontally
+  
+  const routeRect = { 
+    x: ROUTE_LEFT, 
+    y: ROUTE_TOP, 
+    w: ROUTE_MAX_W, 
+    h: ROUTE_MAX_H 
+  };
 
   // project lng/lat -> normalized XY coordinates
   const lngs = track.map(p => p[0]);
@@ -53,8 +62,8 @@ const PosterSVG = React.forwardRef<SVGSVGElement, Props>(({
     return (tMax - t) / ((tMax - tMin) || 1);
   };
 
-  // fit route inside artRect with padding
-  const pad = 0.06;
+  // fit route inside routeRect with padding
+  const pad = 0.05; // Smaller padding for tighter fit
   let xs = track.map(p => lng2x(p[0]));
   let ys = track.map(p => lat2y(p[1]));
   const minX = Math.min(...xs), maxX = Math.max(...xs);
@@ -62,19 +71,19 @@ const PosterSVG = React.forwardRef<SVGSVGElement, Props>(({
   const spanX = (maxX - minX) || 1;
   const spanY = (maxY - minY) || 1;
 
-  // uniform scale to fit
+  // uniform scale to fit within route bounding box
   const scale = (1 - 2*pad) / Math.max(spanX, spanY);
   xs = xs.map(x => (x - minX - spanX/2) * scale + 0.5);
   ys = ys.map(y => (y - minY - spanY/2) * scale + 0.5);
 
-  // convert to poster coordinates
+  // convert to poster coordinates within routeRect
   const toPX = (i:number)=> {
     if (i >= xs.length || i >= ys.length) {
       return [W/2, H/2] as const;
     }
     return [
-      artRect.x + xs[i]*artRect.w,
-      artRect.y + ys[i]*artRect.h
+      routeRect.x + xs[i]*routeRect.w,
+      routeRect.y + ys[i]*routeRect.h
     ] as const;
   };
 
@@ -83,6 +92,17 @@ const PosterSVG = React.forwardRef<SVGSVGElement, Props>(({
     const [x,y]=toPX(i);
     return `${i? 'L':'M'}${x.toFixed(1)},${y.toFixed(1)}`;
   }).join(' ') : '';
+
+  // Typography positioning per spec
+  const TITLE_Y = routeRect.y + routeRect.h + 450; // 150px below route (scaled to 300 DPI)
+  const SUBTITLE_Y = TITLE_Y + 120; // 40px below title (scaled to 300 DPI)
+  const MICRO_DATA_Y = H - MARGIN - 300; // Bottom 10% area
+  
+  // Column layout for micro data
+  const COL_WIDTH = CONTENT_W / 3; // 1440px each
+  const COL_1_X = MARGIN + COL_WIDTH / 2;
+  const COL_2_X = MARGIN + CONTENT_W / 2;
+  const COL_3_X = MARGIN + COL_WIDTH * 2.5;
 
   // theme colors
   let bg, fg, routeColor;
@@ -110,307 +130,133 @@ const PosterSVG = React.forwardRef<SVGSVGElement, Props>(({
     left: 0
   };
 
-  if (posterStyle === 'art-print') {
-    // Art Print style - Apple-like minimal design with perfect balance
-    return (
-      <svg 
-        ref={ref}
-        width="100%"
-        height="100%"
-        viewBox={`0 0 ${W} ${H}`} 
-        xmlns="http://www.w3.org/2000/svg" 
-        style={svgStyle}
-        preserveAspectRatio="xMidYMid meet"
+  // Print-ready poster following exact blueprint specification
+  return (
+    <svg 
+      ref={ref}
+      width="100%"
+      height="100%"
+      viewBox={`0 0 ${W} ${H}`} 
+      xmlns="http://www.w3.org/2000/svg" 
+      style={svgStyle}
+      preserveAspectRatio="xMidYMid meet"
+    >
+      {/* Clean white background */}
+      <rect width={W} height={H} fill={bg}/>
+      
+      {/* Route Trace - 1.5pt stroke, round linecaps */}
+      <path 
+        d={path} 
+        fill="none" 
+        stroke={routeColor} 
+        strokeWidth="13.5" 
+        strokeLinecap="round" 
+        strokeLinejoin="round"
+      />
+      
+      {/* Title Block - 48pt Serif Font */}
+      <text 
+        x={W/2} 
+        y={TITLE_Y} 
+        textAnchor="middle" 
+        fontFamily="Times New Roman, Georgia, serif" 
+        fontSize="144"
+        fontWeight="400"
+        fill={fg}
       >
-        {/* Clean background */}
-        <rect width={W} height={H} fill={bg}/>
-        
-        {/* Subtle gradient overlay for depth */}
-        <defs>
-          <linearGradient id="fadeGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor={theme === 'dark' ? '#000' : '#fff'} stopOpacity="0"/>
-            <stop offset="100%" stopColor={theme === 'dark' ? '#000' : '#fff'} stopOpacity="0.03"/>
-          </linearGradient>
-        </defs>
-        <rect width={W} height={H} fill="url(#fadeGradient)"/>
+        {title.toUpperCase()}
+      </text>
+      
+      {/* Subtitle - 14pt Sans-serif with letterspacing */}
+      <text 
+        x={W/2} 
+        y={SUBTITLE_Y} 
+        textAnchor="middle" 
+        fontFamily="Helvetica Neue, Inter, Arial, sans-serif" 
+        fontSize="42"
+        fill={fg}
+        opacity="0.8"
+        letterSpacing="1.5"
+      >
+        {subtitle}
+      </text>
 
-        {/* Main Route - Thick and Bold */}
-        <path 
-          d={path} 
-          fill="none" 
-          stroke={routeColor} 
-          strokeWidth={theme === 'dark' ? 12 : 10} 
-          strokeLinecap="round" 
-          strokeLinejoin="round"
-          opacity="0.9"
-        />
-        
-        {/* Route glow effect for depth */}
-        <path 
-          d={path} 
-          fill="none" 
-          stroke={routeColor} 
-          strokeWidth={theme === 'dark' ? 24 : 20} 
-          strokeLinecap="round" 
-          strokeLinejoin="round"
-          opacity="0.15"
-        />
-
-        {/* Title - Large and Bold */}
-        <text 
-          x={W/2} 
-          y={artRect.y + artRect.h + M*2} 
-          textAnchor="middle" 
-          fontFamily="-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', sans-serif" 
-          fontSize={theme === 'dark' ? '72' : '68'}
-          fontWeight="600"
-          fill={fg}
-          letterSpacing="-1"
-        >
-          {title.toUpperCase()}
-        </text>
-        
-        {/* Subtitle - Clean and Refined */}
-        <text 
-          x={W/2} 
-          y={artRect.y + artRect.h + M*2 + 100} 
-          textAnchor="middle" 
-          fontFamily="-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', sans-serif" 
-          fontSize="32" 
-          fill={fg}
-          opacity="0.6"
-        >
-          {subtitle}
-        </text>
-
-        {/* Stats Section - Centered and Balanced */}
-        <g transform={`translate(${W/2}, ${H - M*5})`}>
-          {/* Stats Container */}
+      {/* Micro Data Row - Bottom 10% */}
+      <g>
+        {/* Column 1: Distance with Sparkline */}
+        <g>
           <rect 
-            x={-400} 
-            y={-60} 
-            width={800} 
-            height={140} 
-            fill={theme === 'dark' ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.02)'}
-            rx="16"
+            x={COL_1_X - 300} 
+            y={MICRO_DATA_Y - 60} 
+            width="600" 
+            height="120" 
+            fill="none" 
+            stroke={fg} 
+            strokeWidth="1.5" 
+            opacity="0.7"
           />
-          
-          {/* Distance */}
           <text 
-            x="-180" 
+            x={COL_1_X} 
+            y={MICRO_DATA_Y + 60} 
             textAnchor="middle" 
-            fontFamily="-apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif" 
-            fontSize="64" 
-            fontWeight="600"
+            fontFamily="Helvetica Neue, Arial, sans-serif" 
+            fontSize="30"
             fill={fg}
           >
             {distance}
           </text>
+        </g>
+        
+        {/* Column 2: Elevation with Sparkline */}
+        <g>
+          <rect 
+            x={COL_2_X - 300} 
+            y={MICRO_DATA_Y - 60} 
+            width="600" 
+            height="120" 
+            fill="none" 
+            stroke={fg} 
+            strokeWidth="1.5" 
+            opacity="0.7"
+          />
           <text 
-            x="-180" 
-            y="45" 
+            x={COL_2_X} 
+            y={MICRO_DATA_Y + 60} 
             textAnchor="middle" 
-            fontFamily="-apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif" 
-            fontSize="24" 
-            fill={fg}
-            opacity="0.5"
-            letterSpacing="2"
-          >
-            DISTANCE
-          </text>
-          
-          {/* Elevation */}
-          <text 
-            x="0" 
-            textAnchor="middle" 
-            fontFamily="-apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif" 
-            fontSize="64" 
-            fontWeight="600"
+            fontFamily="Helvetica Neue, Arial, sans-serif" 
+            fontSize="30"
             fill={fg}
           >
             {elevation}
           </text>
+        </g>
+        
+        {/* Column 3: Time with Sparkline */}
+        <g>
+          <rect 
+            x={COL_3_X - 300} 
+            y={MICRO_DATA_Y - 60} 
+            width="600" 
+            height="120" 
+            fill="none" 
+            stroke={fg} 
+            strokeWidth="1.5" 
+            opacity="0.7"
+          />
           <text 
-            x="0" 
-            y="45" 
+            x={COL_3_X} 
+            y={MICRO_DATA_Y + 60} 
             textAnchor="middle" 
-            fontFamily="-apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif" 
-            fontSize="24" 
-            fill={fg}
-            opacity="0.5"
-            letterSpacing="2"
-          >
-            ELEVATION
-          </text>
-          
-          {/* Time */}
-          <text 
-            x="180" 
-            textAnchor="middle" 
-            fontFamily="-apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif" 
-            fontSize="64" 
-            fontWeight="600"
+            fontFamily="Helvetica Neue, Arial, sans-serif" 
+            fontSize="30"
             fill={fg}
           >
             {time}
           </text>
-          <text 
-            x="180" 
-            y="45" 
-            textAnchor="middle" 
-            fontFamily="-apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif" 
-            fontSize="24" 
-            fill={fg}
-            opacity="0.5"
-            letterSpacing="2"
-          >
-            TIME
-          </text>
         </g>
-      </svg>
-    );
-  } else {
-    // Classic style - clean modern layout with large route
-    const titleY = Math.round(H * 0.08);
-    const subtitleY = Math.round(H * 0.11);
-    
-    return (
-      <svg 
-        ref={ref}
-        width="100%"
-        height="100%"
-        viewBox={`0 0 ${W} ${H}`} 
-        xmlns="http://www.w3.org/2000/svg" 
-        style={svgStyle}
-        preserveAspectRatio="xMidYMid meet"
-      >
-        {/* Clean background */}
-        <rect width={W} height={H} fill={bg}/>
-        
-        {/* Title - Top Center */}
-        <text 
-          x={W/2} 
-          y={titleY} 
-          textAnchor="middle" 
-          fontFamily="-apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif" 
-          fontSize="56" 
-          fontWeight="600" 
-          fill={fg}
-        >
-          {title.toUpperCase()}
-        </text>
-
-        {/* Subtitle */}
-        <text 
-          x={W/2} 
-          y={subtitleY} 
-          textAnchor="middle" 
-          fontFamily="-apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif" 
-          fontSize="28" 
-          fill={fg}
-          opacity="0.6"
-        >
-          {subtitle}
-        </text>
-        
-        {/* Main Route - Bold and Centered */}
-        <path 
-          d={path} 
-          fill="none" 
-          stroke={routeColor} 
-          strokeWidth="8" 
-          strokeLinecap="round" 
-          strokeLinejoin="round"
-        />
-        
-        {/* Route shadow for depth */}
-        <path 
-          d={path} 
-          fill="none" 
-          stroke={theme === 'dark' ? 'rgba(0,0,0,0.3)' : 'rgba(0,0,0,0.1)'} 
-          strokeWidth="8" 
-          strokeLinecap="round" 
-          strokeLinejoin="round"
-          transform="translate(2, 4)"
-        />
-        
-        {/* Stats at bottom - Clean horizontal layout */}
-        <g transform={`translate(${W/2}, ${H - M*2.5})`}>
-          {/* Distance */}
-          <text 
-            x="-350" 
-            textAnchor="middle" 
-            fontFamily="-apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif" 
-            fontSize="56" 
-            fontWeight="600"
-            fill={fg}
-          >
-            {distance}
-          </text>
-          <text 
-            x="-350" 
-            y="40" 
-            textAnchor="middle" 
-            fontFamily="-apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif" 
-            fontSize="22" 
-            fill={fg}
-            opacity="0.5"
-            letterSpacing="2"
-          >
-            DISTANCE
-          </text>
-          
-          {/* Elevation */}
-          <text 
-            x="0" 
-            textAnchor="middle" 
-            fontFamily="-apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif" 
-            fontSize="56" 
-            fontWeight="600"
-            fill={fg}
-          >
-            {elevation}
-          </text>
-          <text 
-            x="0" 
-            y="40" 
-            textAnchor="middle" 
-            fontFamily="-apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif" 
-            fontSize="22" 
-            fill={fg}
-            opacity="0.5"
-            letterSpacing="2"
-          >
-            ELEVATION
-          </text>
-          
-          {/* Time */}
-          <text 
-            x="350" 
-            textAnchor="middle" 
-            fontFamily="-apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif" 
-            fontSize="56" 
-            fontWeight="600"
-            fill={fg}
-          >
-            {time}
-          </text>
-          <text 
-            x="350" 
-            y="40" 
-            textAnchor="middle" 
-            fontFamily="-apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif" 
-            fontSize="22" 
-            fill={fg}
-            opacity="0.5"
-            letterSpacing="2"
-          >
-            TIME
-          </text>
-        </g>
-      </svg>
-    );
-  }
+      </g>
+    </svg>
+  );
 });
 
 PosterSVG.displayName = 'PosterSVG';
