@@ -184,15 +184,15 @@ const PosterSVG = React.forwardRef<SVGSVGElement, Props>(({
         </text>
 
         {/* Stats Section - Centered and Balanced */}
-        <g transform={`translate(${W/2}, ${H - M*4})`}>
+        <g transform={`translate(${W/2}, ${H - M*5})`}>
           {/* Stats Container */}
           <rect 
-            x={-300} 
-            y={-40} 
-            width={600} 
-            height={80} 
+            x={-400} 
+            y={-60} 
+            width={800} 
+            height={140} 
             fill={theme === 'dark' ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.02)'}
-            rx="12"
+            rx="16"
           />
           
           {/* Distance */}
@@ -200,20 +200,21 @@ const PosterSVG = React.forwardRef<SVGSVGElement, Props>(({
             x="-180" 
             textAnchor="middle" 
             fontFamily="-apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif" 
-            fontSize="36" 
-            fontWeight="500"
+            fontSize="64" 
+            fontWeight="600"
             fill={fg}
           >
             {distance}
           </text>
           <text 
             x="-180" 
-            y="25" 
+            y="45" 
             textAnchor="middle" 
             fontFamily="-apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif" 
-            fontSize="18" 
+            fontSize="24" 
             fill={fg}
             opacity="0.5"
+            letterSpacing="2"
           >
             DISTANCE
           </text>
@@ -223,20 +224,21 @@ const PosterSVG = React.forwardRef<SVGSVGElement, Props>(({
             x="0" 
             textAnchor="middle" 
             fontFamily="-apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif" 
-            fontSize="36" 
-            fontWeight="500"
+            fontSize="64" 
+            fontWeight="600"
             fill={fg}
           >
             {elevation}
           </text>
           <text 
             x="0" 
-            y="25" 
+            y="45" 
             textAnchor="middle" 
             fontFamily="-apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif" 
-            fontSize="18" 
+            fontSize="24" 
             fill={fg}
             opacity="0.5"
+            letterSpacing="2"
           >
             ELEVATION
           </text>
@@ -246,20 +248,21 @@ const PosterSVG = React.forwardRef<SVGSVGElement, Props>(({
             x="180" 
             textAnchor="middle" 
             fontFamily="-apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif" 
-            fontSize="36" 
-            fontWeight="500"
+            fontSize="64" 
+            fontWeight="600"
             fill={fg}
           >
             {time}
           </text>
           <text 
             x="180" 
-            y="25" 
+            y="45" 
             textAnchor="middle" 
             fontFamily="-apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif" 
-            fontSize="18" 
+            fontSize="24" 
             fill={fg}
             opacity="0.5"
+            letterSpacing="2"
           >
             TIME
           </text>
@@ -335,23 +338,24 @@ const PosterSVG = React.forwardRef<SVGSVGElement, Props>(({
         <g transform={`translate(${W/2}, ${H - M*2.5})`}>
           {/* Distance */}
           <text 
-            x="-300" 
+            x="-350" 
             textAnchor="middle" 
             fontFamily="-apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif" 
-            fontSize="32" 
-            fontWeight="500"
+            fontSize="56" 
+            fontWeight="600"
             fill={fg}
           >
             {distance}
           </text>
           <text 
-            x="-300" 
-            y="30" 
+            x="-350" 
+            y="40" 
             textAnchor="middle" 
             fontFamily="-apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif" 
-            fontSize="16" 
+            fontSize="22" 
             fill={fg}
             opacity="0.5"
+            letterSpacing="2"
           >
             DISTANCE
           </text>
@@ -361,43 +365,45 @@ const PosterSVG = React.forwardRef<SVGSVGElement, Props>(({
             x="0" 
             textAnchor="middle" 
             fontFamily="-apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif" 
-            fontSize="32" 
-            fontWeight="500"
+            fontSize="56" 
+            fontWeight="600"
             fill={fg}
           >
             {elevation}
           </text>
           <text 
             x="0" 
-            y="30" 
+            y="40" 
             textAnchor="middle" 
             fontFamily="-apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif" 
-            fontSize="16" 
+            fontSize="22" 
             fill={fg}
             opacity="0.5"
+            letterSpacing="2"
           >
             ELEVATION
           </text>
           
           {/* Time */}
           <text 
-            x="300" 
+            x="350" 
             textAnchor="middle" 
             fontFamily="-apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif" 
-            fontSize="32" 
-            fontWeight="500"
+            fontSize="56" 
+            fontWeight="600"
             fill={fg}
           >
             {time}
           </text>
           <text 
-            x="300" 
-            y="30" 
+            x="350" 
+            y="40" 
             textAnchor="middle" 
             fontFamily="-apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif" 
-            fontSize="16" 
+            fontSize="22" 
             fill={fg}
             opacity="0.5"
+            letterSpacing="2"
           >
             TIME
           </text>
