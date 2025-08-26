@@ -1,3 +1,7 @@
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { CheckCircle2, Circle, MapPin, Palette, Type, Printer } from 'lucide-react';
+
 interface StepperNavigationProps {
   currentStep: 1 | 2 | 3 | 4;
   routeLoaded?: boolean;
@@ -15,61 +19,79 @@ export function StepperNavigation({ currentStep, routeLoaded, routeData, onStepC
     { 
       number: 1, 
       title: 'Route', 
-      description: routeLoaded && routeData ? `${routeData.distance} • ${routeData.duration} • ${routeData.points} pts` : 'Select your activity',
+      icon: MapPin,
+      description: routeLoaded && routeData ? `${routeData.distance} • ${routeData.duration}` : 'Import your ride data',
       completed: routeLoaded
     },
     { 
       number: 2, 
       title: 'Style', 
-      description: 'Pick style + map theme',
+      icon: Palette,
+      description: 'Choose theme & design',
       completed: currentStep > 2
     },
     { 
       number: 3, 
-      title: 'Text', 
-      description: 'Title, subtitle, extras',
+      title: 'Content', 
+      icon: Type,
+      description: 'Add title & details',
       completed: currentStep > 3
     },
     { 
       number: 4, 
-      title: 'Size', 
-      description: 'Print size + export',
+      title: 'Export', 
+      icon: Printer,
+      description: 'Size & download options',
       completed: false
     },
   ];
 
   return (
-    <div className="mb-8">
+    <div className="space-y-1">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-xs font-normal text-white">Customize Your Poster</h2>
-        <div className="text-xs text-gray-300">Step {currentStep} of 4</div>
+        <div className="text-sm font-semibold">Create Your Poster</div>
+        <Badge variant="secondary" className="text-xs">
+          {currentStep} of 4
+        </Badge>
       </div>
       
-      <div className="space-y-3">
+      <div className="space-y-2">
         {steps.map((step) => {
           const isClickable = step.number === 1 || (step.number === 2 && routeLoaded) || (step.number <= currentStep);
+          const isActive = step.number === currentStep;
+          const isCompleted = step.completed;
+          const IconComponent = step.icon;
           
           return (
-            <div
+            <Button
               key={step.number}
-              onClick={() => isClickable && onStepClick?.(step.number as 1 | 2 | 3 | 4)}
-              className={`flex items-center space-x-3 p-3 transition-all ${
-                currentStep === step.number ? 'bg-gray-800' : 'hover:bg-gray-900'
-              } ${isClickable ? 'cursor-pointer' : 'cursor-not-allowed opacity-50'}`}
+              variant={isActive ? "default" : isCompleted ? "secondary" : "ghost"}
+              className={`w-full justify-start h-auto p-3 ${!isClickable ? 'opacity-50 cursor-not-allowed' : ''}`}
+              onClick={isClickable && onStepClick ? () => onStepClick(step.number as 1 | 2 | 3 | 4) : undefined}
+              disabled={!isClickable}
             >
-            <div className={`w-6 h-6 flex items-center justify-center text-xs font-normal ${
-              step.completed ? 'bg-gray-700 text-white' : 
-              currentStep === step.number ? 'bg-gray-700 text-white' : 'bg-gray-800 text-gray-300'
-            }`}>
-              {step.completed ? '✓' : step.number}
-            </div>
-            <div>
-              <div className={`text-xs font-normal ${currentStep === step.number ? 'text-white' : 'text-gray-200'}`}>
-                {step.title}
+              <div className="flex items-center w-full">
+                <div className="flex items-center justify-center mr-3">
+                  {isCompleted ? (
+                    <CheckCircle2 className="w-5 h-5 text-green-600" />
+                  ) : (
+                    <div className="relative">
+                      <Circle className="w-5 h-5" />
+                      <IconComponent className="w-3 h-3 absolute top-1 left-1" />
+                    </div>
+                  )}
+                </div>
+                <div className="flex-1 text-left">
+                  <div className="text-sm font-medium">{step.title}</div>
+                  <div className="text-xs text-muted-foreground">{step.description}</div>
+                </div>
+                {isActive && (
+                  <Badge variant="outline" className="text-xs">
+                    Current
+                  </Badge>
+                )}
               </div>
-              <div className="text-xs text-gray-400">{step.description}</div>
-            </div>
-          </div>
+            </Button>
           );
         })}
       </div>

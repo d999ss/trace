@@ -206,21 +206,42 @@ export function PreviewContent() {
   const routeLoaded = posterState.coordinates.length > 0;
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen" style={{ background: 'linear-gradient(135deg, #0A0E27 0%, #1A1E3A 50%, #2A2F4A 100%)' }}>
       <Header activityName={activity?.name} />
       
-      <div className="flex h-[calc(100vh-140px)]">
-        <PosterPreview posterState={posterState} svgRef={svgRef} />
-        <ControlsSidebar 
-          posterState={posterState} 
-          svgRef={svgRef} 
-          routeData={{
-            distance: '8.85 mi',
-            duration: '48 min',
-            elevation: '+1,247 ft',
-            points: posterState.coordinates.length
-          }}
-        />
+      {/* Premium Studio Layout */}
+      <div className="flex h-[calc(100vh-80px)]">
+        {/* Main Canvas Area */}
+        <div className="flex-1 flex items-center justify-center p-12 bg-gradient-to-br from-white/5 to-white/10 backdrop-blur-sm">
+          <div className="w-full max-w-4xl">
+            <PosterPreview posterState={posterState} svgRef={svgRef} />
+          </div>
+        </div>
+        
+        {/* Premium Controls Panel */}
+        <div className="w-96 bg-white/95 backdrop-blur-xl shadow-2xl border-l border-white/20">
+          <div className="h-full flex flex-col">
+            {/* Panel Header */}
+            <div className="p-8 border-b border-gray-100">
+              <h2 className="text-2xl font-bold text-gray-900 mb-2">Studio</h2>
+              <p className="text-gray-600 text-sm">Craft your perfect poster</p>
+            </div>
+            
+            {/* Controls Content */}
+            <div className="flex-1 overflow-y-auto">
+              <ControlsSidebar 
+                posterState={posterState} 
+                svgRef={svgRef} 
+                routeData={{
+                  distance: '8.85 mi',
+                  duration: '48 min',
+                  elevation: '+1,247 ft',
+                  points: posterState.coordinates.length
+                }}
+              />
+            </div>
+          </div>
+        </div>
       </div>
       
       <StickyCTA posterState={posterState} routeLoaded={routeLoaded} />
