@@ -173,7 +173,7 @@ export function PreviewContent() {
     return (
       <div className="min-h-screen bg-gray-50">
         <Header activityName={activity?.name} />
-        <div className="h-[calc(100vh-80px)] flex items-center justify-center">
+        <div className="h-[calc(100vh-40px)] flex items-center justify-center">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
             <p className="text-gray-600">Loading your activity...</p>
@@ -187,7 +187,7 @@ export function PreviewContent() {
     return (
       <div className="min-h-screen bg-gray-50">
         <Header activityName={activity?.name} />
-        <div className="h-[calc(100vh-80px)] flex items-center justify-center">
+        <div className="h-[calc(100vh-40px)] flex items-center justify-center">
           <div className="text-center max-w-md">
             <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <svg className="w-8 h-8 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -206,7 +206,7 @@ export function PreviewContent() {
     <div className="min-h-screen bg-gray-50">
       <Header activityName={activity?.name} />
       
-      <div className="flex h-[calc(100vh-80px)]">
+      <div className="flex h-[calc(100vh-40px)]">
         <PosterPreview posterState={posterState} svgRef={svgRef} />
         <ControlsSidebar posterState={posterState} svgRef={svgRef} />
       </div>
