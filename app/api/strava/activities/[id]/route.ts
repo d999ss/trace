@@ -3,7 +3,7 @@ import { getActivity } from '@/lib/strava';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const searchParams = request.nextUrl.searchParams;
   const accessToken = searchParams.get('access_token');
@@ -16,7 +16,8 @@ export async function GET(
   }
 
   try {
-    const activity = await getActivity(accessToken, params.id);
+    const { id } = await params;
+    const activity = await getActivity(accessToken, id);
     
     return NextResponse.json(activity);
   } catch (error) {
