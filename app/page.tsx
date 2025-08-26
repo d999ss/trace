@@ -1,5 +1,3 @@
-import Link from 'next/link';
-
 export default function Home() {
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -8,12 +6,12 @@ export default function Home() {
         <p className="text-lg text-gray-600 mb-8">
           Transform your Strava activities into beautiful prints
         </p>
-        <Link 
+        <a 
           href="/api/strava/auth"
           className="inline-block bg-orange-600 hover:bg-orange-700 text-white font-medium py-3 px-6 rounded-lg transition-colors duration-200"
         >
           Connect with Strava
-        </Link>
+        </a>
       </div>
     </div>
   );
