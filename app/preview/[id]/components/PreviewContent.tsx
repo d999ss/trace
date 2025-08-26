@@ -215,9 +215,9 @@ export function PreviewContent() {
           posterState={posterState} 
           svgRef={svgRef} 
           routeData={{
-            distance: posterState.distance || '8.85 mi',
+            distance: '8.85 mi',
             duration: '48 min',
-            elevation: posterState.elevation || '+1,247 ft',
+            elevation: '+1,247 ft',
             points: posterState.coordinates.length
           }}
         />
