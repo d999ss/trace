@@ -10,7 +10,7 @@ export function SizeStep({ posterState }: SizeStepProps) {
   return (
     <div className="space-y-4">
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">Print Size</label>
+        <label className="block text-xs font-normal text-white mb-2">Print Size</label>
         <div className="space-y-2">
           <label className="flex items-center space-x-3 cursor-pointer">
             <input
@@ -21,7 +21,7 @@ export function SizeStep({ posterState }: SizeStepProps) {
               onChange={(e) => posterState.setSelectedSize(e.target.value as 'digital' | 'small' | 'medium' | 'large')}
               className="text-gray-300 focus:ring-gray-500"
             />
-            <span className="text-sm text-gray-700">Digital</span>
+            <span className="text-xs font-normal text-gray-300">Digital</span>
           </label>
           <label className="flex items-center space-x-3 cursor-pointer">
             <input
@@ -32,7 +32,7 @@ export function SizeStep({ posterState }: SizeStepProps) {
               onChange={(e) => posterState.setSelectedSize(e.target.value as 'digital' | 'small' | 'medium' | 'large')}
               className="text-gray-300 focus:ring-gray-500"
             />
-            <span className="text-sm text-gray-700">Small</span>
+            <span className="text-xs font-normal text-gray-300">Small</span>
           </label>
           <label className="flex items-center space-x-3 cursor-pointer">
             <input
@@ -43,7 +43,7 @@ export function SizeStep({ posterState }: SizeStepProps) {
               onChange={(e) => posterState.setSelectedSize(e.target.value as 'digital' | 'small' | 'medium' | 'large')}
               className="text-gray-300 focus:ring-gray-500"
             />
-            <span className="text-sm text-gray-700">Medium</span>
+            <span className="text-xs font-normal text-gray-300">Medium</span>
           </label>
           <label className="flex items-center space-x-3 cursor-pointer">
             <input
@@ -54,7 +54,7 @@ export function SizeStep({ posterState }: SizeStepProps) {
               onChange={(e) => posterState.setSelectedSize(e.target.value as 'digital' | 'small' | 'medium' | 'large')}
               className="text-gray-300 focus:ring-gray-500"
             />
-            <span className="text-sm text-gray-700">Large</span>
+            <span className="text-xs font-normal text-gray-300">Large</span>
           </label>
         </div>
       </div>
@@ -63,7 +63,7 @@ export function SizeStep({ posterState }: SizeStepProps) {
       <div className="flex space-x-3 pt-4">
         <button
           onClick={() => posterState.setCurrentStep(3)}
-          className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-3 px-4 rounded-lg transition-colors"
+          className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 text-xs font-normal py-3 px-4 transition-colors"
         >
           Back
         </button>

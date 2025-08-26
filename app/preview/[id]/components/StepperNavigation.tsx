@@ -41,7 +41,7 @@ export function StepperNavigation({ currentStep, routeLoaded, routeData, onStepC
   return (
     <div className="mb-8">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-xs font-semibold text-white">Customize Your Poster</h2>
+        <h2 className="text-xs font-normal text-white">Customize Your Poster</h2>
         <div className="text-xs text-gray-300">Step {currentStep} of 4</div>
       </div>
       
@@ -57,14 +57,14 @@ export function StepperNavigation({ currentStep, routeLoaded, routeData, onStepC
                 currentStep === step.number ? 'bg-gray-800' : 'hover:bg-gray-900'
               } ${isClickable ? 'cursor-pointer' : 'cursor-not-allowed opacity-50'}`}
             >
-            <div className={`w-6 h-6 flex items-center justify-center text-xs font-medium ${
+            <div className={`w-6 h-6 flex items-center justify-center text-xs font-normal ${
               step.completed ? 'bg-gray-700 text-white' : 
               currentStep === step.number ? 'bg-gray-700 text-white' : 'bg-gray-800 text-gray-300'
             }`}>
               {step.completed ? '✓' : step.number}
             </div>
             <div>
-              <div className={`text-xs font-medium ${currentStep === step.number ? 'text-white' : 'text-gray-200'}`}>
+              <div className={`text-xs font-normal ${currentStep === step.number ? 'text-white' : 'text-gray-200'}`}>
                 {step.title}
               </div>
               <div className="text-xs text-gray-400">{step.description}</div>

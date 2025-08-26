@@ -54,7 +54,7 @@ export function StickyCTA({ posterState, routeLoaded }: StickyCTAProps) {
         <button
           onClick={handleContinue}
           disabled={isDisabled || currentStep === 4}
-          className={`w-full py-3 px-6 text-xs font-medium transition-colors ${
+          className={`w-full py-3 px-4 text-xs font-normal transition-colors ${
             isDisabled || currentStep === 4
               ? 'bg-gray-800 text-gray-500 cursor-not-allowed'
               : 'bg-gray-700 text-white hover:bg-gray-600'

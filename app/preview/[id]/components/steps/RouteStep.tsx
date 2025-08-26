@@ -10,8 +10,8 @@ export function RouteStep({ posterState }: RouteStepProps) {
   return (
     <div className="space-y-4">
       <div>
-        <h3 className="text-lg font-medium text-gray-900 mb-3">Current Activity</h3>
-        <div className="bg-gray-50 rounded-lg p-4">
+        <h3 className="text-xs font-normal text-white mb-3">Current Activity</h3>
+        <div className="bg-gray-800 p-4">
           <div className="flex items-center space-x-3">
             <div className="w-10 h-10 bg-gray-700 rounded-full flex items-center justify-center">
               <svg className="w-5 h-5 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -19,8 +19,8 @@ export function RouteStep({ posterState }: RouteStepProps) {
               </svg>
             </div>
             <div className="flex-1">
-              <div className="font-medium text-gray-900">Activity Loaded</div>
-              <div className="text-sm text-gray-500">{posterState.coordinates.length} GPS points</div>
+              <div className="text-xs font-normal text-white">Activity Loaded</div>
+              <div className="text-xs font-normal text-gray-400">{posterState.coordinates.length} GPS points</div>
             </div>
           </div>
         </div>
@@ -31,7 +31,7 @@ export function RouteStep({ posterState }: RouteStepProps) {
         <button
           onClick={() => posterState.setCurrentStep(2)}
           disabled={!posterState.coordinates.length}
-          className="flex-1 bg-gray-700 hover:bg-gray-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-medium py-3 px-4 rounded-lg transition-colors"
+          className="flex-1 bg-gray-700 hover:bg-gray-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white text-xs font-normal py-3 px-4 transition-colors"
         >
           Continue to Style
         </button>

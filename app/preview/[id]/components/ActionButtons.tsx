@@ -82,14 +82,14 @@ export function ActionButtons({ posterState, svgRef, showExportButtons = false }
         <div className="space-y-3">
           <button
             onClick={handleRenderPrint}
-            className="w-full bg-gray-800 text-white py-2 px-4 text-xs font-medium hover:bg-gray-700 transition-colors"
+            className="w-full bg-gray-800 text-white py-3 px-4 text-xs font-normal hover:bg-gray-700 transition-colors"
           >
             Save Digital Poster (PNG)
           </button>
           
           <button
             onClick={handleBuyPrint}
-            className="w-full bg-gray-800 text-white py-2 px-4 text-xs font-medium hover:bg-gray-700 transition-colors"
+            className="w-full bg-gray-800 text-white py-3 px-4 text-xs font-normal hover:bg-gray-700 transition-colors"
           >
             Order Print
           </button>
