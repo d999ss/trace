@@ -91,10 +91,10 @@ const PosterSVG = React.forwardRef<SVGSVGElement, Props>(({
     return `${i? 'L':'M'}${x.toFixed(1)},${y.toFixed(1)}`;
   }).join(' ') : '';
 
-  // Typography positioning per spec
-  const TITLE_Y = routeRect.y + routeRect.h + 450; // 150px below route (scaled to 300 DPI)
-  const SUBTITLE_Y = TITLE_Y + 120; // 40px below title (scaled to 300 DPI)
-  const MICRO_DATA_Y = H - MARGIN - 300; // Bottom 10% area
+  // Typography positioning per spec  
+  const TITLE_Y = routeRect.y + routeRect.h + 600; // More space below route
+  const SUBTITLE_Y = TITLE_Y + 200; // More space below title
+  const MICRO_DATA_Y = H - MARGIN - 600; // More space from bottom
   
   // Column layout for micro data
   const COL_WIDTH = CONTENT_W / 3; // 1440px each
@@ -142,39 +142,39 @@ const PosterSVG = React.forwardRef<SVGSVGElement, Props>(({
       {/* Clean white background */}
       <rect width={W} height={H} fill={bg}/>
       
-      {/* Route Trace - 1.5pt stroke, round linecaps */}
+      {/* Route Trace - Much thicker stroke */}
       <path 
         d={path} 
         fill="none" 
         stroke={routeColor} 
-        strokeWidth="13.5" 
+        strokeWidth="24" 
         strokeLinecap="round" 
         strokeLinejoin="round"
       />
       
-      {/* Title Block - 48pt Serif Font */}
+      {/* Title Block - Much larger serif font */}
       <text 
         x={W/2} 
         y={TITLE_Y} 
         textAnchor="middle" 
         fontFamily="Times New Roman, Georgia, serif" 
-        fontSize="144"
+        fontSize="320"
         fontWeight="400"
         fill={fg}
       >
         {title.toUpperCase()}
       </text>
       
-      {/* Subtitle - 14pt Sans-serif with letterspacing */}
+      {/* Subtitle - Larger sans-serif */}
       <text 
         x={W/2} 
         y={SUBTITLE_Y} 
         textAnchor="middle" 
         fontFamily="Helvetica Neue, Inter, Arial, sans-serif" 
-        fontSize="42"
+        fontSize="120"
         fill={fg}
         opacity="0.8"
-        letterSpacing="1.5"
+        letterSpacing="3"
       >
         {subtitle}
       </text>
@@ -185,20 +185,21 @@ const PosterSVG = React.forwardRef<SVGSVGElement, Props>(({
         <g>
           <rect 
             x={COL_1_X - 300} 
-            y={MICRO_DATA_Y - 60} 
+            y={MICRO_DATA_Y - 100} 
             width="600" 
-            height="120" 
+            height="200" 
             fill="none" 
             stroke={fg} 
-            strokeWidth="1.5" 
+            strokeWidth="3" 
             opacity="0.7"
           />
           <text 
             x={COL_1_X} 
-            y={MICRO_DATA_Y + 60} 
+            y={MICRO_DATA_Y + 100} 
             textAnchor="middle" 
             fontFamily="Helvetica Neue, Arial, sans-serif" 
-            fontSize="30"
+            fontSize="90"
+            fontWeight="600"
             fill={fg}
           >
             {distance}
@@ -209,20 +210,21 @@ const PosterSVG = React.forwardRef<SVGSVGElement, Props>(({
         <g>
           <rect 
             x={COL_2_X - 300} 
-            y={MICRO_DATA_Y - 60} 
+            y={MICRO_DATA_Y - 100} 
             width="600" 
-            height="120" 
+            height="200" 
             fill="none" 
             stroke={fg} 
-            strokeWidth="1.5" 
+            strokeWidth="3" 
             opacity="0.7"
           />
           <text 
             x={COL_2_X} 
-            y={MICRO_DATA_Y + 60} 
+            y={MICRO_DATA_Y + 100} 
             textAnchor="middle" 
             fontFamily="Helvetica Neue, Arial, sans-serif" 
-            fontSize="30"
+            fontSize="90"
+            fontWeight="600"
             fill={fg}
           >
             {elevation}
@@ -233,20 +235,21 @@ const PosterSVG = React.forwardRef<SVGSVGElement, Props>(({
         <g>
           <rect 
             x={COL_3_X - 300} 
-            y={MICRO_DATA_Y - 60} 
+            y={MICRO_DATA_Y - 100} 
             width="600" 
-            height="120" 
+            height="200" 
             fill="none" 
             stroke={fg} 
-            strokeWidth="1.5" 
+            strokeWidth="3" 
             opacity="0.7"
           />
           <text 
             x={COL_3_X} 
-            y={MICRO_DATA_Y + 60} 
+            y={MICRO_DATA_Y + 100} 
             textAnchor="middle" 
             fontFamily="Helvetica Neue, Arial, sans-serif" 
-            fontSize="30"
+            fontSize="90"
+            fontWeight="600"
             fill={fg}
           >
             {time}
