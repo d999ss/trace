@@ -13,8 +13,8 @@ export function RouteStep({ posterState }: RouteStepProps) {
         <h3 className="text-lg font-medium text-gray-900 mb-3">Current Activity</h3>
         <div className="bg-gray-50 rounded-lg p-4">
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-              <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="w-10 h-10 bg-gray-700 rounded-full flex items-center justify-center">
+              <svg className="w-5 h-5 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
               </svg>
             </div>
@@ -31,7 +31,7 @@ export function RouteStep({ posterState }: RouteStepProps) {
         <button
           onClick={() => posterState.setCurrentStep(2)}
           disabled={!posterState.coordinates.length}
-          className="flex-1 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-medium py-3 px-4 rounded-lg transition-colors"
+          className="flex-1 bg-gray-700 hover:bg-gray-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-medium py-3 px-4 rounded-lg transition-colors"
         >
           Continue to Style
         </button>

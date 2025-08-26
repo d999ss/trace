@@ -16,7 +16,7 @@ export function TextStep({ posterState }: TextStepProps) {
           value={posterState.title}
           onChange={(e) => posterState.setTitle(e.target.value)}
           placeholder="e.g., Morning Run, Epic Ride"
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent"
         />
       </div>
       
@@ -27,7 +27,7 @@ export function TextStep({ posterState }: TextStepProps) {
           value={posterState.subtitle}
           onChange={(e) => posterState.setSubtitle(e.target.value)}
           placeholder="e.g., January 15, 2024"
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent"
         />
       </div>
       
@@ -41,7 +41,7 @@ export function TextStep({ posterState }: TextStepProps) {
         </button>
         <button
           onClick={() => posterState.setCurrentStep(4)}
-          className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg transition-colors"
+          className="flex-1 bg-gray-700 hover:bg-gray-700 text-white font-medium py-3 px-4 rounded-lg transition-colors"
         >
           Continue to Size
         </button>

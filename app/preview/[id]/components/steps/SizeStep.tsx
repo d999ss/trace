@@ -19,7 +19,7 @@ export function SizeStep({ posterState }: SizeStepProps) {
               value="digital"
               checked={posterState.selectedSize === 'digital'}
               onChange={(e) => posterState.setSelectedSize(e.target.value as 'digital' | 'small' | 'medium' | 'large')}
-              className="text-blue-600 focus:ring-blue-500"
+              className="text-gray-300 focus:ring-gray-500"
             />
             <span className="text-sm text-gray-700">Digital</span>
           </label>
@@ -30,7 +30,7 @@ export function SizeStep({ posterState }: SizeStepProps) {
               value="small"
               checked={posterState.selectedSize === 'small'}
               onChange={(e) => posterState.setSelectedSize(e.target.value as 'digital' | 'small' | 'medium' | 'large')}
-              className="text-blue-600 focus:ring-blue-500"
+              className="text-gray-300 focus:ring-gray-500"
             />
             <span className="text-sm text-gray-700">Small</span>
           </label>
@@ -41,7 +41,7 @@ export function SizeStep({ posterState }: SizeStepProps) {
               value="medium"
               checked={posterState.selectedSize === 'medium'}
               onChange={(e) => posterState.setSelectedSize(e.target.value as 'digital' | 'small' | 'medium' | 'large')}
-              className="text-blue-600 focus:ring-blue-500"
+              className="text-gray-300 focus:ring-gray-500"
             />
             <span className="text-sm text-gray-700">Medium</span>
           </label>
@@ -52,7 +52,7 @@ export function SizeStep({ posterState }: SizeStepProps) {
               value="large"
               checked={posterState.selectedSize === 'large'}
               onChange={(e) => posterState.setSelectedSize(e.target.value as 'digital' | 'small' | 'medium' | 'large')}
-              className="text-blue-600 focus:ring-blue-500"
+              className="text-gray-300 focus:ring-gray-500"
             />
             <span className="text-sm text-gray-700">Large</span>
           </label>

@@ -19,7 +19,7 @@ export function StyleStep({ posterState }: StyleStepProps) {
               value="classic"
               checked={posterState.posterStyle === 'classic'}
               onChange={(e) => posterState.setPosterStyle(e.target.value as 'classic' | 'art-print')}
-              className="text-blue-600 focus:ring-blue-500"
+              className="text-gray-300 focus:ring-gray-500"
             />
             <span className="text-sm text-gray-700">Classic</span>
           </label>
@@ -30,7 +30,7 @@ export function StyleStep({ posterState }: StyleStepProps) {
               value="art-print"
               checked={posterState.posterStyle === 'art-print'}
               onChange={(e) => posterState.setPosterStyle(e.target.value as 'classic' | 'art-print')}
-              className="text-blue-600 focus:ring-blue-500"
+              className="text-gray-300 focus:ring-gray-500"
             />
             <span className="text-sm text-gray-700">Art Print</span>
           </label>
@@ -47,7 +47,7 @@ export function StyleStep({ posterState }: StyleStepProps) {
               value="light"
               checked={posterState.theme === 'light'}
               onChange={(e) => posterState.setTheme(e.target.value as 'light' | 'dark' | 'accent')}
-              className="text-blue-600 focus:ring-blue-500"
+              className="text-gray-300 focus:ring-gray-500"
             />
             <span className="text-sm text-gray-700">Classic</span>
           </label>
@@ -58,7 +58,7 @@ export function StyleStep({ posterState }: StyleStepProps) {
               value="dark"
               checked={posterState.theme === 'dark'}
               onChange={(e) => posterState.setTheme(e.target.value as 'light' | 'dark' | 'accent')}
-              className="text-blue-600 focus:ring-blue-500"
+              className="text-gray-300 focus:ring-gray-500"
             />
             <span className="text-sm text-gray-700">Dark</span>
           </label>
@@ -69,7 +69,7 @@ export function StyleStep({ posterState }: StyleStepProps) {
               value="accent"
               checked={posterState.theme === 'accent'}
               onChange={(e) => posterState.setTheme(e.target.value as 'light' | 'dark' | 'accent')}
-              className="text-blue-600 focus:ring-blue-500"
+              className="text-gray-300 focus:ring-gray-500"
             />
             <span className="text-sm text-gray-700">Satellite</span>
           </label>
@@ -86,7 +86,7 @@ export function StyleStep({ posterState }: StyleStepProps) {
         </button>
         <button
           onClick={() => posterState.setCurrentStep(3)}
-          className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg transition-colors"
+          className="flex-1 bg-gray-700 hover:bg-gray-700 text-white font-medium py-3 px-4 rounded-lg transition-colors"
         >
           Continue to Text
         </button>
