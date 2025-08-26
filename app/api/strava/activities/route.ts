@@ -22,15 +22,15 @@ export async function GET(request: NextRequest) {
     console.log(`Successfully fetched ${activities.length} activities`);
     
     return NextResponse.json(activities);
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     console.error('Error fetching activities from Strava:', {
-      message: error.message,
-      status: error.status,
-      response: error.response
+      message: errorMessage,
+      error: error
     });
     
     // If it's a 401 from Strava, the token might be expired
-    if (error.message?.includes('401')) {
+    if (errorMessage.includes('401')) {
       return NextResponse.json(
         { error: 'Authentication failed. Please reconnect your Strava account.' },
         { status: 401 }
@@ -38,7 +38,7 @@ export async function GET(request: NextRequest) {
     }
     
     return NextResponse.json(
-      { error: 'Failed to fetch activities from Strava', details: error.message },
+      { error: 'Failed to fetch activities from Strava', details: errorMessage },
       { status: 500 }
     );
   }

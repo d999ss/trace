@@ -18,8 +18,6 @@ const PosterSVG = React.forwardRef<SVGSVGElement, Props>(({
   title,
   subtitle = 'Strava Activity',
   theme = 'dark',
-  posterRatio = '2:3',
-  posterStyle = 'classic',
   distance = '8.85 mi',
   elevation = '+1,247 ft',
   time = '1:23:45',

@@ -23,15 +23,18 @@ export async function GET(
     console.log('Successfully fetched activity:', activity.name);
     
     return NextResponse.json(activity);
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    const { id } = await params;
+    
     console.error('Error fetching activity from Strava:', {
-      message: error.message,
-      status: error.status,
-      activityId: (await params).id
+      message: errorMessage,
+      activityId: id,
+      error: error
     });
     
     // If it's a 401 from Strava, the token might be expired
-    if (error.message?.includes('401')) {
+    if (errorMessage.includes('401')) {
       return NextResponse.json(
         { error: 'Authentication failed. Please reconnect your Strava account.' },
         { status: 401 }
@@ -39,7 +42,7 @@ export async function GET(
     }
     
     // If it's a 404, the activity doesn't exist or isn't accessible
-    if (error.message?.includes('404')) {
+    if (errorMessage.includes('404')) {
       return NextResponse.json(
         { error: 'Activity not found. It may be private or deleted.' },
         { status: 404 }
@@ -47,7 +50,7 @@ export async function GET(
     }
     
     return NextResponse.json(
-      { error: 'Failed to fetch activity from Strava', details: error.message },
+      { error: 'Failed to fetch activity from Strava', details: errorMessage },
       { status: 500 }
     );
   }
