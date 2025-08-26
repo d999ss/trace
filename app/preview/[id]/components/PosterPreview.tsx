@@ -33,16 +33,16 @@ export function PosterPreview({ posterState, svgRef }: PosterPreviewProps) {
   }
 
   return (
-    <div className="flex-1 bg-white overflow-auto">
+    <div className="flex-1 bg-gray-100 overflow-auto">
       <div className="h-full flex flex-col">
         <div className="flex-1 flex items-center justify-center p-8">
-          <div className="max-w-2xl w-full">
-            <div className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+          <div className="w-full max-w-[500px]">
+            <div className="bg-white rounded-2xl shadow-2xl hover:shadow-3xl transition-all duration-300 transform hover:-translate-y-1 p-8">
               <div 
-                className="w-full rounded-2xl overflow-hidden"
+                className="w-full bg-white"
                 style={{ 
-                  maxHeight: '700px',
-                  aspectRatio: '2/3' // Ensure portrait orientation is maintained
+                  aspectRatio: '2/3',
+                  position: 'relative' as const
                 }}
               >
                 <PosterSVG

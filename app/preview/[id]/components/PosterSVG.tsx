@@ -104,9 +104,9 @@ const PosterSVG = React.forwardRef<SVGSVGElement, Props>(({
     background: bg,
     width: '100%',
     height: '100%',
-    maxWidth: '100%',
-    maxHeight: '100%',
-    objectFit: 'contain' as const
+    position: 'absolute' as const,
+    top: 0,
+    left: 0
   };
 
   if (posterStyle === 'art-print') {
