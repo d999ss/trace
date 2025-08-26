@@ -179,7 +179,7 @@ const PosterSVG = React.forwardRef<SVGSVGElement, Props>(({
           </text>
           <text 
             x={COL_1_X} 
-            y={MICRO_DATA_Y + 90} 
+            y={MICRO_DATA_Y + 250} 
             textAnchor="middle" 
             fontFamily="Helvetica Neue, Arial, sans-serif" 
             fontSize="100"
@@ -206,7 +206,7 @@ const PosterSVG = React.forwardRef<SVGSVGElement, Props>(({
           </text>
           <text 
             x={COL_2_X} 
-            y={MICRO_DATA_Y + 90} 
+            y={MICRO_DATA_Y + 250} 
             textAnchor="middle" 
             fontFamily="Helvetica Neue, Arial, sans-serif" 
             fontSize="100"
@@ -233,7 +233,7 @@ const PosterSVG = React.forwardRef<SVGSVGElement, Props>(({
           </text>
           <text 
             x={COL_3_X} 
-            y={MICRO_DATA_Y + 90} 
+            y={MICRO_DATA_Y + 250} 
             textAnchor="middle" 
             fontFamily="Helvetica Neue, Arial, sans-serif" 
             fontSize="100"
