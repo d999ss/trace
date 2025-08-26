@@ -30,10 +30,11 @@ const PosterSVG = React.forwardRef<SVGSVGElement, Props>(({
           : posterRatio === '3:4' ? Math.round(W * 4 / 3)
           : Math.round(W * 24 / 18);
 
-  // layout margins
-  const M = Math.round(W * 0.08);
-  const artTop = M;
-  const artHeight = Math.round(H * 0.32);
+  // layout margins - tighter for better use of space
+  const M = Math.round(W * 0.06);
+  // Route takes up 65% of poster height, centered vertically with slight offset up
+  const artHeight = Math.round(H * 0.65);
+  const artTop = Math.round(H * 0.12); // Start 12% from top for visual balance
   const artRect = { x: M, y: artTop, w: W - 2*M, h: artHeight };
 
   // project lng/lat -> normalized XY coordinates
@@ -110,7 +111,7 @@ const PosterSVG = React.forwardRef<SVGSVGElement, Props>(({
   };
 
   if (posterStyle === 'art-print') {
-    // Art Print style - minimal, centered route with clean typography
+    // Art Print style - Apple-like minimal design with perfect balance
     return (
       <svg 
         ref={ref}
@@ -121,58 +122,154 @@ const PosterSVG = React.forwardRef<SVGSVGElement, Props>(({
         style={svgStyle}
         preserveAspectRatio="xMidYMid meet"
       >
-        {/* Background with subtle grid */}
+        {/* Clean background */}
+        <rect width={W} height={H} fill={bg}/>
+        
+        {/* Subtle gradient overlay for depth */}
         <defs>
-          <pattern id="tinyGrid" width="20" height="20" patternUnits="userSpaceOnUse">
-            <rect width="20" height="20" fill={theme==='dark' ? '#121419' : '#F7F9FB'}/>
-            <path d="M 20 0 L 0 0 0 20" stroke={theme==='dark' ? '#1C2028' : '#E3E7ED'} strokeWidth="1"/>
-          </pattern>
+          <linearGradient id="fadeGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stopColor={theme === 'dark' ? '#000' : '#fff'} stopOpacity="0"/>
+            <stop offset="100%" stopColor={theme === 'dark' ? '#000' : '#fff'} stopOpacity="0.03"/>
+          </linearGradient>
         </defs>
-        <rect x={artRect.x} y={artRect.y} width={artRect.w} height={artRect.h} fill="url(#tinyGrid)"/>
+        <rect width={W} height={H} fill="url(#fadeGradient)"/>
 
-        {/* Route */}
-        <path d={path} fill="none" stroke={routeColor} strokeWidth={4} strokeLinecap="round" strokeLinejoin="round"/>
+        {/* Main Route - Thick and Bold */}
+        <path 
+          d={path} 
+          fill="none" 
+          stroke={routeColor} 
+          strokeWidth={theme === 'dark' ? 12 : 10} 
+          strokeLinecap="round" 
+          strokeLinejoin="round"
+          opacity="0.9"
+        />
+        
+        {/* Route glow effect for depth */}
+        <path 
+          d={path} 
+          fill="none" 
+          stroke={routeColor} 
+          strokeWidth={theme === 'dark' ? 24 : 20} 
+          strokeLinecap="round" 
+          strokeLinejoin="round"
+          opacity="0.15"
+        />
 
-        {/* Title */}
+        {/* Title - Large and Bold */}
         <text 
           x={W/2} 
-          y={artRect.y + artRect.h + M*1.2} 
+          y={artRect.y + artRect.h + M*2} 
           textAnchor="middle" 
-          fontFamily="Inter, system-ui, -apple-system, sans-serif" 
-          fontSize="13" 
-          fill="black"
+          fontFamily="-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', sans-serif" 
+          fontSize={theme === 'dark' ? '72' : '68'}
+          fontWeight="600"
+          fill={fg}
+          letterSpacing="-1"
         >
-          {title}
+          {title.toUpperCase()}
         </text>
+        
+        {/* Subtitle - Clean and Refined */}
         <text 
           x={W/2} 
-          y={artRect.y + artRect.h + M*1.2 + 20} 
+          y={artRect.y + artRect.h + M*2 + 100} 
           textAnchor="middle" 
-          fontFamily="Inter, system-ui, -apple-system, sans-serif" 
-          fontSize="11" 
-          fill="black"
+          fontFamily="-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', sans-serif" 
+          fontSize="32" 
+          fill={fg}
+          opacity="0.6"
         >
           {subtitle}
         </text>
 
-        {/* Footer metrics */}
-        <g 
-          transform={`translate(${M}, ${H - M*0.8})`} 
-          fill="black" 
-          fontFamily="Inter, system-ui, -apple-system, sans-serif" 
-          fontSize="11"
-        >
-          <text>{distance}</text>
-          <text x={W/2 - M*1.0} textAnchor="middle">{elevation}</text>
-          <text x={W - 2*M} textAnchor="end">{time}</text>
+        {/* Stats Section - Centered and Balanced */}
+        <g transform={`translate(${W/2}, ${H - M*4})`}>
+          {/* Stats Container */}
+          <rect 
+            x={-300} 
+            y={-40} 
+            width={600} 
+            height={80} 
+            fill={theme === 'dark' ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.02)'}
+            rx="12"
+          />
+          
+          {/* Distance */}
+          <text 
+            x="-180" 
+            textAnchor="middle" 
+            fontFamily="-apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif" 
+            fontSize="36" 
+            fontWeight="500"
+            fill={fg}
+          >
+            {distance}
+          </text>
+          <text 
+            x="-180" 
+            y="25" 
+            textAnchor="middle" 
+            fontFamily="-apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif" 
+            fontSize="18" 
+            fill={fg}
+            opacity="0.5"
+          >
+            DISTANCE
+          </text>
+          
+          {/* Elevation */}
+          <text 
+            x="0" 
+            textAnchor="middle" 
+            fontFamily="-apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif" 
+            fontSize="36" 
+            fontWeight="500"
+            fill={fg}
+          >
+            {elevation}
+          </text>
+          <text 
+            x="0" 
+            y="25" 
+            textAnchor="middle" 
+            fontFamily="-apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif" 
+            fontSize="18" 
+            fill={fg}
+            opacity="0.5"
+          >
+            ELEVATION
+          </text>
+          
+          {/* Time */}
+          <text 
+            x="180" 
+            textAnchor="middle" 
+            fontFamily="-apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif" 
+            fontSize="36" 
+            fontWeight="500"
+            fill={fg}
+          >
+            {time}
+          </text>
+          <text 
+            x="180" 
+            y="25" 
+            textAnchor="middle" 
+            fontFamily="-apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif" 
+            fontSize="18" 
+            fill={fg}
+            opacity="0.5"
+          >
+            TIME
+          </text>
         </g>
       </svg>
     );
   } else {
-    // Classic style - traditional poster layout
-    const topSectionHeight = Math.round(H * 0.15);
-    const mapBlockHeight = Math.round(H * 0.5);
-    const statsBarHeight = Math.round(H * 0.1);
+    // Classic style - clean modern layout with large route
+    const titleY = Math.round(H * 0.08);
+    const subtitleY = Math.round(H * 0.11);
     
     return (
       <svg 
@@ -184,34 +281,18 @@ const PosterSVG = React.forwardRef<SVGSVGElement, Props>(({
         style={svgStyle}
         preserveAspectRatio="xMidYMid meet"
       >
-        {/* Gradients */}
-        <defs>
-          <linearGradient id="topGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor={theme === 'dark' ? 'rgba(59, 130, 246, 0.05)' : 'rgba(59, 130, 246, 0.05)'}/>
-            <stop offset="100%" stopColor={theme === 'dark' ? 'rgba(59, 130, 246, 0.02)' : 'rgba(59, 130, 246, 0.02)'}/>
-          </linearGradient>
-          <linearGradient id="mapGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor={theme === 'dark' ? '#1e293b' : '#ffffff'}/>
-            <stop offset="100%" stopColor={theme === 'dark' ? '#0f172a' : '#f1f5f9'}/>
-          </linearGradient>
-          <linearGradient id="statsGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor="#f8fafc"/>
-            <stop offset="100%" stopColor="#e2e8f0"/>
-          </linearGradient>
-        </defs>
-
-        {/* Top section background */}
-        <rect x="0" y="0" width={W} height={topSectionHeight} fill="url(#topGradient)"/>
-
-        {/* Title */}
+        {/* Clean background */}
+        <rect width={W} height={H} fill={bg}/>
+        
+        {/* Title - Top Center */}
         <text 
           x={W/2} 
-          y={Math.round(H*0.08)} 
+          y={titleY} 
           textAnchor="middle" 
-          fontFamily="Inter, system-ui, -apple-system, sans-serif" 
-          fontSize="13" 
-          fontWeight="bold" 
-          fill="black"
+          fontFamily="-apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif" 
+          fontSize="56" 
+          fontWeight="600" 
+          fill={fg}
         >
           {title.toUpperCase()}
         </text>
@@ -219,41 +300,108 @@ const PosterSVG = React.forwardRef<SVGSVGElement, Props>(({
         {/* Subtitle */}
         <text 
           x={W/2} 
-          y={Math.round(H*0.12)} 
+          y={subtitleY} 
           textAnchor="middle" 
-          fontFamily="Inter, system-ui, -apple-system, sans-serif" 
-          fontSize="11" 
-          fill="black"
+          fontFamily="-apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif" 
+          fontSize="28" 
+          fill={fg}
+          opacity="0.6"
         >
           {subtitle}
         </text>
-
-        {/* Map section */}
-        <rect x="0" y={topSectionHeight} width={W} height={mapBlockHeight} fill="url(#mapGradient)"/>
         
-        {/* Route on map */}
-        <path d={path} fill="none" stroke={routeColor} strokeWidth={Math.round(W*0.008)} strokeLinecap="round" strokeLinejoin="round"/>
-
-        {/* Stats bar */}
-        <rect x="0" y={topSectionHeight + mapBlockHeight} width={W} height={statsBarHeight} fill="url(#statsGradient)"/>
+        {/* Main Route - Bold and Centered */}
+        <path 
+          d={path} 
+          fill="none" 
+          stroke={routeColor} 
+          strokeWidth="8" 
+          strokeLinecap="round" 
+          strokeLinejoin="round"
+        />
         
-        {/* Stats text */}
-        <g 
-          transform={`translate(${W/6}, ${topSectionHeight + mapBlockHeight + Math.round(H*0.06)})`} 
-          fill="black" 
-          fontFamily="Inter, system-ui, -apple-system, sans-serif" 
-          fontSize="11" 
-          fontWeight="bold"
-        >
-          <text textAnchor="middle">{distance}</text>
-          <text x={W/2} textAnchor="middle">{elevation}</text>
-          <text x={2*W/3} textAnchor="middle">{time}</text>
+        {/* Route shadow for depth */}
+        <path 
+          d={path} 
+          fill="none" 
+          stroke={theme === 'dark' ? 'rgba(0,0,0,0.3)' : 'rgba(0,0,0,0.1)'} 
+          strokeWidth="8" 
+          strokeLinecap="round" 
+          strokeLinejoin="round"
+          transform="translate(2, 4)"
+        />
+        
+        {/* Stats at bottom - Clean horizontal layout */}
+        <g transform={`translate(${W/2}, ${H - M*2.5})`}>
+          {/* Distance */}
+          <text 
+            x="-300" 
+            textAnchor="middle" 
+            fontFamily="-apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif" 
+            fontSize="32" 
+            fontWeight="500"
+            fill={fg}
+          >
+            {distance}
+          </text>
+          <text 
+            x="-300" 
+            y="30" 
+            textAnchor="middle" 
+            fontFamily="-apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif" 
+            fontSize="16" 
+            fill={fg}
+            opacity="0.5"
+          >
+            DISTANCE
+          </text>
+          
+          {/* Elevation */}
+          <text 
+            x="0" 
+            textAnchor="middle" 
+            fontFamily="-apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif" 
+            fontSize="32" 
+            fontWeight="500"
+            fill={fg}
+          >
+            {elevation}
+          </text>
+          <text 
+            x="0" 
+            y="30" 
+            textAnchor="middle" 
+            fontFamily="-apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif" 
+            fontSize="16" 
+            fill={fg}
+            opacity="0.5"
+          >
+            ELEVATION
+          </text>
+          
+          {/* Time */}
+          <text 
+            x="300" 
+            textAnchor="middle" 
+            fontFamily="-apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif" 
+            fontSize="32" 
+            fontWeight="500"
+            fill={fg}
+          >
+            {time}
+          </text>
+          <text 
+            x="300" 
+            y="30" 
+            textAnchor="middle" 
+            fontFamily="-apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif" 
+            fontSize="16" 
+            fill={fg}
+            opacity="0.5"
+          >
+            TIME
+          </text>
         </g>
-
-        {/* Footer branding */}
-        <text x={W/2} y={H - Math.round(H*0.03)} textAnchor="middle" fontFamily="Inter, system-ui, -apple-system, sans-serif" fontSize="11" fill="black">
-          TRACE PRINTS
-        </text>
       </svg>
     );
   }
