@@ -76,20 +76,30 @@ export async function getActivities(accessToken: string, page = 1, perPage = 30)
 }
 
 export async function getActivity(accessToken: string, activityId: string): Promise<StravaActivity> {
-  const response = await fetch(
-    `https://www.strava.com/api/v3/activities/${activityId}`,
-    {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    }
-  );
+  const url = `https://www.strava.com/api/v3/activities/${activityId}`;
+  
+  console.log('Making request to Strava API for activity:', url);
+  
+  const response = await fetch(url, {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
 
   if (!response.ok) {
-    throw new Error('Failed to fetch activity');
+    const errorText = await response.text();
+    console.error('Strava API error for activity:', {
+      activityId,
+      status: response.status,
+      statusText: response.statusText,
+      body: errorText
+    });
+    throw new Error(`Failed to fetch activity: ${response.status} - ${response.statusText}`);
   }
 
-  return response.json();
+  const data = await response.json();
+  console.log('Received activity from Strava:', data.name, 'with map:', !!data.map?.summary_polyline);
+  return data;
 }
 
 export function decodePolyline(str: string, precision = 5): [number, number][] {
