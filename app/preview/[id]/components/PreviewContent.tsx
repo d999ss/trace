@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef } from 'react';
 import { useParams, useSearchParams } from 'next/navigation';
-import { getActivity, decodePolyline } from '@/lib/strava';
+import { decodePolyline } from '@/lib/strava';
 import { Header } from './Header';
 import { PosterPreview } from './PosterPreview';
 import { ControlsSidebar } from './ControlsSidebar';
@@ -71,7 +71,11 @@ export function PreviewContent() {
     async function fetchActivity() {
       try {
         console.log('Fetching activity:', activityId);
-        const data = await getActivity(accessToken!, activityId);
+        const response = await fetch(`/api/strava/activities/${activityId}?access_token=${accessToken}`);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
         console.log('Activity data received:', data);
         setActivity(data);
         

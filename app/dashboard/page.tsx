@@ -2,7 +2,6 @@
 
 import { Suspense, useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { getActivities } from '@/lib/strava';
 import Link from 'next/link';
 
 interface Activity {
@@ -31,7 +30,11 @@ function DashboardContent() {
 
     async function fetchActivities() {
       try {
-        const data = await getActivities(accessToken!);
+        const response = await fetch(`/api/strava/activities?access_token=${accessToken}`);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
         setActivities(data);
       } catch (err) {
         setError('Failed to fetch activities');
