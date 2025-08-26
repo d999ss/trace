@@ -348,7 +348,7 @@ export const motionReduce = '@media (prefers-reduced-motion: reduce)';
 export const darkMode = '@media (prefers-color-scheme: dark)';
 export const lightMode = '@media (prefers-color-scheme: light)';
 
-export default {
+const designSystem = {
   colors,
   typography,
   spacing,
@@ -367,3 +367,5 @@ export default {
   darkMode,
   lightMode,
 };
+
+export default designSystem;

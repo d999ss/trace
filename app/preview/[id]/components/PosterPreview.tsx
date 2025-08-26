@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useCallback, useEffect, RefObject } from 'react';
+import { RefObject } from 'react';
 import { PosterState } from '../hooks/usePosterState';
 import PosterSVG from './PosterSVG';
 

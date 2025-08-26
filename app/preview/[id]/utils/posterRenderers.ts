@@ -55,19 +55,16 @@ export function renderClassicPoster(
   const mapBlockWidth = width;
 
   // Map background with theme-appropriate colors
-  let mapBackgroundColor, mapGradient;
+  let mapGradient;
   if (posterState.theme === 'dark') {
-    mapBackgroundColor = '#0f172a';
     mapGradient = ctx.createLinearGradient(mapBlockX, mapBlockY, mapBlockX, mapBlockY + mapBlockHeight);
     mapGradient.addColorStop(0, '#1e293b');
     mapGradient.addColorStop(1, '#0f172a');
   } else if (posterState.theme === 'accent') {
-    mapBackgroundColor = '#eff6ff';
     mapGradient = ctx.createLinearGradient(mapBlockX, mapBlockY, mapBlockX, mapBlockY + mapBlockHeight);
     mapGradient.addColorStop(0, '#f0f9ff');
     mapGradient.addColorStop(1, '#e0f2fe');
   } else {
-    mapBackgroundColor = '#f8fafc';
     mapGradient = ctx.createLinearGradient(mapBlockX, mapBlockY, mapBlockX, mapBlockY + mapBlockHeight);
     mapGradient.addColorStop(0, '#ffffff');
     mapGradient.addColorStop(1, '#f1f5f9');

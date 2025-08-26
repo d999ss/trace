@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback } from 'react';
 
 export type PosterStyle = 'classic' | 'art-print';
 export type Theme = 'light' | 'dark' | 'accent';

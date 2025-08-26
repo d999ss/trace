@@ -328,7 +328,7 @@ function adjustBrightness(color: string, percent: number): string {
 export function autoSelectTheme(
   rideType: string,
   timeOfDay: string,
-  season?: string
+  _season?: string
 ): ThemePreset {
   // Logic to auto-select best theme
   if (rideType === 'mountain' || rideType === 'trail') {

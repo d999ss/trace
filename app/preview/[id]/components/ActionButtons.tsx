@@ -1,6 +1,5 @@
 'use client';
 
-import { usePosterRenderer } from '../hooks/usePosterRenderer';
 import { PosterState } from '../hooks/usePosterState';
 import { exportSVGToPNG, exportSVGToBlob } from '../utils/export';
 import { RefObject } from 'react';
@@ -37,30 +36,6 @@ export function ActionButtons({ posterState, svgRef, showExportButtons = false }
     }
   };
 
-  const handleSaveSVG = async () => {
-    if (!posterState.coordinates.length || !svgRef.current) {
-      alert('Poster SVG not found. Please try refreshing the page.');
-      return;
-    }
-
-    try {
-      // Export to SVG
-      const blob = await exportSVGToBlob(svgRef.current);
-      
-      // Download the SVG
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `trace-prints-${posterState.selectedSize}-${Date.now()}.svg`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-    } catch (error) {
-      console.error('SVG export failed:', error);
-      alert('SVG export failed. Please try again.');
-    }
-  };
 
   const handleBuyPrint = () => {
     // This would integrate with a print service

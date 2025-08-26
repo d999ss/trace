@@ -40,17 +40,16 @@ export function CommunityGallery({ initialPosts = [], onPostClick }: CommunityGa
 
   // Load posts
   useEffect(() => {
-    loadPosts();
+    const loadPostsInner = async () => {
+      setIsLoading(true);
+      // Simulate API call
+      setTimeout(() => {
+        setPosts(generateSamplePosts());
+        setIsLoading(false);
+      }, 500);
+    };
+    loadPostsInner();
   }, [filter]);
-
-  const loadPosts = async () => {
-    setIsLoading(true);
-    // Simulate API call
-    setTimeout(() => {
-      setPosts(generateSamplePosts());
-      setIsLoading(false);
-    }, 500);
-  };
 
   const generateSamplePosts = (): GalleryPost[] => {
     // Generate sample gallery posts for demo
@@ -63,19 +62,19 @@ export function CommunityGallery({ initialPosts = [], onPostClick }: CommunityGa
         coordinates: [],
         metrics: {
           distance: 20 + Math.random() * 80,
-          distanceUnit: 'mi',
+          distanceUnit: 'mi' as const,
           duration: 3600 + Math.random() * 7200,
           elevationGain: 500 + Math.random() * 3000,
-          elevationUnit: 'ft',
+          elevationUnit: 'ft' as const,
           averageSpeed: 12 + Math.random() * 8,
           maxSpeed: 25 + Math.random() * 15,
         },
         context: {
-          type: ['mountain', 'road', 'trail', 'urban'][i % 4] as any,
+          type: (['mountain', 'road', 'trail', 'urban'][i % 4]) as 'mountain' | 'urban' | 'trail' | 'road',
           time: {
             startTime: new Date(),
             endTime: new Date(),
-            dayPeriod: ['dawn', 'morning', 'afternoon', 'evening'][i % 4] as any,
+            dayPeriod: (['dawn', 'morning', 'afternoon', 'evening'][i % 4]) as 'dawn' | 'morning' | 'afternoon' | 'evening',
           },
           location: {
             country: 'USA',
@@ -83,8 +82,8 @@ export function CommunityGallery({ initialPosts = [], onPostClick }: CommunityGa
           },
         },
         style: {
-          theme: ['minimal', 'mountain', 'urban', 'neon'][i % 4] as any,
-          posterStyle: 'art-print',
+          theme: (['minimal', 'mountain', 'urban', 'neon'][i % 4]) as 'light' | 'dark' | 'accent' | 'mountain' | 'urban' | 'minimal' | 'retro' | 'brutalist' | 'neon',
+          posterStyle: 'art-print' as const,
           colorScheme: {
             primary: '#000000',
             secondary: '#666666',

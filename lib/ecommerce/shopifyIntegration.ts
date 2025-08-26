@@ -1,4 +1,4 @@
-import { RideObject, ProductMetadata } from '@/lib/types/ride';
+import { RideObject } from '@/lib/types/ride';
 import Client from 'shopify-buy';
 
 interface ShopifyConfig {
@@ -20,11 +20,11 @@ interface ProductVariant {
   price: number;
   sku: string;
   image?: string;
-  options: Record<string, any>;
+  options: Record<string, string | number | boolean>;
 }
 
 export class ShopifyIntegration {
-  private client: any;
+  private client: ReturnType<typeof Client.buildClient>;
   private config: ShopifyConfig;
 
   constructor(config: ShopifyConfig) {
@@ -68,7 +68,7 @@ export class ShopifyIntegration {
   /**
    * Build product data from ride object
    */
-  private buildProductData(ride: RideObject): any {
+  private buildProductData(ride: RideObject): Record<string, unknown> {
     const { product, marketing, customizations } = ride;
     
     return {
@@ -124,7 +124,7 @@ export class ShopifyIntegration {
    * Generate rich product description
    */
   private generateProductDescription(ride: RideObject): string {
-    const { metrics, marketing, context, customizations } = ride;
+    const { metrics, marketing, customizations } = ride;
     
     let description = `<div class="product-description">`;
     

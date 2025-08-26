@@ -28,92 +28,100 @@ export function AnimatedRouteRenderer({
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
+    const generateStoryTextInner = () => {
+      const { metrics, context } = ride;
+      const distance = `${metrics.distance.toFixed(1)} ${metrics.distanceUnit}`;
+      const elevation = `${metrics.elevationGain.toLocaleString()} ${metrics.elevationUnit}`;
+      
+      let story = '';
+      
+      if (context.time?.dayPeriod === 'dawn') {
+        story = `Dawn patrol • ${distance} • ${elevation} climb`;
+      } else if (context.type === 'mountain') {
+        story = `Mountain adventure • ${distance} • ${elevation} ascent`;
+      } else if (context.type === 'urban') {
+        story = `City exploration • ${distance} through the streets`;
+      } else {
+        story = `${distance} journey • ${elevation} elevation gained`;
+      }
+      
+      setStoryText(story);
+    };
+
+    const detectMilestonesInner = () => {
+      const { coordinates } = ride;
+      if (coordinates.length < 10) return;
+
+      const milestones: { point: number; label: string }[] = [];
+      
+      // Find highest point (summit)
+      let maxElevationIndex = 0;
+      let maxElevation = coordinates[0].elevation || 0;
+      
+      coordinates.forEach((coord, i) => {
+        if (coord.elevation && coord.elevation > maxElevation) {
+          maxElevation = coord.elevation;
+          maxElevationIndex = i;
+        }
+      });
+      
+      if (maxElevationIndex > 0 && maxElevationIndex < coordinates.length - 1) {
+        milestones.push({ 
+          point: maxElevationIndex, 
+          label: 'Summit' 
+        });
+      }
+      
+      setMilestones(milestones);
+    };
+
+    const animateRouteInner = (ctx: CanvasRenderingContext2D) => {
+      const { coordinates, style } = ride;
+      const duration = 3000; // 3 seconds for full animation
+      const startTime = Date.now();
+      
+      const animate = () => {
+        const elapsed = Date.now() - startTime;
+        const currentProgress = Math.min(elapsed / duration, 1);
+        setProgress(currentProgress);
+        
+        // Clear canvas
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        // Draw animated route
+        drawAnimatedRoute(ctx, coordinates, currentProgress, style.colorScheme.route);
+        
+        // Draw milestones
+        drawMilestones(ctx, currentProgress);
+        
+        if (currentProgress < 1) {
+          animationFrameRef.current = requestAnimationFrame(animate);
+        } else {
+          onAnimationComplete?.();
+        }
+      };
+      
+      animate();
+    };
+
     // Generate story text
-    generateStoryText();
+    generateStoryTextInner();
     
     // Find milestones in the route
-    detectMilestones();
+    detectMilestonesInner();
 
     // Start route animation
-    animateRoute(ctx);
+    animateRouteInner(ctx);
 
     return () => {
       if (animationFrameRef.current) {
         cancelAnimationFrame(animationFrameRef.current);
       }
     };
-  }, [isAnimating, ride]);
+  }, [isAnimating, ride, onAnimationComplete]);
 
-  const generateStoryText = () => {
-    const { metrics, context } = ride;
-    const distance = `${metrics.distance.toFixed(1)} ${metrics.distanceUnit}`;
-    const elevation = `${metrics.elevationGain.toLocaleString()} ${metrics.elevationUnit}`;
-    
-    let story = '';
-    
-    if (context.time?.dayPeriod === 'dawn') {
-      story = `Dawn patrol • ${distance} • ${elevation} climb`;
-    } else if (context.type === 'mountain') {
-      story = `Mountain adventure • ${distance} • ${elevation} ascent`;
-    } else if (context.type === 'urban') {
-      story = `City exploration • ${distance} through the streets`;
-    } else {
-      story = `${distance} journey • ${elevation} elevation gained`;
-    }
-    
-    setStoryText(story);
-  };
 
-  const detectMilestones = () => {
-    const { coordinates } = ride;
-    if (coordinates.length < 10) return;
-
-    const milestones: { point: number; label: string }[] = [];
-    
-    // Find highest point (summit)
-    let maxElevationIndex = 0;
-    let maxElevation = coordinates[0].elevation || 0;
-    
-    coordinates.forEach((coord, i) => {
-      if (coord.elevation && coord.elevation > maxElevation) {
-        maxElevation = coord.elevation;
-        maxElevationIndex = i;
-      }
-    });
-    
-    if (maxElevationIndex > 0 && maxElevationIndex < coordinates.length - 1) {
-      milestones.push({ 
-        point: maxElevationIndex, 
-        label: 'Summit' 
-      });
-    }
-    
-    // Find steepest climb
-    let maxGradient = 0;
-    let steepestIndex = 0;
-    
-    for (let i = 1; i < coordinates.length - 1; i++) {
-      const elevChange = (coordinates[i].elevation || 0) - (coordinates[i - 1].elevation || 0);
-      const distance = calculateDistance(coordinates[i - 1], coordinates[i]);
-      const gradient = elevChange / distance;
-      
-      if (gradient > maxGradient) {
-        maxGradient = gradient;
-        steepestIndex = i;
-      }
-    }
-    
-    if (steepestIndex > 0 && Math.abs(steepestIndex - maxElevationIndex) > 10) {
-      milestones.push({ 
-        point: steepestIndex, 
-        label: 'Steep Climb' 
-      });
-    }
-    
-    setMilestones(milestones);
-  };
-
-  const calculateDistance = (coord1: any, coord2: any): number => {
+  const calculateDistance = (coord1: { lat: number; lng: number }, coord2: { lat: number; lng: number }): number => {
     const R = 6371; // Earth radius in km
     const dLat = (coord2.lat - coord1.lat) * Math.PI / 180;
     const dLon = (coord2.lng - coord1.lng) * Math.PI / 180;
@@ -124,34 +132,6 @@ export function AnimatedRouteRenderer({
     return R * c;
   };
 
-  const animateRoute = (ctx: CanvasRenderingContext2D) => {
-    const { coordinates, style } = ride;
-    const duration = 3000; // 3 seconds for full animation
-    const startTime = Date.now();
-    
-    const animate = () => {
-      const elapsed = Date.now() - startTime;
-      const currentProgress = Math.min(elapsed / duration, 1);
-      setProgress(currentProgress);
-      
-      // Clear canvas
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      
-      // Draw animated route
-      drawAnimatedRoute(ctx, coordinates, currentProgress, style.colorScheme.route);
-      
-      // Draw milestones
-      drawMilestones(ctx, currentProgress);
-      
-      if (currentProgress < 1) {
-        animationFrameRef.current = requestAnimationFrame(animate);
-      } else {
-        onAnimationComplete?.();
-      }
-    };
-    
-    animate();
-  };
 
   const drawAnimatedRoute = (
     ctx: CanvasRenderingContext2D,

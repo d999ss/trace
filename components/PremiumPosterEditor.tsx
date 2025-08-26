@@ -12,12 +12,40 @@ interface PremiumPosterEditorProps {
 
 export function PremiumPosterEditor({ ride, onUpdate, onExport }: PremiumPosterEditorProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [activeControl, setActiveControl] = useState<'style' | 'text' | 'metrics' | null>(null);
   const [previewMode, setPreviewMode] = useState<'poster' | 'framed' | 'wall'>('poster');
-  const [isRendering, setIsRendering] = useState(false);
 
   // Real-time canvas rendering
   useEffect(() => {
+    const renderPosterInner = (ctx: CanvasRenderingContext2D, rideData: RideObject) => {
+      const { style, coordinates, customizations, metrics } = rideData;
+      const { colorScheme, typography } = style;
+
+      // Clear canvas
+      ctx.fillStyle = colorScheme.background;
+      ctx.fillRect(0, 0, 1800, 2400);
+
+      // Render route with smooth animation
+      if (coordinates.length > 0) {
+        renderRoute(ctx, coordinates, colorScheme.route);
+      }
+
+      // Render title
+      ctx.fillStyle = colorScheme.foreground;
+      ctx.font = `bold 120px ${typography.titleFont}`;
+      ctx.textAlign = 'center';
+      ctx.fillText(customizations.title, 900, 300);
+
+      // Render subtitle
+      ctx.font = `48px ${typography.subtitleFont}`;
+      ctx.fillStyle = colorScheme.secondary;
+      ctx.fillText(customizations.subtitle, 900, 380);
+
+      // Render metrics if enabled
+      if (customizations.showMetrics) {
+        renderMetrics(ctx, metrics, style);
+      }
+    };
+
     if (!canvasRef.current) return;
     
     const canvas = canvasRef.current;
@@ -30,38 +58,9 @@ export function PremiumPosterEditor({ ride, onUpdate, onExport }: PremiumPosterE
     canvas.height = 2400 * scale;
     ctx.scale(scale, scale);
 
-    renderPoster(ctx, ride);
+    renderPosterInner(ctx, ride);
   }, [ride]);
 
-  const renderPoster = (ctx: CanvasRenderingContext2D, rideData: RideObject) => {
-    const { style, coordinates, customizations, metrics } = rideData;
-    const { colorScheme, typography } = style;
-
-    // Clear canvas
-    ctx.fillStyle = colorScheme.background;
-    ctx.fillRect(0, 0, 1800, 2400);
-
-    // Render route with smooth animation
-    if (coordinates.length > 0) {
-      renderRoute(ctx, coordinates, colorScheme.route);
-    }
-
-    // Render title
-    ctx.fillStyle = colorScheme.foreground;
-    ctx.font = `bold 120px ${typography.titleFont}`;
-    ctx.textAlign = 'center';
-    ctx.fillText(customizations.title, 900, 300);
-
-    // Render subtitle
-    ctx.font = `48px ${typography.subtitleFont}`;
-    ctx.fillStyle = colorScheme.secondary;
-    ctx.fillText(customizations.subtitle, 900, 380);
-
-    // Render metrics if enabled
-    if (customizations.showMetrics) {
-      renderMetrics(ctx, metrics, style);
-    }
-  };
 
   const renderRoute = (
     ctx: CanvasRenderingContext2D, 
@@ -135,7 +134,6 @@ export function PremiumPosterEditor({ ride, onUpdate, onExport }: PremiumPosterE
     style: RideStyle
   ) => {
     const metricsY = 2100;
-    const colWidth = 600;
 
     ctx.font = `bold 72px ${style.typography.metricsFont}`;
     ctx.fillStyle = style.colorScheme.foreground;
