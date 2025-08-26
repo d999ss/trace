@@ -83,12 +83,6 @@ const PosterSVG = React.forwardRef<SVGSVGElement, Props>(({
   // Simple Douglas-Peucker simplification for GPS cleanup
   const simplify = (points: [number, number][], tolerance: number): [number, number][] => {
     if (points.length <= 2) return points;
-    
-    const sqDistance = (p1: [number, number], p2: [number, number]) => {
-      const dx = p1[0] - p2[0];
-      const dy = p1[1] - p2[1];
-      return dx * dx + dy * dy;
-    };
 
     const getSqSegDistance = (p: [number, number], p1: [number, number], p2: [number, number]) => {
       let dx = p2[0] - p1[0];
@@ -135,7 +129,10 @@ const PosterSVG = React.forwardRef<SVGSVGElement, Props>(({
     return simplified;
   };
 
-  const pxPts = xs.map((_, i) => toPX(i));
+  const pxPts: [number, number][] = xs.map((_, i) => {
+    const [x, y] = toPX(i);
+    return [x, y];
+  });
   const simplified = simplify(pxPts, 2); // ~2 px tolerance at 300dpi
 
   // Generate smooth path
