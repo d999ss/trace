@@ -31,14 +31,25 @@ function DashboardContent() {
     async function fetchActivities() {
       try {
         const response = await fetch(`/api/strava/activities?access_token=${accessToken}`);
+        
         if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
+          const errorData = await response.json();
+          console.error('API Error:', errorData);
+          
+          if (response.status === 401) {
+            setError('Authentication failed. Please reconnect your Strava account.');
+          } else {
+            setError(errorData.error || `Failed to fetch activities (Status: ${response.status})`);
+          }
+          setLoading(false);
+          return;
         }
+        
         const data = await response.json();
         setActivities(data);
       } catch (err) {
-        setError('Failed to fetch activities');
-        console.error(err);
+        console.error('Fetch error:', err);
+        setError('Failed to connect to the server. Please try again.');
       } finally {
         setLoading(false);
       }
@@ -58,7 +69,20 @@ function DashboardContent() {
   if (error) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-red-600 bg-red-50 border border-red-200 rounded-lg p-4">{error}</div>
+        <div className="max-w-md w-full mx-4">
+          <div className="bg-red-50 border border-red-200 rounded-lg p-6">
+            <h3 className="text-red-800 font-semibold mb-2">Error</h3>
+            <p className="text-red-600 mb-4">{error}</p>
+            {error.includes('Authentication') && (
+              <Link 
+                href="/"
+                className="inline-block bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200"
+              >
+                Reconnect to Strava
+              </Link>
+            )}
+          </div>
+        </div>
       </div>
     );
   }

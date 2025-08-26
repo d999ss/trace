@@ -50,20 +50,29 @@ export async function exchangeCodeForToken(code: string): Promise<StravaTokenRes
 }
 
 export async function getActivities(accessToken: string, page = 1, perPage = 30): Promise<StravaActivity[]> {
-  const response = await fetch(
-    `https://www.strava.com/api/v3/athlete/activities?page=${page}&per_page=${perPage}`,
-    {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    }
-  );
+  const url = `https://www.strava.com/api/v3/athlete/activities?page=${page}&per_page=${perPage}`;
+  
+  console.log('Making request to Strava API:', url);
+  
+  const response = await fetch(url, {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
 
   if (!response.ok) {
-    throw new Error('Failed to fetch activities');
+    const errorText = await response.text();
+    console.error('Strava API error:', {
+      status: response.status,
+      statusText: response.statusText,
+      body: errorText
+    });
+    throw new Error(`Failed to fetch activities: ${response.status} - ${response.statusText}`);
   }
 
-  return response.json();
+  const data = await response.json();
+  console.log(`Received ${data.length} activities from Strava`);
+  return data;
 }
 
 export async function getActivity(accessToken: string, activityId: string): Promise<StravaActivity> {
