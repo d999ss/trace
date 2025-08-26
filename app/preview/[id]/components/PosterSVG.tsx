@@ -131,7 +131,7 @@ const PosterSVG = React.forwardRef<SVGSVGElement, Props>(({
       {/* Clean white background */}
       <rect width={W} height={H} fill={bg}/>
       
-      {/* Route area background - subtle grey box */}
+      {/* Map background - subtle topographic style */}
       <rect 
         x={routeRect.x} 
         y={routeRect.y} 
@@ -140,12 +140,82 @@ const PosterSVG = React.forwardRef<SVGSVGElement, Props>(({
         fill={theme === 'dark' ? '#1a1b1e' : '#f8f9fa'}
       />
       
-      {/* Route Trace - Better line weight */}
+      {/* Map grid lines for context */}
+      <g opacity="0.15">
+        {/* Horizontal grid lines */}
+        {Array.from({ length: 8 }, (_, i) => {
+          const y = routeRect.y + (i * routeRect.h / 7);
+          return (
+            <line 
+              key={`h-${i}`}
+              x1={routeRect.x} 
+              y1={y} 
+              x2={routeRect.x + routeRect.w} 
+              y2={y}
+              stroke={fg}
+              strokeWidth="2"
+            />
+          );
+        })}
+        {/* Vertical grid lines */}
+        {Array.from({ length: 10 }, (_, i) => {
+          const x = routeRect.x + (i * routeRect.w / 9);
+          return (
+            <line 
+              key={`v-${i}`}
+              x1={x} 
+              y1={routeRect.y} 
+              x2={x} 
+              y2={routeRect.y + routeRect.h}
+              stroke={fg}
+              strokeWidth="2"
+            />
+          );
+        })}
+      </g>
+      
+      {/* Map terrain features */}
+      <g opacity="0.08">
+        {/* Mountain/terrain shapes */}
+        <path 
+          d={`M${routeRect.x} ${routeRect.y + routeRect.h * 0.7} 
+             Q${routeRect.x + routeRect.w * 0.2} ${routeRect.y + routeRect.h * 0.4}
+             ${routeRect.x + routeRect.w * 0.4} ${routeRect.y + routeRect.h * 0.6}
+             Q${routeRect.x + routeRect.w * 0.6} ${routeRect.y + routeRect.h * 0.8}
+             ${routeRect.x + routeRect.w} ${routeRect.y + routeRect.h * 0.5}`}
+          fill="none"
+          stroke={fg}
+          strokeWidth="8"
+        />
+        <path 
+          d={`M${routeRect.x} ${routeRect.y + routeRect.h * 0.3} 
+             Q${routeRect.x + routeRect.w * 0.3} ${routeRect.y + routeRect.h * 0.1}
+             ${routeRect.x + routeRect.w * 0.7} ${routeRect.y + routeRect.h * 0.2}
+             Q${routeRect.x + routeRect.w * 0.9} ${routeRect.y + routeRect.h * 0.4}
+             ${routeRect.x + routeRect.w} ${routeRect.y + routeRect.h * 0.2}`}
+          fill="none"
+          stroke={fg}
+          strokeWidth="6"
+        />
+      </g>
+      
+      {/* Route shadow for depth - behind route */}
+      <path 
+        d={path} 
+        fill="none" 
+        stroke="rgba(0,0,0,0.2)" 
+        strokeWidth="24" 
+        strokeLinecap="round" 
+        strokeLinejoin="round"
+        transform="translate(4,4)"
+      />
+      
+      {/* Route Trace - Bold line over map */}
       <path 
         d={path} 
         fill="none" 
         stroke={routeColor} 
-        strokeWidth="16" 
+        strokeWidth="20" 
         strokeLinecap="round" 
         strokeLinejoin="round"
       />
