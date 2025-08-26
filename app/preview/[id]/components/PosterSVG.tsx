@@ -150,30 +150,30 @@ const PosterSVG = React.forwardRef<SVGSVGElement, Props>(({
         strokeLinejoin="round"
       />
       
-      {/* Title - Proportional to layout */}
+      {/* Title - Large and readable */}
       <text 
         x={W/2} 
         y={TITLE_Y} 
         textAnchor="middle" 
         fontFamily="Times New Roman, Georgia, serif" 
-        fontSize="180"
-        fontWeight="300"
+        fontSize="280"
+        fontWeight="400"
         fill={fg}
         letterSpacing="2"
       >
         {title}
       </text>
       
-      {/* Subtitle - Balanced hierarchy */}
+      {/* Subtitle - Clear hierarchy */}
       <text 
         x={W/2} 
         y={SUBTITLE_Y} 
         textAnchor="middle" 
         fontFamily="Helvetica Neue, Inter, Arial, sans-serif" 
-        fontSize="72"
+        fontSize="120"
         fill={fg}
         opacity="0.7"
-        letterSpacing="4"
+        letterSpacing="3"
       >
         {subtitle}
       </text>
@@ -187,8 +187,8 @@ const PosterSVG = React.forwardRef<SVGSVGElement, Props>(({
             y={METRICS_Y} 
             textAnchor="middle" 
             fontFamily="Helvetica Neue, Arial, sans-serif" 
-            fontSize="140"
-            fontWeight="500"
+            fontSize="180"
+            fontWeight="600"
             fill={fg}
           >
             {distance}
@@ -198,7 +198,7 @@ const PosterSVG = React.forwardRef<SVGSVGElement, Props>(({
             y={LABELS_Y} 
             textAnchor="middle" 
             fontFamily="Helvetica Neue, Arial, sans-serif" 
-            fontSize="54"
+            fontSize="80"
             fill={fg}
             opacity="0.6"
             letterSpacing="3"
@@ -214,8 +214,8 @@ const PosterSVG = React.forwardRef<SVGSVGElement, Props>(({
             y={METRICS_Y} 
             textAnchor="middle" 
             fontFamily="Helvetica Neue, Arial, sans-serif" 
-            fontSize="140"
-            fontWeight="500"
+            fontSize="180"
+            fontWeight="600"
             fill={fg}
           >
             {elevation}
@@ -225,7 +225,7 @@ const PosterSVG = React.forwardRef<SVGSVGElement, Props>(({
             y={LABELS_Y} 
             textAnchor="middle" 
             fontFamily="Helvetica Neue, Arial, sans-serif" 
-            fontSize="54"
+            fontSize="80"
             fill={fg}
             opacity="0.6"
             letterSpacing="3"
@@ -241,8 +241,8 @@ const PosterSVG = React.forwardRef<SVGSVGElement, Props>(({
             y={METRICS_Y} 
             textAnchor="middle" 
             fontFamily="Helvetica Neue, Arial, sans-serif" 
-            fontSize="140"
-            fontWeight="500"
+            fontSize="180"
+            fontWeight="600"
             fill={fg}
           >
             {time}
@@ -252,7 +252,7 @@ const PosterSVG = React.forwardRef<SVGSVGElement, Props>(({
             y={LABELS_Y} 
             textAnchor="middle" 
             fontFamily="Helvetica Neue, Arial, sans-serif" 
-            fontSize="54"
+            fontSize="80"
             fill={fg}
             opacity="0.6"
             letterSpacing="3"
