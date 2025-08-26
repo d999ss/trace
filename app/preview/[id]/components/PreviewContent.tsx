@@ -46,17 +46,17 @@ export function PreviewContent() {
     const accessToken = searchParams.get('access_token');
     const activityId = params.id as string;
     
-    // Check if we're in test mode (using placeholder values)
-    const isTestMode = accessToken === '[your-token]' || activityId === '[activity-id]';
+    // Check if we're in test mode (using placeholder values or sample ID)
+    const isTestMode = accessToken === '[your-token]' || activityId === '[activity-id]' || activityId === 'sample';
     
     if (isTestMode) {
       // Use sample data for testing
-      console.log('Test mode detected, using sample data');
-      setActivity({ name: 'Sample Activity - Golden Gate Bridge Loop' });
+      console.log('Sample mode detected, using sample data');
+      setActivity({ name: 'Morning Loop Around Golden Gate' });
       posterState.setCoordinates(SAMPLE_COORDINATES);
-      posterState.setTitle('Golden Gate Bridge Loop');
-      posterState.setSubtitle('Sunday Morning Ride');
-      posterState.setTheme('dark');
+      posterState.setTitle('Morning Loop Around Golden Gate');
+      posterState.setSubtitle('John Smith • 08:32:15 • 4:16 split');
+      posterState.setTheme('light');
       posterState.setPosterStyle('art-print');
       setLoading(false);
       return;
