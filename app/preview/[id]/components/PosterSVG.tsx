@@ -73,10 +73,10 @@ const PosterSVG = React.forwardRef<SVGSVGElement, Props>(({
     return `${i ? 'L' : 'M'}${x.toFixed(1)},${y.toFixed(1)}`;
   }).join(' ') : '';
 
-  // Typography positioning - better spacing
-  const TITLE_Y = routeTop + routeHeight + 300;
-  const SUBTITLE_Y = TITLE_Y + 150;
-  const MICRO_DATA_Y = H - MARGIN - 300;
+  // Typography positioning - spacing for larger text
+  const TITLE_Y = routeTop + routeHeight + 400;
+  const SUBTITLE_Y = TITLE_Y + 200;
+  const MICRO_DATA_Y = H - MARGIN - 400;
   
   // Column layout for micro data
   const SAFE_W = W - 2 * MARGIN;
@@ -135,29 +135,29 @@ const PosterSVG = React.forwardRef<SVGSVGElement, Props>(({
         strokeLinejoin="round"
       />
       
-      {/* Title Block - Properly sized */}
+      {/* Title Block - Large for 18x24 print */}
       <text 
         x={W/2} 
         y={TITLE_Y} 
         textAnchor="middle" 
         fontFamily="Times New Roman, Georgia, serif" 
-        fontSize="180"
+        fontSize="240"
         fontWeight="400"
         fill={fg}
       >
         {title}
       </text>
       
-      {/* Subtitle - Properly sized */}
+      {/* Subtitle - Large for print */}
       <text 
         x={W/2} 
         y={SUBTITLE_Y} 
         textAnchor="middle" 
         fontFamily="Helvetica Neue, Inter, Arial, sans-serif" 
-        fontSize="72"
+        fontSize="96"
         fill={fg}
         opacity="0.8"
-        letterSpacing="2"
+        letterSpacing="3"
       >
         {subtitle}
       </text>
@@ -171,7 +171,7 @@ const PosterSVG = React.forwardRef<SVGSVGElement, Props>(({
             y={MICRO_DATA_Y} 
             textAnchor="middle" 
             fontFamily="Helvetica Neue, Arial, sans-serif" 
-            fontSize="48"
+            fontSize="72"
             fontWeight="600"
             fill={fg}
           >
@@ -179,13 +179,13 @@ const PosterSVG = React.forwardRef<SVGSVGElement, Props>(({
           </text>
           <text 
             x={COL_1_X} 
-            y={MICRO_DATA_Y + 60} 
+            y={MICRO_DATA_Y + 90} 
             textAnchor="middle" 
             fontFamily="Helvetica Neue, Arial, sans-serif" 
-            fontSize="24"
+            fontSize="36"
             fill={fg}
             opacity="0.6"
-            letterSpacing="1"
+            letterSpacing="2"
           >
             DISTANCE
           </text>
@@ -198,7 +198,7 @@ const PosterSVG = React.forwardRef<SVGSVGElement, Props>(({
             y={MICRO_DATA_Y} 
             textAnchor="middle" 
             fontFamily="Helvetica Neue, Arial, sans-serif" 
-            fontSize="48"
+            fontSize="72"
             fontWeight="600"
             fill={fg}
           >
@@ -206,13 +206,13 @@ const PosterSVG = React.forwardRef<SVGSVGElement, Props>(({
           </text>
           <text 
             x={COL_2_X} 
-            y={MICRO_DATA_Y + 60} 
+            y={MICRO_DATA_Y + 90} 
             textAnchor="middle" 
             fontFamily="Helvetica Neue, Arial, sans-serif" 
-            fontSize="24"
+            fontSize="36"
             fill={fg}
             opacity="0.6"
-            letterSpacing="1"
+            letterSpacing="2"
           >
             ELEVATION
           </text>
@@ -225,7 +225,7 @@ const PosterSVG = React.forwardRef<SVGSVGElement, Props>(({
             y={MICRO_DATA_Y} 
             textAnchor="middle" 
             fontFamily="Helvetica Neue, Arial, sans-serif" 
-            fontSize="48"
+            fontSize="72"
             fontWeight="600"
             fill={fg}
           >
@@ -233,13 +233,13 @@ const PosterSVG = React.forwardRef<SVGSVGElement, Props>(({
           </text>
           <text 
             x={COL_3_X} 
-            y={MICRO_DATA_Y + 60} 
+            y={MICRO_DATA_Y + 90} 
             textAnchor="middle" 
             fontFamily="Helvetica Neue, Arial, sans-serif" 
-            fontSize="24"
+            fontSize="36"
             fill={fg}
             opacity="0.6"
-            letterSpacing="1"
+            letterSpacing="2"
           >
             TIME
           </text>
