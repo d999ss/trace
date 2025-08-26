@@ -104,7 +104,7 @@ const PosterSVG = React.forwardRef<SVGSVGElement, Props>(({
   } else {
     bg = '#FFFFFF';
     fg = '#0E0F12';
-    routeColor = '#3b82f6';
+    routeColor = '#000000';
   }
 
   const svgStyle = {
