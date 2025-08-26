@@ -82,9 +82,9 @@ const PosterSVG = React.forwardRef<SVGSVGElement, Props>(({
   const TITLE_Y = HEADER_HEIGHT * 0.6;
   const SUBTITLE_Y = HEADER_HEIGHT * 0.85;
   
-  // Metrics positioned in footer area
-  const METRICS_Y = H - FOOTER_HEIGHT * 0.65;
-  const LABELS_Y = H - FOOTER_HEIGHT * 0.25;
+  // Metrics positioned in footer area with closer spacing
+  const METRICS_Y = H - FOOTER_HEIGHT * 0.7;
+  const LABELS_Y = H - FOOTER_HEIGHT * 0.35;
   
   // Better column spacing
   const COL_1_X = W * 0.25;
