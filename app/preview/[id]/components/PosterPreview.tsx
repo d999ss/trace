@@ -33,7 +33,7 @@ export function PosterPreview({ posterState, svgRef }: PosterPreviewProps) {
   }
 
   return (
-    <div className="flex-1 bg-gray-100 overflow-auto">
+    <div className="flex-1 overflow-auto" style={{backgroundColor: '#1B1B1B'}}>
       <div className="h-full flex flex-col">
         <div className="flex-1 flex items-center justify-center p-8">
           <div className="w-full max-w-[500px]">

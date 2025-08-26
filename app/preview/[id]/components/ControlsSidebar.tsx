@@ -13,7 +13,7 @@ interface ControlsSidebarProps {
 
 export function ControlsSidebar({ posterState, svgRef }: ControlsSidebarProps) {
   return (
-    <div className="w-96 bg-white border-l border-gray-200 overflow-y-auto">
+    <div className="w-96 bg-black border-l border-gray-800 overflow-y-auto">
       <div className="p-6">
         <StepperNavigation currentStep={posterState.currentStep} />
         <StepContent posterState={posterState} />

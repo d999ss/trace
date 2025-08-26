@@ -67,37 +67,37 @@ export function ActionButtons({ posterState, svgRef }: ActionButtonsProps) {
   };
 
   return (
-    <div className="fixed bottom-0 right-0 w-96 bg-white border-t border-gray-200 p-6 shadow-lg">
+    <div className="fixed bottom-0 right-0 w-96 bg-black border-t border-gray-800 p-6 shadow-lg">
       <div className="space-y-4">
         <div>
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">Export Options</h3>
-          <p className="text-sm text-gray-600">Download your poster in high resolution for printing or digital use.</p>
+          <h3 className="text-lg font-semibold text-white mb-2">Export Options</h3>
+          <p className="text-sm text-gray-300">Download your poster in high resolution for printing or digital use.</p>
         </div>
         
         <div className="space-y-3">
           <button
             onClick={handleRenderPrint}
-            className="w-full bg-blue-600 text-white py-3 px-4 rounded-lg font-medium hover:bg-blue-700 transition-colors"
+            className="w-full bg-blue-600 text-white py-3 px-4 font-medium hover:bg-blue-700 transition-colors"
           >
             Save Digital Poster (PNG)
           </button>
           
           <button
             onClick={handleSaveSVG}
-            className="w-full bg-gray-100 text-gray-700 py-3 px-4 rounded-lg font-medium hover:bg-gray-200 transition-colors"
+            className="w-full bg-gray-700 text-gray-200 py-3 px-4 font-medium hover:bg-gray-600 transition-colors"
           >
             Save as SVG (Vector)
           </button>
           
           <button
             onClick={handleBuyPrint}
-            className="w-full bg-green-600 text-white py-3 px-4 rounded-lg font-medium hover:bg-green-700 transition-colors"
+            className="w-full bg-green-600 text-white py-3 px-4 font-medium hover:bg-green-700 transition-colors"
           >
             Order Print
           </button>
         </div>
         
-        <div className="text-xs text-gray-500 text-center">
+        <div className="text-xs text-gray-400 text-center">
           <p>PNG: High-resolution image for digital use</p>
           <p>SVG: Vector format for professional printing</p>
         </div>

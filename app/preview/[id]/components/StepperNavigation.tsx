@@ -13,8 +13,8 @@ export function StepperNavigation({ currentStep }: StepperNavigationProps) {
   return (
     <div className="mb-8">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-lg font-semibold text-gray-900">Customize Your Poster</h2>
-        <div className="text-sm text-gray-500">Step {currentStep} of 4</div>
+        <h2 className="text-lg font-semibold text-white">Customize Your Poster</h2>
+        <div className="text-sm text-gray-300">Step {currentStep} of 4</div>
       </div>
       
       <div className="space-y-3">
@@ -22,19 +22,19 @@ export function StepperNavigation({ currentStep }: StepperNavigationProps) {
           <div
             key={step.number}
             className={`flex items-center space-x-3 p-3 rounded-lg transition-all ${
-              currentStep === step.number ? 'bg-blue-50 border border-blue-200' : 'hover:bg-gray-50'
+              currentStep === step.number ? 'bg-gray-800 border border-gray-600' : 'hover:bg-gray-900'
             }`}
           >
             <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
-              currentStep === step.number ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-600'
+              currentStep === step.number ? 'bg-blue-600 text-white' : 'bg-gray-700 text-gray-300'
             }`}>
               {step.number}
             </div>
             <div>
-              <div className={`font-medium ${currentStep === step.number ? 'text-blue-900' : 'text-gray-700'}`}>
+              <div className={`font-medium ${currentStep === step.number ? 'text-blue-300' : 'text-gray-200'}`}>
                 {step.title}
               </div>
-              <div className="text-sm text-gray-500">{step.description}</div>
+              <div className="text-sm text-gray-400">{step.description}</div>
             </div>
           </div>
         ))}
