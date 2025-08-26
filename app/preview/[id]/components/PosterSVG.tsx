@@ -137,9 +137,7 @@ const PosterSVG = React.forwardRef<SVGSVGElement, Props>(({
         y={routeRect.y} 
         width={routeRect.w} 
         height={routeRect.h} 
-        fill={theme === 'dark' ? '#1a1b1e' : '#f8f9fa'} 
-        rx="20" 
-        ry="20"
+        fill={theme === 'dark' ? '#1a1b1e' : '#f8f9fa'}
       />
       
       {/* Route Trace - Better line weight */}
