@@ -125,6 +125,17 @@ const PosterSVG = React.forwardRef<SVGSVGElement, Props>(({
       {/* Clean white background */}
       <rect width={W} height={H} fill={bg}/>
       
+      {/* Route area background - subtle grey box */}
+      <rect 
+        x={routeRect.x} 
+        y={routeRect.y} 
+        width={routeRect.w} 
+        height={routeRect.h} 
+        fill={theme === 'dark' ? '#1a1b1e' : '#f8f9fa'} 
+        rx="20" 
+        ry="20"
+      />
+      
       {/* Route Trace - Better line weight */}
       <path 
         d={path} 
