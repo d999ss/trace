@@ -73,10 +73,10 @@ const PosterSVG = React.forwardRef<SVGSVGElement, Props>(({
     return `${i ? 'L' : 'M'}${x.toFixed(1)},${y.toFixed(1)}`;
   }).join(' ') : '';
 
-  // Typography positioning
-  const TITLE_Y = routeTop + routeHeight + 600;
-  const SUBTITLE_Y = TITLE_Y + 200;
-  const MICRO_DATA_Y = H - MARGIN - 180;
+  // Typography positioning - better spacing
+  const TITLE_Y = routeTop + routeHeight + 300;
+  const SUBTITLE_Y = TITLE_Y + 150;
+  const MICRO_DATA_Y = H - MARGIN - 300;
   
   // Column layout for micro data
   const SAFE_W = W - 2 * MARGIN;
@@ -125,117 +125,123 @@ const PosterSVG = React.forwardRef<SVGSVGElement, Props>(({
       {/* Clean white background */}
       <rect width={W} height={H} fill={bg}/>
       
-      {/* Route Trace - Simple thick line */}
+      {/* Route Trace - Better line weight */}
       <path 
         d={path} 
         fill="none" 
         stroke={routeColor} 
-        strokeWidth="32" 
+        strokeWidth="16" 
         strokeLinecap="round" 
         strokeLinejoin="round"
       />
       
-      {/* Title Block - Much larger serif font */}
+      {/* Title Block - Properly sized */}
       <text 
         x={W/2} 
         y={TITLE_Y} 
         textAnchor="middle" 
         fontFamily="Times New Roman, Georgia, serif" 
-        fontSize="320"
+        fontSize="180"
         fontWeight="400"
         fill={fg}
       >
-        {title.toUpperCase()}
+        {title}
       </text>
       
-      {/* Subtitle - Larger sans-serif */}
+      {/* Subtitle - Properly sized */}
       <text 
         x={W/2} 
         y={SUBTITLE_Y} 
         textAnchor="middle" 
         fontFamily="Helvetica Neue, Inter, Arial, sans-serif" 
-        fontSize="120"
+        fontSize="72"
         fill={fg}
         opacity="0.8"
-        letterSpacing="3"
+        letterSpacing="2"
       >
         {subtitle}
       </text>
 
-      {/* Micro Data Row - Bottom 10% */}
+      {/* Stats Row - Three columns */}
       <g>
-        {/* Column 1: Distance with Sparkline */}
+        {/* Distance */}
         <g>
-          <rect 
-            x={COL_1_X - 300} 
-            y={MICRO_DATA_Y - 100} 
-            width="600" 
-            height="200" 
-            fill="none" 
-            stroke={fg} 
-            strokeWidth="3" 
-            opacity="0.7"
-          />
           <text 
             x={COL_1_X} 
-            y={MICRO_DATA_Y + 100} 
+            y={MICRO_DATA_Y} 
             textAnchor="middle" 
             fontFamily="Helvetica Neue, Arial, sans-serif" 
-            fontSize="90"
+            fontSize="48"
             fontWeight="600"
             fill={fg}
           >
             {distance}
           </text>
-        </g>
-        
-        {/* Column 2: Elevation with Sparkline */}
-        <g>
-          <rect 
-            x={COL_2_X - 300} 
-            y={MICRO_DATA_Y - 100} 
-            width="600" 
-            height="200" 
-            fill="none" 
-            stroke={fg} 
-            strokeWidth="3" 
-            opacity="0.7"
-          />
           <text 
-            x={COL_2_X} 
-            y={MICRO_DATA_Y + 100} 
+            x={COL_1_X} 
+            y={MICRO_DATA_Y + 60} 
             textAnchor="middle" 
             fontFamily="Helvetica Neue, Arial, sans-serif" 
-            fontSize="90"
+            fontSize="24"
+            fill={fg}
+            opacity="0.6"
+            letterSpacing="1"
+          >
+            DISTANCE
+          </text>
+        </g>
+        
+        {/* Elevation */}
+        <g>
+          <text 
+            x={COL_2_X} 
+            y={MICRO_DATA_Y} 
+            textAnchor="middle" 
+            fontFamily="Helvetica Neue, Arial, sans-serif" 
+            fontSize="48"
             fontWeight="600"
             fill={fg}
           >
             {elevation}
           </text>
-        </g>
-        
-        {/* Column 3: Time with Sparkline */}
-        <g>
-          <rect 
-            x={COL_3_X - 300} 
-            y={MICRO_DATA_Y - 100} 
-            width="600" 
-            height="200" 
-            fill="none" 
-            stroke={fg} 
-            strokeWidth="3" 
-            opacity="0.7"
-          />
           <text 
-            x={COL_3_X} 
-            y={MICRO_DATA_Y + 100} 
+            x={COL_2_X} 
+            y={MICRO_DATA_Y + 60} 
             textAnchor="middle" 
             fontFamily="Helvetica Neue, Arial, sans-serif" 
-            fontSize="90"
+            fontSize="24"
+            fill={fg}
+            opacity="0.6"
+            letterSpacing="1"
+          >
+            ELEVATION
+          </text>
+        </g>
+        
+        {/* Time */}
+        <g>
+          <text 
+            x={COL_3_X} 
+            y={MICRO_DATA_Y} 
+            textAnchor="middle" 
+            fontFamily="Helvetica Neue, Arial, sans-serif" 
+            fontSize="48"
             fontWeight="600"
             fill={fg}
           >
             {time}
+          </text>
+          <text 
+            x={COL_3_X} 
+            y={MICRO_DATA_Y + 60} 
+            textAnchor="middle" 
+            fontFamily="Helvetica Neue, Arial, sans-serif" 
+            fontSize="24"
+            fill={fg}
+            opacity="0.6"
+            letterSpacing="1"
+          >
+            TIME
           </text>
         </g>
       </g>
