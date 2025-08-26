@@ -1,6 +1,10 @@
 'use client';
 
 import { PosterState, PosterActions } from '../../hooks/usePosterState';
+import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 interface StyleStepProps {
   posterState: PosterState & PosterActions;
@@ -8,88 +12,65 @@ interface StyleStepProps {
 
 export function StyleStep({ posterState }: StyleStepProps) {
   return (
-    <div className="space-y-4">
-      <div>
-        <label className="block text-xs font-normal text-white mb-2">Poster Style</label>
-        <div className="space-y-2">
-          <label className="flex items-center space-x-3 cursor-pointer">
-            <input
-              type="radio"
-              name="posterStyle"
-              value="classic"
-              checked={posterState.posterStyle === 'classic'}
-              onChange={(e) => posterState.setPosterStyle(e.target.value as 'classic' | 'art-print')}
-              className="text-gray-300 focus:ring-gray-500"
-            />
-            <span className="text-xs font-normal text-gray-300">Classic</span>
-          </label>
-          <label className="flex items-center space-x-3 cursor-pointer">
-            <input
-              type="radio"
-              name="posterStyle"
-              value="art-print"
-              checked={posterState.posterStyle === 'art-print'}
-              onChange={(e) => posterState.setPosterStyle(e.target.value as 'classic' | 'art-print')}
-              className="text-gray-300 focus:ring-gray-500"
-            />
-            <span className="text-xs font-normal text-gray-300">Art Print</span>
-          </label>
+    <div className="space-y-6">
+      <div className="space-y-4">
+        <div>
+          <h4 className="text-sm font-medium mb-3">Poster Style</h4>
+          <RadioGroup
+            value={posterState.posterStyle}
+            onValueChange={(value) => posterState.setPosterStyle(value as 'classic' | 'art-print')}
+            className="space-y-2"
+          >
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="classic" id="classic" />
+              <Label htmlFor="classic" className="text-sm">Classic</Label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="art-print" id="art-print" />
+              <Label htmlFor="art-print" className="text-sm">Art Print</Label>
+            </div>
+          </RadioGroup>
+        </div>
+        
+        <div>
+          <h4 className="text-sm font-medium mb-3">Theme</h4>
+          <RadioGroup
+            value={posterState.theme}
+            onValueChange={(value) => posterState.setTheme(value as 'light' | 'dark' | 'accent')}
+            className="space-y-2"
+          >
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="light" id="light" />
+              <Label htmlFor="light" className="text-sm">Light</Label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="dark" id="dark" />
+              <Label htmlFor="dark" className="text-sm">Dark</Label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="accent" id="accent" />
+              <Label htmlFor="accent" className="text-sm">Accent</Label>
+            </div>
+          </RadioGroup>
         </div>
       </div>
       
-      <div>
-        <label className="block text-xs font-normal text-white mb-2">Map Style</label>
-        <div className="space-y-2">
-          <label className="flex items-center space-x-3 cursor-pointer">
-            <input
-              type="radio"
-              name="theme"
-              value="light"
-              checked={posterState.theme === 'light'}
-              onChange={(e) => posterState.setTheme(e.target.value as 'light' | 'dark' | 'accent')}
-              className="text-gray-300 focus:ring-gray-500"
-            />
-            <span className="text-xs font-normal text-gray-300">Classic</span>
-          </label>
-          <label className="flex items-center space-x-3 cursor-pointer">
-            <input
-              type="radio"
-              name="theme"
-              value="dark"
-              checked={posterState.theme === 'dark'}
-              onChange={(e) => posterState.setTheme(e.target.value as 'light' | 'dark' | 'accent')}
-              className="text-gray-300 focus:ring-gray-500"
-            />
-            <span className="text-xs font-normal text-gray-300">Dark</span>
-          </label>
-          <label className="flex items-center space-x-3 cursor-pointer">
-            <input
-              type="radio"
-              name="theme"
-              value="accent"
-              checked={posterState.theme === 'accent'}
-              onChange={(e) => posterState.setTheme(e.target.value as 'light' | 'dark' | 'accent')}
-              className="text-gray-300 focus:ring-gray-500"
-            />
-            <span className="text-xs font-normal text-gray-300">Satellite</span>
-          </label>
-        </div>
-      </div>
-      
-      {/* Navigation buttons */}
-      <div className="flex space-x-3 pt-4">
-        <button
+      <div className="flex gap-2">
+        <Button
+          variant="outline"
           onClick={() => posterState.setCurrentStep(1)}
-          className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 text-xs font-normal py-3 px-4 transition-colors"
+          className="flex-1"
+          size="sm"
         >
           Back
-        </button>
-        <button
+        </Button>
+        <Button
           onClick={() => posterState.setCurrentStep(3)}
-          className="flex-1 bg-gray-700 hover:bg-gray-700 text-white text-xs font-normal py-3 px-4 transition-colors"
+          className="flex-1"
+          size="sm"
         >
-          Continue to Text
-        </button>
+          Continue
+        </Button>
       </div>
     </div>
   );

@@ -1,6 +1,10 @@
 'use client';
 
 import { PosterState, PosterActions } from '../../hooks/usePosterState';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 interface TextStepProps {
   posterState: PosterState & PosterActions;
@@ -8,43 +12,47 @@ interface TextStepProps {
 
 export function TextStep({ posterState }: TextStepProps) {
   return (
-    <div className="space-y-4">
-      <div>
-        <label className="block text-xs font-normal text-white mb-2">Poster Title</label>
-        <input
-          type="text"
-          value={posterState.title}
-          onChange={(e) => posterState.setTitle(e.target.value)}
-          placeholder="e.g., Morning Run, Epic Ride"
-          className="w-full px-3 py-3 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent text-xs"
-        />
+    <div className="space-y-6">
+      <div className="space-y-4">
+        <div className="space-y-2">
+          <Label htmlFor="title" className="text-sm font-medium">Title</Label>
+          <Input
+            id="title"
+            value={posterState.title}
+            onChange={(e) => posterState.setTitle(e.target.value)}
+            placeholder="e.g., Morning Run, Epic Ride"
+            className="h-9"
+          />
+        </div>
+        
+        <div className="space-y-2">
+          <Label htmlFor="subtitle" className="text-sm font-medium">Subtitle</Label>
+          <Input
+            id="subtitle"
+            value={posterState.subtitle}
+            onChange={(e) => posterState.setSubtitle(e.target.value)}
+            placeholder="e.g., January 15, 2024"
+            className="h-9"
+          />
+        </div>
       </div>
       
-      <div>
-        <label className="block text-xs font-normal text-white mb-2">Subtitle (Optional)</label>
-        <input
-          type="text"
-          value={posterState.subtitle}
-          onChange={(e) => posterState.setSubtitle(e.target.value)}
-          placeholder="e.g., January 15, 2024"
-          className="w-full px-3 py-3 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent text-xs"
-        />
-      </div>
-      
-      {/* Navigation buttons */}
-      <div className="flex space-x-3 pt-4">
-        <button
+      <div className="flex gap-2">
+        <Button
+          variant="outline"
           onClick={() => posterState.setCurrentStep(2)}
-          className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 text-xs font-normal py-3 px-4 transition-colors"
+          className="flex-1"
+          size="sm"
         >
           Back
-        </button>
-        <button
+        </Button>
+        <Button
           onClick={() => posterState.setCurrentStep(4)}
-          className="flex-1 bg-gray-700 hover:bg-gray-700 text-white text-xs font-normal py-3 px-4 transition-colors"
+          className="flex-1"
+          size="sm"
         >
-          Continue to Size
-        </button>
+          Continue
+        </Button>
       </div>
     </div>
   );

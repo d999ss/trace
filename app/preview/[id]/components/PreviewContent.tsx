@@ -6,8 +6,8 @@ import { decodePolyline } from '@/lib/strava';
 import { Header } from './Header';
 import { PosterPreview } from './PosterPreview';
 import { ControlsSidebar } from './ControlsSidebar';
-import { StickyCTA } from './StickyCTA';
 import { usePosterState } from '../hooks/usePosterState';
+import { Card, CardContent } from '@/components/ui/card';
 
 // Sample coordinates - Cursive uppercase S shape
 const SAMPLE_COORDINATES: [number, number][] = [
@@ -168,7 +168,7 @@ export function PreviewContent() {
     }
 
     fetchActivity();
-  }, [params.id, searchParams, posterState]);
+  }, [params.id, searchParams]); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (loading) {
     return (
@@ -206,45 +206,35 @@ export function PreviewContent() {
   const routeLoaded = posterState.coordinates.length > 0;
 
   return (
-    <div className="min-h-screen" style={{ background: 'linear-gradient(135deg, #0A0E27 0%, #1A1E3A 50%, #2A2F4A 100%)' }}>
+    <div className="min-h-screen bg-background">
       <Header activityName={activity?.name} />
       
-      {/* Premium Studio Layout */}
-      <div className="flex h-[calc(100vh-80px)]">
-        {/* Main Canvas Area */}
-        <div className="flex-1 flex items-center justify-center p-12 bg-gradient-to-br from-white/5 to-white/10 backdrop-blur-sm">
-          <div className="w-full max-w-4xl">
+      {/* Main Interface - Clean shadcn/ui Style */}
+      <div className="flex h-[calc(100vh-60px)]">
+        
+        {/* Sidebar - Left */}
+        <div className="w-80 border-r bg-muted/40 p-6">
+          <ControlsSidebar 
+            posterState={posterState} 
+            svgRef={svgRef} 
+            routeData={{
+              distance: '8.85 mi',
+              duration: '48 min',
+              elevation: '+1,247 ft',
+              points: posterState.coordinates.length
+            }}
+          />
+        </div>
+        
+        {/* Main Content - Poster Preview */}
+        <div className="flex-1 p-6 bg-background">
+          <div className="h-full flex items-center justify-center">
             <PosterPreview posterState={posterState} svgRef={svgRef} />
           </div>
         </div>
         
-        {/* Premium Controls Panel */}
-        <div className="w-96 bg-white/95 backdrop-blur-xl shadow-2xl border-l border-white/20">
-          <div className="h-full flex flex-col">
-            {/* Panel Header */}
-            <div className="p-8 border-b border-gray-100">
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">Studio</h2>
-              <p className="text-gray-600 text-sm">Craft your perfect poster</p>
-            </div>
-            
-            {/* Controls Content */}
-            <div className="flex-1 overflow-y-auto">
-              <ControlsSidebar 
-                posterState={posterState} 
-                svgRef={svgRef} 
-                routeData={{
-                  distance: '8.85 mi',
-                  duration: '48 min',
-                  elevation: '+1,247 ft',
-                  points: posterState.coordinates.length
-                }}
-              />
-            </div>
-          </div>
-        </div>
       </div>
       
-      <StickyCTA posterState={posterState} routeLoaded={routeLoaded} />
     </div>
   );
 }

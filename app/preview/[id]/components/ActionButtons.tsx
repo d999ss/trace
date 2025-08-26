@@ -3,6 +3,8 @@
 import { PosterState } from '../hooks/usePosterState';
 import { exportSVGToPNG } from '../utils/export';
 import { RefObject } from 'react';
+import { Button } from '@/components/ui/button';
+import { Download, ShoppingCart } from 'lucide-react';
 
 interface ActionButtonsProps {
   posterState: PosterState;
@@ -47,32 +49,35 @@ export function ActionButtons({ posterState, svgRef, showExportButtons = false }
   }
 
   return (
-    <div className="fixed bottom-0 right-0 w-96 bg-black border-t border-gray-800 p-6 shadow-lg">
-      <div className="space-y-4">
-        <div>
-          <h3 className="text-xs font-semibold text-white mb-2">Export Options</h3>
-          <p className="text-xs text-gray-300">Download your poster in high resolution for printing or digital use.</p>
-        </div>
+    <div className="space-y-4">
+      <div className="text-center">
+        <h3 className="font-semibold mb-2">Ready to Export</h3>
+        <p className="text-sm text-muted-foreground">Download your poster in high resolution or order a premium print.</p>
+      </div>
+      
+      <div className="space-y-3">
+        <Button
+          onClick={handleRenderPrint}
+          className="w-full"
+          size="lg"
+        >
+          <Download className="w-4 h-4 mr-2" />
+          Download High-Res PNG
+        </Button>
         
-        <div className="space-y-3">
-          <button
-            onClick={handleRenderPrint}
-            className="w-full bg-gray-800 text-white py-3 px-4 text-xs font-normal hover:bg-gray-700 transition-colors"
-          >
-            Save Digital Poster (PNG)
-          </button>
-          
-          <button
-            onClick={handleBuyPrint}
-            className="w-full bg-gray-800 text-white py-3 px-4 text-xs font-normal hover:bg-gray-700 transition-colors"
-          >
-            Order Print
-          </button>
-        </div>
-        
-        <div className="text-xs text-gray-400 text-center">
-          <p>PNG: High-resolution image for digital use</p>
-        </div>
+        <Button
+          onClick={handleBuyPrint}
+          variant="outline"
+          className="w-full"
+          size="lg"
+        >
+          <ShoppingCart className="w-4 h-4 mr-2" />
+          Order Premium Print
+        </Button>
+      </div>
+      
+      <div className="text-xs text-muted-foreground text-center">
+        <p>High-resolution exports perfect for printing up to poster size</p>
       </div>
     </div>
   );

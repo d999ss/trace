@@ -21,75 +21,70 @@ interface ControlsSidebarProps {
 
 export function ControlsSidebar({ posterState, svgRef, routeData }: ControlsSidebarProps) {
   const routeLoaded = posterState.coordinates.length > 0;
-  const showExportButtons = posterState.currentStep === 4; // Only show on final step
+  const showExportButtons = posterState.currentStep === 4;
 
   return (
-    <div className="h-full flex flex-col space-y-6 p-6">
-      {/* Route Data Card */}
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="space-y-2">
+        <h1 className="text-2xl font-semibold tracking-tight">Trace</h1>
+        <p className="text-sm text-muted-foreground">
+          Create beautiful posters from your cycling routes
+        </p>
+      </div>
+
+      {/* Route Overview */}
       {routeData && routeLoaded && (
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-lg">Route Overview</CardTitle>
-            <CardDescription>Your cycling data at a glance</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <div className="grid grid-cols-2 gap-3">
-              <div className="text-center">
-                <div className="text-2xl font-bold text-primary">{routeData.distance}</div>
-                <div className="text-xs text-muted-foreground uppercase tracking-wide">Distance</div>
-              </div>
-              <div className="text-center">
-                <div className="text-2xl font-bold text-primary">{routeData.duration}</div>
-                <div className="text-xs text-muted-foreground uppercase tracking-wide">Duration</div>
-              </div>
+        <div className="space-y-3">
+          <h3 className="text-lg font-medium">Overview</h3>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <p className="text-2xl font-bold">{routeData.distance}</p>
+              <p className="text-xs text-muted-foreground">Distance</p>
             </div>
-            <Separator />
-            <div className="grid grid-cols-2 gap-3">
-              <div className="text-center">
-                <div className="text-lg font-semibold">{routeData.elevation}</div>
-                <div className="text-xs text-muted-foreground uppercase tracking-wide">Elevation</div>
-              </div>
-              <div className="text-center">
-                <div className="text-lg font-semibold">{routeData.points}</div>
-                <div className="text-xs text-muted-foreground uppercase tracking-wide">Points</div>
-              </div>
+            <div className="space-y-2">
+              <p className="text-2xl font-bold">{routeData.duration}</p>
+              <p className="text-xs text-muted-foreground">Duration</p>
             </div>
-          </CardContent>
-        </Card>
+            <div className="space-y-2">
+              <p className="text-lg font-medium">{routeData.elevation}</p>
+              <p className="text-xs text-muted-foreground">Elevation</p>
+            </div>
+            <div className="space-y-2">
+              <p className="text-lg font-medium">{routeData.points}</p>
+              <p className="text-xs text-muted-foreground">Points</p>
+            </div>
+          </div>
+        </div>
       )}
       
-      {/* Progress Steps */}
-      <Card>
-        <CardContent className="p-6">
-          <StepperNavigation 
-            currentStep={posterState.currentStep} 
-            routeLoaded={routeLoaded}
-            routeData={routeData}
-            onStepClick={posterState.setCurrentStep}
-          />
-        </CardContent>
-      </Card>
+      <Separator />
+      
+      {/* Steps */}
+      <StepperNavigation 
+        currentStep={posterState.currentStep} 
+        routeLoaded={routeLoaded}
+        routeData={routeData}
+        onStepClick={posterState.setCurrentStep}
+      />
+      
+      <Separator />
       
       {/* Step Content */}
-      <div className="flex-1 min-h-0">
-        <Card className="h-full">
-          <CardContent className="p-6 h-full overflow-y-auto">
-            <StepContent posterState={posterState} />
-          </CardContent>
-        </Card>
+      <div className="space-y-4">
+        <StepContent posterState={posterState} />
       </div>
       
       {/* Export Actions */}
       {showExportButtons && (
-        <Card className="bg-gradient-to-r from-primary to-primary/80 text-primary-foreground">
-          <CardContent className="p-6">
-            <ActionButtons
-              posterState={posterState}
-              svgRef={svgRef}
-              showExportButtons={showExportButtons}
-            />
-          </CardContent>
-        </Card>
+        <>
+          <Separator />
+          <ActionButtons
+            posterState={posterState}
+            svgRef={svgRef}
+            showExportButtons={showExportButtons}
+          />
+        </>
       )}
     </div>
   );

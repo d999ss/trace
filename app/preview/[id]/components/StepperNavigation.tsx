@@ -47,10 +47,10 @@ export function StepperNavigation({ currentStep, routeLoaded, routeData, onStepC
   ];
 
   return (
-    <div className="space-y-1">
-      <div className="flex items-center justify-between mb-4">
-        <div className="text-sm font-semibold">Create Your Poster</div>
-        <Badge variant="secondary" className="text-xs">
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <h3 className="text-sm font-medium">Steps</h3>
+        <Badge variant="outline" className="text-xs">
           {currentStep} of 4
         </Badge>
       </div>
@@ -63,35 +63,35 @@ export function StepperNavigation({ currentStep, routeLoaded, routeData, onStepC
           const IconComponent = step.icon;
           
           return (
-            <Button
+            <div
               key={step.number}
-              variant={isActive ? "default" : isCompleted ? "secondary" : "ghost"}
-              className={`w-full justify-start h-auto p-3 ${!isClickable ? 'opacity-50 cursor-not-allowed' : ''}`}
               onClick={isClickable && onStepClick ? () => onStepClick(step.number as 1 | 2 | 3 | 4) : undefined}
-              disabled={!isClickable}
+              className={`flex items-center gap-3 p-2 rounded-md cursor-pointer transition-colors ${
+                isActive 
+                  ? 'bg-accent' 
+                  : isClickable 
+                  ? 'hover:bg-accent/50' 
+                  : 'opacity-50 cursor-not-allowed'
+              }`}
             >
-              <div className="flex items-center w-full">
-                <div className="flex items-center justify-center mr-3">
-                  {isCompleted ? (
-                    <CheckCircle2 className="w-5 h-5 text-green-600" />
-                  ) : (
-                    <div className="relative">
-                      <Circle className="w-5 h-5" />
-                      <IconComponent className="w-3 h-3 absolute top-1 left-1" />
-                    </div>
-                  )}
-                </div>
-                <div className="flex-1 text-left">
-                  <div className="text-sm font-medium">{step.title}</div>
-                  <div className="text-xs text-muted-foreground">{step.description}</div>
-                </div>
-                {isActive && (
-                  <Badge variant="outline" className="text-xs">
-                    Current
-                  </Badge>
+              <div className={`w-6 h-6 rounded-full border flex items-center justify-center text-xs font-medium ${
+                isCompleted 
+                  ? 'bg-primary text-primary-foreground border-primary'
+                  : isActive 
+                  ? 'border-primary text-primary' 
+                  : 'border-border text-muted-foreground'
+              }`}>
+                {isCompleted ? (
+                  <CheckCircle2 className="w-3 h-3" />
+                ) : (
+                  step.number
                 )}
               </div>
-            </Button>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium leading-none">{step.title}</p>
+                <p className="text-xs text-muted-foreground mt-1">{step.description}</p>
+              </div>
+            </div>
           );
         })}
       </div>
