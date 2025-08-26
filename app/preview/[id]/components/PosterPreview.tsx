@@ -37,7 +37,7 @@ export function PosterPreview({ posterState, svgRef }: PosterPreviewProps) {
       <div className="h-full flex flex-col">
         <div className="flex-1 flex items-center justify-center p-8">
           <div className="w-full max-w-[500px]">
-            <div className="bg-white rounded-2xl shadow-2xl hover:shadow-3xl transition-all duration-300 transform hover:-translate-y-1 p-8">
+            <div className="bg-white shadow-2xl hover:shadow-3xl transition-all duration-300 transform hover:-translate-y-1 p-8">
               <div 
                 className="w-full bg-white"
                 style={{ 
