@@ -1,7 +1,7 @@
 'use client';
 
 import { PosterState } from '../hooks/usePosterState';
-import { exportSVGToPNG, exportSVGToBlob } from '../utils/export';
+import { exportSVGToPNG } from '../utils/export';
 import { RefObject } from 'react';
 
 interface ActionButtonsProps {

@@ -120,18 +120,42 @@ export function AnimatedRouteRenderer({
     };
   }, [isAnimating, ride, onAnimationComplete]);
 
-
-  const calculateDistance = (coord1: { lat: number; lng: number }, coord2: { lat: number; lng: number }): number => {
-    const R = 6371; // Earth radius in km
-    const dLat = (coord2.lat - coord1.lat) * Math.PI / 180;
-    const dLon = (coord2.lng - coord1.lng) * Math.PI / 180;
-    const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-              Math.cos(coord1.lat * Math.PI / 180) * Math.cos(coord2.lat * Math.PI / 180) *
-              Math.sin(dLon/2) * Math.sin(dLon/2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-    return R * c;
+  const drawMilestones = (ctx: CanvasRenderingContext2D, progress: number) => {
+    const { coordinates } = ride;
+    const padding = 50;
+    const width = canvasRef.current!.width - 2 * padding;
+    const height = canvasRef.current!.height - 2 * padding;
+    
+    const lats = coordinates.map(c => c.lat);
+    const lngs = coordinates.map(c => c.lng);
+    const minLat = Math.min(...lats);
+    const maxLat = Math.max(...lats);
+    const minLng = Math.min(...lngs);
+    const maxLng = Math.max(...lngs);
+    
+    milestones.forEach(milestone => {
+      const milestoneProgress = milestone.point / coordinates.length;
+      if (milestoneProgress <= progress) {
+        const coord = coordinates[milestone.point];
+        const x = padding + ((coord.lng - minLng) / (maxLng - minLng)) * width;
+        const y = padding + ((maxLat - coord.lat) / (maxLat - minLat)) * height;
+        
+        // Draw milestone marker
+        ctx.fillStyle = '#FFD700';
+        ctx.strokeStyle = '#FFA500';
+        ctx.lineWidth = 2;
+        
+        // Star shape for milestone
+        drawStar(ctx, x, y, 5, 10, 5);
+        
+        // Label
+        ctx.fillStyle = '#333';
+        ctx.font = 'bold 12px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(milestone.label, x, y - 15);
+      }
+    });
   };
-
 
   const drawAnimatedRoute = (
     ctx: CanvasRenderingContext2D,
@@ -215,43 +239,6 @@ export function AnimatedRouteRenderer({
     
     ctx.globalAlpha = 1;
     ctx.shadowBlur = 0;
-  };
-
-  const drawMilestones = (ctx: CanvasRenderingContext2D, progress: number) => {
-    const { coordinates } = ride;
-    const padding = 50;
-    const width = canvasRef.current!.width - 2 * padding;
-    const height = canvasRef.current!.height - 2 * padding;
-    
-    const lats = coordinates.map(c => c.lat);
-    const lngs = coordinates.map(c => c.lng);
-    const minLat = Math.min(...lats);
-    const maxLat = Math.max(...lats);
-    const minLng = Math.min(...lngs);
-    const maxLng = Math.max(...lngs);
-    
-    milestones.forEach(milestone => {
-      const milestoneProgress = milestone.point / coordinates.length;
-      if (milestoneProgress <= progress) {
-        const coord = coordinates[milestone.point];
-        const x = padding + ((coord.lng - minLng) / (maxLng - minLng)) * width;
-        const y = padding + ((maxLat - coord.lat) / (maxLat - minLat)) * height;
-        
-        // Draw milestone marker
-        ctx.fillStyle = '#FFD700';
-        ctx.strokeStyle = '#FFA500';
-        ctx.lineWidth = 2;
-        
-        // Star shape for milestone
-        drawStar(ctx, x, y, 5, 10, 5);
-        
-        // Label
-        ctx.fillStyle = '#333';
-        ctx.font = 'bold 12px sans-serif';
-        ctx.textAlign = 'center';
-        ctx.fillText(milestone.label, x, y - 15);
-      }
-    });
   };
 
   const drawStar = (

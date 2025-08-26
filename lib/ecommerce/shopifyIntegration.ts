@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { RideObject } from '@/lib/types/ride';
 import Client from 'shopify-buy';
 
