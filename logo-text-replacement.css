@@ -1,13 +1,18 @@
 /* PrintMyRide Logo to Text Replacement */
-/* Hide existing logo images */
+/* Hide existing logo images ONLY */
 .header-title-logo img,
 .site-title img,
 .logo img,
 .header-logo img,
 img[src*="nuevologo"],
 img[src*="301409ac"],
-img[src*="Screen+Shot"],
-img[src*="squarespace-cdn"] {
+img[src*="Screen+Shot"] {
+  display: none !important;
+}
+
+/* Hide specific logo images from squarespace-cdn but not all images */
+img[src*="nuevologo2024.png"],
+img[src*="Screen+Shot+2022-08-09"] {
   display: none !important;
 }
 
@@ -73,7 +78,19 @@ img[data-loader="sqs"] {
 
 /* Fix any image visibility issues */
 .image-block img,
-.gallery-block img {
+.gallery-block img,
+.sqs-gallery img,
+.gallery-grid-item img,
+.fluid-engine img {
   max-width: 100%;
   height: auto;
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+/* Ensure all content images are visible */
+img:not([src*="nuevologo"]):not([src*="Screen+Shot+2022-08-09"]) {
+  display: block !important;
+  visibility: visible !important;
 }

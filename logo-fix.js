@@ -1,8 +1,8 @@
 <script>
-// Aggressive PrintMyRide logo replacement
+// Targeted PrintMyRide logo replacement (only logos, not all images)
 function replaceLogo() {
   document.querySelectorAll("img").forEach(function(img) {
-    if (img.src && (img.src.includes("nuevologo") || img.src.includes("301409ac") || img.src.includes("Screen+Shot") || img.src.includes("squarespace-cdn"))) {
+    if (img.src && (img.src.includes("nuevologo") || img.src.includes("301409ac") || img.src.includes("Screen+Shot+2022-08-09"))) {
       img.src = "printmyride-logo.png";
       img.alt = "PrintMyRide Logo";
       img.style.maxHeight = "40px";
