@@ -38,8 +38,13 @@ html.wf-loading * {
   will-change: color;
 }
 
-/* Optimize image loading and rendering */
-img {
+/* Optimize image loading and rendering - but don't interfere with Squarespace */
+img[data-src] {
+  /* Let Squarespace handle its own lazy loading */
+  loading: auto !important;
+}
+
+img:not([data-src]) {
   loading: lazy;
   decoding: async;
 }
@@ -58,4 +63,17 @@ img {
 /* Optimize grid rendering */
 .gallery-grid-wrapper {
   contain: layout;
+}
+
+/* Ensure Squarespace images load properly */
+img[data-loader="sqs"] {
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+/* Fix any image visibility issues */
+.image-block img,
+.gallery-block img {
+  max-width: 100%;
+  height: auto;
 }
