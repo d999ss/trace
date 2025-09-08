@@ -1,0 +1,34 @@
+/* PrintMyRide Logo to Text Replacement */
+/* Hide existing logo images */
+.header-title-logo img,
+.site-title img,
+.logo img,
+.header-logo img,
+img[src*="nuevologo"],
+img[src*="301409ac"],
+img[src*="Screen+Shot"],
+img[src*="squarespace-cdn"] {
+  display: none !important;
+}
+
+/* Replace with PrintMyRide text */
+.header-title-logo:after,
+.site-title:after,
+.logo:after,
+.header-logo:after {
+  content: "PrintMyRide" !important;
+  font-family: "IBM Plex Mono", monospace !important;
+  font-size: 18px !important;
+  font-weight: 700 !important;
+  color: #000 !important;
+  text-decoration: none !important;
+  display: inline-block !important;
+}
+
+/* Ensure the parent containers are visible */
+.header-title-logo,
+.site-title,
+.logo,
+.header-logo {
+  display: inline-block !important;
+}
