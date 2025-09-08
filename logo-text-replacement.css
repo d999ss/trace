@@ -38,7 +38,24 @@ html.wf-loading * {
   will-change: color;
 }
 
-/* Optimize image loading */
+/* Optimize image loading and rendering */
 img {
   loading: lazy;
+  decoding: async;
+}
+
+/* Critical performance optimizations */
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Reduce layout thrashing */
+.header-nav, .nav, .mobile-nav {
+  contain: layout;
+}
+
+/* Optimize grid rendering */
+.gallery-grid-wrapper {
+  contain: layout;
 }
