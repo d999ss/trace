@@ -32,3 +32,13 @@ img[src*="squarespace-cdn"] {
 .header-logo {
   display: inline-block !important;
 }
+
+/* Performance optimization - add will-change for animated elements */
+html.wf-loading * {
+  will-change: color;
+}
+
+/* Optimize image loading */
+img {
+  loading: lazy;
+}
