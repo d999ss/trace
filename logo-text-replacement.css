@@ -17,9 +17,9 @@ img[src*="squarespace-cdn"] {
 .logo:after,
 .header-logo:after {
   content: "PrintMyRide" !important;
-  font-family: "IBM Plex Mono", monospace !important;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", system-ui, sans-serif !important;
   font-size: 18px !important;
-  font-weight: 700 !important;
+  font-weight: 600 !important;
   color: #000 !important;
   text-decoration: none !important;
   display: inline-block !important;
